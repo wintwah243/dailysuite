@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DailySuite</title>
+</head>
+<body>
+    <header>
+        <h1>DailySuite</h1>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="{% url 'login' %}">Login</a> |
+            <a href="{% url 'register' %}">Register</a>
+        </nav>
+        <hr>
+    </header>
+
+    {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+</body>
+</html>

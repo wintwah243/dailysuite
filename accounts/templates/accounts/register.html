@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+
+{% block content %}
+<h2>Create an Account</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="text" name="username" placeholder="Username" required><br>
+    <input type="email" name="email" placeholder="Email" required><br>
+    <input type="password" name="password1" placeholder="Password" required><br>
+    <input type="password" name="password2" placeholder="Confirm Password" required><br>
+    <button type="submit">Register</button>
+</form>
+
+<p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+<a href="{% provider_login_url 'google' %}">Login with Google</a>
+{% endblock %}
