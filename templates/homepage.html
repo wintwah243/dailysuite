@@ -5,9 +5,33 @@
 </head>
 <body>
     <h1>Welcome to DailySuite!</h1>
+    <p id="user-info"></p>
     <p>
-        <a href="/accounts/register/">Register</a> |
-        <a href="/accounts/login/">Login</a>
+        <a href="/accounts/logout/">Logout</a>
     </p>
+
+<script>
+async function fetchJWT() {
+    try {
+        const response = await fetch('/accounts/google-jwt/');
+        const data = await response.json();
+
+        if (data.success) {
+            localStorage.setItem('access_token', data.access_token);
+            localStorage.setItem('username', data.username);
+            document.getElementById('user-info').textContent =
+                `Hello, ${data.username}! JWT token stored in localStorage.`;
+            console.log("JWT Token:", data.access_token);
+        } else {
+            console.log("No JWT token:", data.error);
+        }
+    } catch (err) {
+        console.error("Error fetching JWT:", err);
+    }
+}
+
+// Call on page load
+fetchJWT();
+</script>
 </body>
 </html>

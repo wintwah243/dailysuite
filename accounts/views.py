@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.decorators import login_required
 
 def Landing(request):
     return render(request, 'Landing.html')
@@ -40,22 +42,39 @@ def register_user(request):
     return render(request, 'accounts/register.html')
 
 
+# Normal form login with JWT response
 def login_user(request):
     if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-
+        username = request.POST.get("username")
+        password = request.POST.get("password")
         user = authenticate(request, username=username, password=password)
-
-        if user is not None:
+        if user:
             login(request, user)
-            messages.success(request, "Logged in successfully")
-            return redirect('home')
+            # Generate JWT
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            return JsonResponse({
+                "success": True,
+                "access_token": access_token,
+                "username": user.username
+            })
         else:
-            messages.error(request, "Invalid credentials")
-            return redirect('login')
+            return JsonResponse({"success": False, "error": "Invalid credentials"}, status=401)
+    return render(request, "accounts/login.html")
 
-    return render(request, 'accounts/login.html')
+
+# Google JWT endpoint
+def google_jwt(request):
+    user = request.user
+    if user.is_authenticated:
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        return JsonResponse({
+            "success": True,
+            "access_token": access_token,
+            "username": user.username
+        })
+    return JsonResponse({"success": False, "error": "User not authenticated"}, status=401)
 
 
 def logout_user(request):

@@ -757,10 +757,7 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             try {
-                // Get CSRF token
                 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-
-                // IMPORTANT: Use the correct endpoint that matches your Django URL
                 const response = await fetch('/accounts/ai-chat/', {
                     method: 'POST',
                     headers: {

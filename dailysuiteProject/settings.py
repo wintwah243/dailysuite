@@ -68,13 +68,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
+        'SCOPE': ['profile', 'email'],
         'APP': {
             'client_id': os.environ.get("GOOGLE_CLIENT_ID"),
             'secret': os.environ.get("GOOGLE_CLIENT_SECRET"),
@@ -82,6 +76,10 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+# Redirect after Google login only
+SOCIALACCOUNT_LOGIN_REDIRECT_URL = '/accounts/google-redirect/'
+
 
 
 MIDDLEWARE = [
@@ -93,7 +91,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'allauth.account.middleware.AccountMiddleware', # google oauth
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 
@@ -145,6 +143,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
 
 
 # Internationalization
