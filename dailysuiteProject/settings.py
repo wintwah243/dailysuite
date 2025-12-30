@@ -30,6 +30,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 load_dotenv()
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 
 # Application definition
@@ -62,7 +63,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Redirect URLs after login/logout
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/home/'
 LOGOUT_REDIRECT_URL = '/'
 
 SOCIALACCOUNT_PROVIDERS = {

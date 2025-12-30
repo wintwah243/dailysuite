@@ -1,28 +1,842 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>DailySuite</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailySuite | Minimal Productivity Platform</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% csrf_token %}
+    <style>
+        * {
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f5f5f5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        /* Card hover effect */
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Step indicator animation */
+        .step-active {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Monochrome filter for images/icons */
+        .monochrome {
+            filter: grayscale(100%);
+        }
+
+        /* Elegant underline effect */
+        .underline-effect {
+            position: relative;
+        }
+
+        .underline-effect:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #000;
+            transition: width 0.3s ease;
+        }
+
+        .underline-effect:hover:after {
+            width: 100%;
+        }
+
+        /* Subtle border animation */
+        .border-animate {
+            position: relative;
+        }
+
+        .border-animate:before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #000, #333, #000);
+            z-index: -1;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .border-animate:hover:before {
+            opacity: 1;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <h1>This is Landing of DailySuite.</h1>
-        <nav>
-            <a href="/">Home</a> |
-            <a href="{% url 'login' %}">Login</a> |
-            <a href="{% url 'register' %}">Register</a>
-        </nav>
-        <hr>
+<body class="bg-white text-gray-900">
+    <!-- chatbot floating button-->
+<div id="chatbot-button" class="fixed bottom-6 right-6 z-50">
+    <button onclick="toggleChat()"
+        class="w-14 h-14 rounded-full bg-black text-white shadow-xl flex items-center justify-center hover:scale-105 transition">
+        💬
+    </button>
+</div>
+
+    <!-- Chatbot Popup -->
+<div id="chatbot-box"
+    class="hidden fixed bottom-24 right-6 w-80 bg-white border border-gray-300 rounded-xl shadow-2xl flex flex-col z-50">
+
+    <!-- Header -->
+    <div class="bg-black text-white px-4 py-3 rounded-t-xl font-bold">
+        DailySuite Assistant
+    </div>
+
+    <!-- Messages -->
+    <div id="chat-messages" class="p-3 h-64 overflow-y-auto text-sm space-y-2">
+        <div class="text-gray-700">
+            👋 Hi! Ask me about DailySuite.
+        </div>
+    </div>
+
+    <!-- Input -->
+    <div class="flex border-t">
+        <input id="chat-input" type="text"
+            placeholder="Ask something..."
+            class="flex-1 px-3 py-2 text-sm focus:outline-none" />
+        <button onclick="sendMessage()"
+            class="px-4 bg-black text-white text-sm">
+            Send
+        </button>
+    </div>
+</div>
+
+    <!-- Header / Navigation -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <!-- logo starts here -->
+                <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center border border-gray-800">
+                    <i class="fas fa-tasks text-white"></i>
+                </div>
+                <!-- logo ends here -->
+                <h1 class="text-2xl font-bold text-gray-900">Daily<span class="text-black font-extrabold">Suite</span></h1>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="#home" class="text-gray-700 hover:text-black font-medium underline-effect">Home</a>
+                <a href="#features" class="text-gray-700 hover:text-black font-medium underline-effect">Features</a>
+                <a href="#guidelines" class="text-gray-700 hover:text-black font-medium underline-effect">How to Use</a>
+                <a href="#contact" class="text-gray-700 hover:text-black font-medium underline-effect">Contact</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'login' %}" class="text-gray-700 hover:text-black font-medium hidden md:inline underline-effect">Login</a>
+                <a href="{% url 'register' %}" class="bg-black hover:bg-gray-800 text-white px-5 py-2 rounded-lg font-medium shadow hover:shadow-lg transition-all border border-gray-900">Get Started</a>
+
+                <!-- Mobile menu button -->
+                <button id="mobileMenuBtn" class="md:hidden text-gray-700 hover:text-black">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobileMenu" class="md:hidden hidden bg-white border-t border-gray-200 px-6 py-4 shadow-lg">
+            <div class="flex flex-col space-y-4">
+                <a href="#home" class="text-gray-700 hover:text-black font-medium py-2 border-b border-gray-100">Home</a>
+                <a href="#features" class="text-gray-700 hover:text-black font-medium py-2 border-b border-gray-100">Features</a>
+                <a href="#guidelines" class="text-gray-700 hover:text-black font-medium py-2 border-b border-gray-100">How to Use</a>
+                <a href="#contact" class="text-gray-700 hover:text-black font-medium py-2 border-b border-gray-100">Contact</a>
+                <a href="#" class="text-gray-700 hover:text-black font-medium py-2">Login</a>
+            </div>
+        </div>
     </header>
 
-    {% if messages %}
-        <ul>
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
+    <!-- Hero Section -->
+    <section id="home" class="bg-gradient-to-b from-white to-gray-50 pt-20 pb-24">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col lg:flex-row items-center justify-between">
+                <div class="lg:w-1/2 mb-12 lg:mb-0">
+                    <div class="inline-flex items-center bg-gray-100 border border-gray-300 rounded-full px-4 py-2 mb-6">
+                        <span class="w-2 h-2 bg-black rounded-full mr-2"></span>
+                        <span class="text-sm font-medium">All-in-one productivity platform</span>
+                    </div>
 
-    {% block content %}{% endblock %}
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                        Organize Your <span class="bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">Daily Work</span> With Elegance
+                    </h1>
 
+                    <p class="text-xl mb-8 text-gray-700">
+                        DailySuite is an all-in-one platform that combines task management, budget tracking, note-taking, and calendar tools in one seamless interface.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="{% url 'register' %}" class="bg-black hover:bg-gray-800 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all text-center border border-gray-900">
+                            Get Started <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                        <a href="#features" class="bg-white border-2 border-black hover:bg-gray-50 px-8 py-4 rounded-lg font-bold text-lg text-center transition-all shadow-sm">
+                            Explore Features
+                        </a>
+                    </div>
+
+                    <div class="mt-12 flex items-center">
+                        <div class="flex -space-x-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gray-800 to-black border-2 border-white shadow"></div>
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gray-700 to-gray-900 border-2 border-white shadow"></div>
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-800 border-2 border-white shadow"></div>
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gray-500 to-gray-700 border-2 border-white shadow"></div>
+                        </div>
+                        <div class="ml-4">
+                            <p class="font-bold">10,000+ active users</p>
+                            <p class="text-gray-600">Trusted by users worldwide</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2 flex justify-center">
+                    <div class="relative floating">
+                        <div class="w-80 h-80 md:w-96 md:h-96 bg-gradient-to-br from-white to-gray-100 rounded-3xl border border-gray-300 shadow-2xl flex items-center justify-center">
+                            <div class="text-center p-8">
+                                <i class="fas fa-tasks text-gray-800 text-7xl mb-6"></i>
+                                <h3 class="text-2xl font-bold mb-4 text-gray-900">Dashboard Preview</h3>
+                                <p class="text-gray-700">Experience our intuitive interface</p>
+                            </div>
+                        </div>
+
+                        <!-- Floating elements -->
+                        <div class="absolute -top-6 -left-6 bg-white text-gray-900 p-4 rounded-2xl shadow-xl border border-gray-300">
+                            <i class="fas fa-calendar-alt text-2xl"></i>
+                        </div>
+                        <div class="absolute -bottom-6 -right-6 bg-white text-gray-900 p-4 rounded-2xl shadow-xl border border-gray-300">
+                            <i class="fas fa-sticky-note text-2xl"></i>
+                        </div>
+                        <div class="absolute top-1/2 -right-10 bg-white text-gray-900 p-4 rounded-2xl shadow-xl border border-gray-300">
+                            <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    Powerful <span class="bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">Features</span> for Your Productivity
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Discover the tools that will transform how you organize your day, plan your budget, and achieve your goals.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-gray-50 hover-card rounded-2xl p-8 border border-gray-200">
+                    <div class="w-16 h-16 bg-gradient-to-r from-gray-900 to-black rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-tasks text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900">To Do List</h3>
+                    <p class="text-gray-700 mb-6">
+                        Create, prioritize, and track tasks with our system that adapts to your workflow and suggests optimal schedules.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-gray-50 hover-card rounded-2xl p-8 border border-gray-200">
+                    <div class="w-16 h-16 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-calendar-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900">Budget Tracker</h3>
+                    <p class="text-gray-700 mb-6">
+                        Track your income, expenses, and savings in one unified dashboard with smart insights and spending habits.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-gray-50 hover-card rounded-2xl p-8 border border-gray-200">
+                    <div class="w-16 h-16 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900">Note Taking</h3>
+                    <p class="text-gray-700 mb-6">
+                        Capture your notes, ideas, and reminders in one unified space with smart organization and quick search.
+                    </p>
+                </div>
+            </div>
+    </section>
+
+    <!-- Guidelines / How to Use Section -->
+    <section id="guidelines" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    How to Use <span class="bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">DailySuite</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Get started in just a few simple steps and unlock the full potential of your daily productivity.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Steps visualization -->
+                <div class="relative">
+                    <div class="space-y-10">
+                        <!-- Step 1 -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="step-indicator w-16 h-16 bg-gradient-to-r from-gray-900 to-black rounded-full flex items-center justify-center text-white font-bold text-2xl step-active border border-gray-800">
+                                    1
+                                </div>
+                            </div>
+                            <div class="ml-6">
+                                <h3 class="text-2xl font-bold mb-3 text-gray-900">Sign Up for Free</h3>
+                                <p class="text-gray-700">
+                                    Create your account in less than a minute. No credit card required. All Free.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="step-indicator w-16 h-16 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full flex items-center justify-center text-white font-bold text-2xl border border-gray-700">
+                                    2
+                                </div>
+                            </div>
+                            <div class="ml-6">
+                                <h3 class="text-2xl font-bold mb-3 text-gray-900">Set Up Your Daily Work</h3>
+                                <p class="text-gray-700">
+                                    Customize your dashboard, add to-do-list, and plan your budget.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="step-indicator w-16 h-16 bg-gradient-to-r from-gray-700 to-gray-800 rounded-full flex items-center justify-center text-white font-bold text-2xl border border-gray-600">
+                                    3
+                                </div>
+                            </div>
+                            <div class="ml-6">
+                                <h3 class="text-2xl font-bold mb-3 text-gray-900">Start Organizing</h3>
+                                <p class="text-gray-700">
+                                    Create income & expense, add tasks, schedule events, and experience enhanced productivity.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Demo visualization -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+                    <h3 class="text-2xl font-bold mb-6 text-center text-gray-900">Quick Demo</h3>
+                    <div class="space-y-6">
+                        <!-- Signup demo -->
+                        <div class="border border-gray-200 rounded-xl p-5 hover:border-gray-400 transition-all">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4 border border-gray-300">
+                                    <i class="fas fa-user-plus text-gray-800 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-gray-900">Registration Process</h4>
+                                    <p class="text-gray-600 text-sm">Simple form with social login options</p>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="h-3 bg-gray-200 rounded-full"></div>
+                                <div class="h-3 bg-gray-200 rounded-full w-5/6"></div>
+                                <div class="h-3 bg-gray-200 rounded-full w-4/6"></div>
+                            </div>
+                        </div>
+
+                        <!-- Dashboard demo -->
+                        <div class="border border-gray-200 rounded-xl p-5 hover:border-gray-400 transition-all">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4 border border-gray-300">
+                                    <i class="fas fa-tachometer-alt text-gray-800 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-gray-900">Dashboard Overview</h4>
+                                    <p class="text-gray-600 text-sm">Your productivity hub with widgets</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="h-20 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-300"></div>
+                                <div class="h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg border border-gray-300"></div>
+                                <div class="h-20 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg border border-gray-300"></div>
+                            </div>
+                        </div>
+
+                        <!-- Features demo -->
+                        <div class="border border-gray-200 rounded-xl p-5 hover:border-gray-400 transition-all">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4 border border-gray-300">
+                                    <i class="fas fa-sliders-h text-gray-800 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-gray-900">Feature Exploration</h4>
+                                    <p class="text-gray-600 text-sm">Discover tools with interactive guides</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-3">
+                                <div class="w-1/3 h-8 bg-gradient-to-r from-gray-800 to-black rounded-lg"></div>
+                                <div class="w-1/3 h-8 bg-gradient-to-r from-gray-600 to-gray-800 rounded-lg"></div>
+                                <div class="w-1/3 h-8 bg-gradient-to-r from-gray-400 to-gray-600 rounded-lg"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    Get in <span class="bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">Touch</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Have questions or need support? Our team is here to help you get the most out of DailySuite.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="bg-gray-50 rounded-2xl p-8 shadow-lg border border-gray-200">
+                    <h3 class="text-2xl font-bold mb-6 text-gray-900">Send us a Message</h3>
+                    <form id="contactForm" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-gray-700 font-medium mb-2">Full Name</label>
+                                <input type="text" id="name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-black focus:ring-2 focus:ring-gray-200 outline-none transition" placeholder="John Doe">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
+                                <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-black focus:ring-2 focus:ring-gray-200 outline-none transition" placeholder="john@example.com">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="subject" class="block text-gray-700 font-medium mb-2">Subject</label>
+                            <input type="text" id="subject" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-black focus:ring-2 focus:ring-gray-200 outline-none transition" placeholder="How can we help?">
+                        </div>
+
+                        <div>
+                            <label for="message" class="block text-gray-700 font-medium mb-2">Message</label>
+                            <textarea id="message" rows="5" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-black focus:ring-2 focus:ring-gray-200 outline-none transition" placeholder="Tell us about your inquiry..."></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-black hover:bg-gray-800 text-white font-bold py-4 rounded-lg shadow-md hover:shadow-lg transition-all border border-gray-900">
+                            Send Message <i class="fas fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Contact Info & FAQ -->
+                <div>
+                    <div class="mb-10">
+                        <h3 class="text-2xl font-bold mb-6 text-gray-900">Contact Information</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mr-4 border border-gray-300">
+                                    <i class="fas fa-map-marker-alt text-gray-800 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-gray-900">Office Address</h4>
+                                    <p class="text-gray-700">Mudra Hostel<br>University of Computer Studies, Yangon</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mr-4 border border-gray-300">
+                                    <i class="fas fa-phone-alt text-gray-800 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-gray-900">Phone Number</h4>
+                                    <p class="text-gray-700">+95 9254229977<br>Mon-Fri, 9am-6pm MMT</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mr-4 border border-gray-300">
+                                    <i class="fas fa-envelope text-gray-800 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-gray-900">Email Address</h4>
+                                    <p class="text-gray-700">wahwint72@gmail.com<br>help@dailysuite.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ -->
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6 text-gray-900">Frequently Asked Questions</h3>
+                        <div class="space-y-4">
+                            <div class="border border-gray-200 rounded-xl p-5 hover:border-gray-400 transition-all cursor-pointer faq-item">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-bold text-gray-900">What is DailySuite?</h4>
+                                    <i class="fas fa-chevron-down text-gray-500"></i>
+                                </div>
+                                <p class="text-gray-700 mt-3 hidden">DailySuite is an all-in-one daily management web application designed to help users organize and manage their everyday activities in one place.</p>
+                            </div>
+
+                            <div class="border border-gray-200 rounded-xl p-5 hover:border-gray-400 transition-all cursor-pointer faq-item">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-bold text-gray-900">Can I use DailySuite on mobile?</h4>
+                                    <i class="fas fa-chevron-down text-gray-500"></i>
+                                </div>
+                                <p class="text-gray-700 mt-3 hidden">Absolutely! We have responsive mobile view for apps that sync seamlessly with the web version.</p>
+                            </div>
+
+                            <div class="border border-gray-200 rounded-xl p-5 hover:border-gray-400 transition-all cursor-pointer faq-item">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-bold text-gray-900">Are main features on DailySuite free?</h4>
+                                    <i class="fas fa-chevron-down text-gray-500"></i>
+                                </div>
+                                <p class="text-gray-700 mt-3 hidden">Yes, we offer a free features with full access to all users. No credit card required.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                <!-- Company Info -->
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-r from-gray-800 to-black rounded-lg flex items-center justify-center border border-gray-700">
+                            <i class="fas fa-tasks text-white"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-white">Daily<span class="text-gray-300">Suite</span></h2>
+                    </div>
+                    <p class="mb-6">
+                        The all-in-one productivity platform that helps individuals and teams organize their daily work, collaborate effectively, and achieve more.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-black rounded-full flex items-center justify-center transition border border-gray-700">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-black rounded-full flex items-center justify-center transition border border-gray-700">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-black rounded-full flex items-center justify-center transition border border-gray-700">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-black rounded-full flex items-center justify-center transition border border-gray-700">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-6">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="hover:text-white transition">Home</a></li>
+                        <li><a href="#features" class="hover:text-white transition">Features</a></li>
+                        <li><a href="#guidelines" class="hover:text-white transition">How to Use</a></li>
+                        <li><a href="#contact" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter -->
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-6">Stay Updated</h3>
+                    <p class="mb-6">Subscribe to our newsletter for the latest updates and productivity tips.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="bg-gray-800 text-white px-4 py-3 rounded-l-lg w-full focus:outline-none focus:ring-2 focus:ring-gray-600 border border-gray-700">
+                        <button class="bg-black hover:bg-gray-800 px-5 rounded-r-lg font-medium transition border border-gray-800">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 mt-8 text-center justify-between items-center">
+                <p>&copy; <span id="currentYear"></span> DailySuite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for interactivity -->
+    <script>
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.className = 'fas fa-bars text-xl';
+            } else {
+                icon.className = 'fas fa-times text-xl';
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Close mobile menu if open
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuBtn.querySelector('i').className = 'fas fa-bars text-xl';
+
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Step indicator animation
+        const stepIndicators = document.querySelectorAll('.step-indicator');
+        let activeStep = 0;
+
+        function rotateStepIndicator() {
+            stepIndicators.forEach(indicator => indicator.classList.remove('step-active'));
+            stepIndicators[activeStep].classList.add('step-active');
+
+            activeStep = (activeStep + 1) % stepIndicators.length;
+        }
+
+        // Rotate steps every 3 seconds
+        setInterval(rotateStepIndicator, 3000);
+
+        // FAQ toggle functionality
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const answer = item.querySelector('p');
+                const icon = item.querySelector('i');
+
+                if (answer.classList.contains('hidden')) {
+                    answer.classList.remove('hidden');
+                    icon.className = 'fas fa-chevron-up text-gray-300';
+                } else {
+                    answer.classList.add('hidden');
+                    icon.className = 'fas fa-chevron-down text-gray-500';
+                }
+            });
+        });
+
+        // Form submission handling
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+
+            // Simple validation
+            if (name && email && subject) {
+                // Show success message (in a real app, this would submit to a server)
+                alert(`Thank you ${name}! Your message has been sent. We'll respond to you at ${email} soon.`);
+                this.reset();
+            } else {
+                alert('Please fill in all required fields.');
+            }
+        });
+
+        // Add scroll effect to navbar
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.classList.add('shadow-md', 'border-b', 'border-gray-300');
+                header.classList.remove('shadow-sm');
+            } else {
+                header.classList.remove('shadow-md');
+                header.classList.add('shadow-sm');
+            }
+        });
+
+          <!-- Chatbot JavaScript Fix -->
+        // Chatbot toggle function
+        function toggleChat() {
+            const chatbotBox = document.getElementById('chatbot-box');
+            if (chatbotBox.classList.contains('hidden')) {
+                chatbotBox.classList.remove('hidden');
+                document.getElementById('chat-input').focus();
+            } else {
+                chatbotBox.classList.add('hidden');
+            }
+        }
+
+        // Send message function
+        async function sendMessage() {
+            const chatInput = document.getElementById('chat-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const userText = chatInput.value.trim();
+
+            if (!userText) return;
+
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'text-right mb-2';
+            userMessage.innerHTML = `
+                <div class="inline-block bg-black text-white px-3 py-2 rounded-lg rounded-br-none text-sm max-w-xs text-right ml-auto">
+                    ${userText}
+                </div>
+            `;
+            chatMessages.appendChild(userMessage);
+
+            // Clear input
+            chatInput.value = '';
+
+            // Add typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.id = 'typing-indicator';
+            typingIndicator.className = 'text-gray-500 italic text-sm mb-2';
+            typingIndicator.textContent = 'DailySuite Assistant is thinking...';
+            chatMessages.appendChild(typingIndicator);
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                // Get CSRF token
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+                // IMPORTANT: Use the correct endpoint that matches your Django URL
+                const response = await fetch('/accounts/ai-chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrftoken || getCookie('csrftoken') || ''
+                    },
+                    body: new URLSearchParams({
+                        'message': userText
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Remove typing indicator
+                const typingElem = document.getElementById('typing-indicator');
+                if (typingElem) typingElem.remove();
+
+                // Add bot response
+                const botMessage = document.createElement('div');
+                botMessage.className = 'text-left mb-2';
+                botMessage.innerHTML = `
+                    <div class="inline-block bg-gray-100 text-gray-800 px-3 py-2 rounded-lg rounded-bl-none text-sm max-w-xs">
+                        ${data.reply}
+                    </div>
+                `;
+                chatMessages.appendChild(botMessage);
+
+            } catch (error) {
+                console.error('Error fetching AI response:', error);
+
+                // Remove typing indicator
+                const typingElem = document.getElementById('typing-indicator');
+                if (typingElem) typingElem.remove();
+
+                // Fallback response
+                const fallbackMessage = document.createElement('div');
+                fallbackMessage.className = 'text-left mb-2';
+                fallbackMessage.innerHTML = `
+                    <div class="inline-block bg-gray-100 text-gray-800 px-3 py-2 rounded-lg rounded-bl-none text-sm max-w-xs">
+                        I'm having trouble connecting right now. You can email us at wahwint72@gmail.com or call +95 9254229977 for assistance.
+                    </div>
+                `;
+                chatMessages.appendChild(fallbackMessage);
+            }
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Helper function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Allow sending message with Enter key
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
 </body>
 </html>

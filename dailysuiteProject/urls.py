@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import Landing
+from accounts.views import Landing, home
 
 
 urlpatterns = [
@@ -24,4 +24,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('allauth.urls')),   # for Google OAuth
     path('', Landing),
+    path('home/', home),
 ]

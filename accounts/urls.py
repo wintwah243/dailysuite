@@ -5,4 +5,6 @@ urlpatterns = [
     path('register/', views.register_user, name='register'),
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
+    path('home/', views.home, name='home'),
+    path("ai-chat/", views.ai_chat_groq, name="ai_chat"),
 ]
