@@ -22,6 +22,7 @@ from accounts.views import Landing, home
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
+    path('chatbot/', include('chatbot.urls')),
     path('accounts/', include('allauth.urls')),   # for Google OAuth
     path('', Landing),
     path('home/', home),

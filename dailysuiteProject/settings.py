@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'accounts',
+    'chatbot',
+    'budget',
+    'todos',
 
     # apps for Google OAuth
     'django.contrib.sites',
