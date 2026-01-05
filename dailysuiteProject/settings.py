@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'chatbot',
     'budget',
     'todos',
+    'notes',
 
     # apps for Google OAuth
     'django.contrib.sites',
