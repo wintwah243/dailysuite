@@ -79,5 +79,5 @@ def google_jwt(request):
 
 def logout_user(request):
     logout(request)
-    messages.success(request, "Logged out successfully")
+    # messages.success(request, "Logged out successfully")
     return redirect('login')

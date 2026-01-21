@@ -2,25 +2,27 @@
 <html>
 <head>
     <title>DailySuite</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <header>
-        <h1>This is base of DailySuite.</h1>
-        <nav>
-            <a href="/">Landing page</a> |
-            <a href="{% url 'login' %}">Login</a> |
-            <a href="{% url 'register' %}">Register</a>
-        </nav>
-        <hr>
-    </header>
+<!--    <header>-->
+<!--        <h1>This is base of DailySuite.</h1>-->
+<!--        <nav>-->
+<!--            <a href="/">Landing page</a> |-->
+<!--            <a href="{% url 'login' %}">Login</a> |-->
+<!--            <a href="{% url 'register' %}">Register</a>-->
+<!--        </nav>-->
+<!--        <hr>-->
+<!--    </header>-->
 
-    {% if messages %}
-        <ul>
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
+<!--    {% if messages %}-->
+<!--        <ul>-->
+<!--        {% for message in messages %}-->
+<!--            <li>{{ message }}</li>-->
+<!--        {% endfor %}-->
+<!--        </ul>-->
+<!--    {% endif %}-->
 
     {% block content %}{% endblock %}
 
