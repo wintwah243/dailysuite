@@ -94,6 +94,6 @@ http://127.0.0.1:8000/
 | **Hsu Wai Linn** | Member | https://github.com/hsuwailinn |
 | **Yin Nyein Htwe** | Member | https://github.com/yinnyeinhtwe |
 | **Aye Yu Mon** | Member | https://github.com/YuMon9124 |
-| **Durga** | Member | N/A |
+| **Durga** | Member | https://github.com/Jusiy |
 
 ---
