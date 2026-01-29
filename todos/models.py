@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here. hihihi hihiyinyein
+# Create your models here.
 
 class Option(models.Model):
     option_name = models.CharField(max_length=100)
