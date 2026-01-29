@@ -86,6 +86,24 @@ http://127.0.0.1:8000/
 ```
 ---
 
+## Getting started with Docker
+#### Make sure you have Docker installed on your system and then open terminal.
+### 1. Build the Docker image
+```bash
+docker build -t dailysuite . 
+```
+
+### 2. Run the Docker container
+```bash
+docker run -p 8000:8000 dailysuite
+```
+
+### 3. After that, open your browser and go to:
+```bash
+http://localhost:8000
+```
+---
+
 ## Team Members
 
 | Name | Role | GitHub Link |
