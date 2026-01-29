@@ -6,14 +6,20 @@
 </head>
 <body>
     {% extends "todos/navbar.html" %}
-        {% block title %}
-        To Do List
+        {% block content %}
+            {% for task in tasks %}
+                <div class="p-4 bg-white rounded-xl shadow flex justify-between">
+                    <span class="{% if task.is_completed %}line-through text-gray-400{% endif %}">
+                        {{ task.name }}
+                    </span>
+                    <span class="text-sm text-gray-500">
+                        {{ task.due_date }}
+                    </span>
+                </div>
+            {% endfor %}
+            <a href="{% url 'addtask' %}" class="bg-black text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition">+ New Task</a>
         {% endblock %}
 
-        {% block content %}
-            <h1 class="text-3xl font-bold mt-10 text-center">
-                Hello! World
-            </h1>
-        {% endblock %}
+
 </body>
 </html>

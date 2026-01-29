@@ -24,3 +24,5 @@ class Task(models.Model):
     options = models.ForeignKey(Option, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     priority = models.ForeignKey(Priority, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name

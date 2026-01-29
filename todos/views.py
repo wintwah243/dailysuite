@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-
-from .forms import TaskForm
-
+from .forms import *
+from .models import *
 
 # Create your views here.
 def todo(request):
-    return render(request, 'todos/todohome.html')
+    tasks = Task.objects.all()
+    return render(request, 'todos/todohome.html', {'tasks': tasks})
 
 def addtask(request):
     if request.method == 'POST':
@@ -16,4 +16,6 @@ def addtask(request):
     else:
         taskform = TaskForm()
     return render(request, 'todos/addtask.html', {'forms': taskform})
+
+
 
