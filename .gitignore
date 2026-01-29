@@ -1,3 +1,26 @@
-.env
+# Python
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.swp
+*.swo
+*.egg-info/
+*.egg
+
+# Virtual environment
+.venv/
+
+# Local database
 db.sqlite3
+
+# Django
+*.log
+*.pot
+*.mo
+
+# IDE / MacOS
+.vscode/
+.idea/
+.DS_Store
