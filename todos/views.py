@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import *
 from .models import *
 
@@ -17,5 +17,27 @@ def addtask(request):
         taskform = TaskForm()
     return render(request, 'todos/addtask.html', {'forms': taskform})
 
+def updatetask(request, id):
+    task = Task.objects.get(id=id)
+    if request.method == 'POST':
+        taskform = TaskForm(request.POST, instance=task)
+        if taskform.is_valid():
+            taskform.save()
+            return redirect('todolist')
+    else:
+        taskform = TaskForm(instance=task)
+    return render(request, 'todos/updatetask.html', {'forms': taskform})
 
+def deletetask(request, id):
+    task = get_object_or_404(Task, id=id)
+    if request.method == 'POST':
+        task.delete()
+        return redirect('todolist')
+    return render(request, 'todos/deletetask.html', {'task': task})
+
+def toggle_task(request, id):
+    task = Task.objects.get(id=id)
+    task.is_completed = not task.is_completed
+    task.save()
+    return redirect('todolist')
 
