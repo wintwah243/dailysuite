@@ -29,11 +29,9 @@ def updatetask(request, id):
     return render(request, 'todos/updatetask.html', {'forms': taskform})
 
 def deletetask(request, id):
-    task = get_object_or_404(Task, id=id)
-    if request.method == 'POST':
-        task.delete()
-        return redirect('todolist')
-    return render(request, 'todos/deletetask.html', {'task': task})
+    task = Task.objects.get(id=id)
+    task.delete()
+    return redirect('todolist')
 
 def toggle_task(request, id):
     task = Task.objects.get(id=id)
