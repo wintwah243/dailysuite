@@ -5,31 +5,29 @@ from .models import *
 # Create your views here.
 def todo(request):
     tasks = Task.objects.all()
-    return render(request, 'todos/todohome.html', {'tasks': tasks})
+    for task in tasks:
+        task.form = TaskForm(instance=task)
+    add_form = TaskForm()
+    return render(request, 'todos/todohome.html', {'tasks': tasks, 'add_form': add_form})
 
 def addtask(request):
     if request.method == 'POST':
         taskform = TaskForm(request.POST)
         if taskform.is_valid():
             taskform.save()
-            return redirect('todolist')
-    else:
-        taskform = TaskForm()
-    return render(request, 'todos/addtask.html', {'forms': taskform})
+    return redirect('todolist')
+
 
 def updatetask(request, id):
-    task = Task.objects.get(id=id)
+    task = get_object_or_404(Task, id=id)
     if request.method == 'POST':
         taskform = TaskForm(request.POST, instance=task)
         if taskform.is_valid():
             taskform.save()
-            return redirect('todolist')
-    else:
-        taskform = TaskForm(instance=task)
-    return render(request, 'todos/updatetask.html', {'forms': taskform})
+    return redirect('todolist')
 
 def deletetask(request, id):
-    task = Task.objects.get(id=id)
+    task = get_object_or_404(Task, id=id)
     task.delete()
     return redirect('todolist')
 
