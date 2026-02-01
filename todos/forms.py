@@ -18,7 +18,7 @@ class TaskForm(forms.ModelForm):
         ('medium', 'Medium'),
         ('high', 'High'),
     ]
-    name = forms.CharField(required=True,label="", widget=forms.TextInput(attrs={'class': 'form-control w-full','placeholder': 'Task name 😊','id': 'task-name-input'}))
+    name = forms.CharField(required=True,label="", widget=forms.TextInput(attrs={'class': 'form-control w-full text-2xl py-2','placeholder': 'Task Name','id': 'task-name-input'}))
     is_completed = forms.BooleanField(required=False, label="Status", widget=forms.CheckboxInput())
     due_date = forms.DateField(
         required=False, label="Due date",
