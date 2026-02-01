@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from accounts.views import Landing, home
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
@@ -26,9 +25,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),   # for Google OAuth
     path('', Landing),
     path('home/', home),
-<<<<<<< HEAD
     path('budget/',include('budget.urls')),
-=======
     path('todo/', include('todos.urls')),
->>>>>>> 6439aebbcbe9cb64c5a9910d00a38414f488a569
+
 ]
