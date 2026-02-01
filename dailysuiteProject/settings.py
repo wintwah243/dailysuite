@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 
     'accounts',
     'chatbot',
-    'budget',
+    'budget.apps.BudgetConfig',
     'todos',
     'notes',
 

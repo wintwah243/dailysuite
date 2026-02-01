@@ -26,4 +26,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),   # for Google OAuth
     path('', Landing),
     path('home/', home),
+    path('budget/',include('budget.urls')),
 ]
