@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 
@@ -22,5 +23,17 @@ class Task(models.Model):
     option = models.CharField(max_length=50, choices=OPTION_CHOICES)
     priority = models.CharField(max_length=50, choices=PRIORITY_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
+    @property
+    def days_left(self):
+        if self.due_date:
+            today = timezone.now().date()
+            return (self.due_date - today).days
+        else:
+            return None
+
+    @property
+    def days_left_abs(self):
+        return abs(self.days_left) if self.days_left is not None else None
+
     def __str__(self):
         return self.name

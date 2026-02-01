@@ -27,12 +27,27 @@
                     <input type="checkbox"
                            onchange="this.form.submit()"
                            {% if task.is_completed %}checked{% endif %}
-                           class="w-5 h-5 accent-black mt-1">
+                           class="w-4 h-5 accent-black mt-1">
                 </form>
 
-                <p class="text-sm text-gray-500">
+                <div class="text-sm text-gray-500">
                     {{ task.due_date|default:"No due date" }}
-                </p>
+                    {% if task.is_completed %}
+                        <span class="inline-block bg-green-100 text-green-700 px-2 rounded-md text-sm font-medium mt-1 ml-2">
+                            Well done! 🎉
+                        </span>
+                    {% elif task.days_left is not None%}
+                        {% if task.days_left > 0 %}
+                            <span class="inline-block bg-green-100 text-green-700 px-2 rounded-md text-sm font-medium mt-1 ml-1"> {{ task.days_left }} days remaining</span>
+                        {% elif task.days_left == 0 %}
+                            <span class="inline-block bg-[#F3E8E2] text-[#6B3E26] px-2 rounded-md text-sm font-medium mt-1 ml-1"> Do it today!</span>
+                        {% else %}
+                            <span class="inline-block bg-red-100 text-red-700 px-2 rounded-md text-sm font-medium mt-1 ml-1"> Due {{ task.days_left_abs }} days ago 🥶"</span>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-sm text-gray-500">No due date</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
 
