@@ -34,7 +34,7 @@
                     {{ task.due_date|default:"No due date" }}
                     {% if task.is_completed %}
                         <span class="inline-block bg-green-100 text-green-700 px-2 rounded-md text-sm font-medium mt-1 ml-2">
-                            Well done 🎉
+                            Well done! 🎉
                         </span>
                     {% elif task.days_left is not None%}
                         {% if task.days_left > 0 %}
