@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}DailySuite{% endblock %}</title>
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .underline-effect {
+            position: relative;
+        }
+
+        .underline-effect:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #000;
+            transition: width 0.3s ease;
+        }
+
+        .underline-effect:hover:after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <!-- logo starts here -->
+                <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center border border-gray-800">
+                    <i class="fas fa-tasks text-white"></i>
+                </div>
+                <!-- logo ends here -->
+                <h1 class="text-2xl font-bold text-gray-900">Daily<span class="text-black font-extrabold">Suite</span></h1>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="#home" class="text-gray-700 hover:text-black font-medium underline-effect">Status</a>
+                <a href="#features" class="text-gray-700 hover:text-black font-medium underline-effect">Task To Come</a>
+                <a href="#guidelines" class="text-gray-700 hover:text-black font-medium underline-effect">Today</a>
+                <a href="#contact" class="text-gray-700 hover:text-black font-medium underline-effect">This Week</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'login' %}" class="text-gray-700 hover:text-black font-medium hidden md:inline underline-effect">Login</a>
+                <a href="{% url 'register' %}" class="bg-black hover:bg-gray-800 text-white px-5 py-2 rounded-lg font-medium shadow hover:shadow-lg transition-all border border-gray-900">Get Started</a>
+
+                <!-- Mobile menu button -->
+                <button id="mobileMenuBtn" class="md:hidden text-gray-700 hover:text-black">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobileMenu" class="md:hidden hidden bg-white border-t border-gray-200 px-6 py-4 shadow-lg">
+            <div class="flex flex-col space-y-4">
+                <a href="#home" class="text-gray-700 hover:text-black font-medium py-2 border-b border-gray-100">Home</a>
+                <a href="#features" class="text-gray-700 hover:text-black font-medium py-2 border-b border-gray-100">Features</a>
+                <a href="#guidelines" class="text-gray-700 hover:text-black font-medium py-2 border-b border-gray-100">How to Use</a>
+                <a href="#contact" class="text-gray-700 hover:text-black font-medium py-2 border-b border-gray-100">Contact</a>
+                <a href="#" class="text-gray-700 hover:text-black font-medium py-2">Login</a>
+            </div>
+        </div>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>

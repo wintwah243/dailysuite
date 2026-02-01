@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-_l*m@h3upk5^und5&$bi!8nn!g0ly(o!cg)ksglgf459r9(08m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -55,6 +55,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+
+
+    'widget_tweaks'
 ]
 
 # my site ID
