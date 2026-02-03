@@ -8,13 +8,121 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Avg
+from notes.models import Note
+from todos.models import Task
+from budget.models import Income, Expense
+from datetime import date, datetime
+import calendar as pycal
 
 def Landing(request):
     return render(request, 'Landing.html')
 
+
 @login_required
 def home(request):
-    return render(request, 'homepage.html')
+    today = date.today()
+    current_date = datetime.now()
+
+    # Generate calendar data
+    cal = pycal.Calendar(firstweekday=0)  # Monday first
+    month_dates = cal.monthdatescalendar(current_date.year, current_date.month)
+
+    # Get all tasks for calendar
+    all_tasks = Task.objects.filter(user=request.user)
+
+    # Prepare calendar days and task days
+    calendar_days = []
+    task_days = []
+    for week in month_dates:
+        for day in week:
+            if day.month == current_date.month:
+                calendar_days.append(day.day)
+                # Check if any tasks on this day
+                if all_tasks.filter(due_date__day=day.day, due_date__month=current_date.month,
+                                    due_date__year=current_date.year).exists():
+                    task_days.append(day.day)
+            else:
+                calendar_days.append(0)
+
+    # Weekday headers
+    week_days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+
+    # Budget data
+    incomes = Income.objects.filter(user=request.user).order_by('-date')[:5]
+    expenses = Expense.objects.filter(user=request.user).order_by('-date')[:5]
+    total_income = Income.objects.filter(user=request.user).aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expense = Expense.objects.filter(user=request.user).aggregate(Sum('amount'))['amount__sum'] or 0
+    balance = total_income - total_expense
+
+    # Calculate savings percentage
+    if total_income > 0:
+        savings_percentage = (balance / total_income) * 100
+    else:
+        savings_percentage = 0
+
+    # Notes data
+    notes = Note.objects.filter(user=request.user).order_by('-created_at')[:5]
+
+    # Todos data
+    tasks = Task.objects.filter(user=request.user).order_by('-created_at')
+    completed_count = tasks.filter(is_completed=True).count()
+    pending_count = tasks.filter(is_completed=False).count()
+    overdue_count = tasks.filter(is_completed=False, due_date__lt=today).count()
+
+    # Productivity score
+    if tasks.count() > 0:
+        productivity_score = (completed_count / tasks.count()) * 100
+    else:
+        productivity_score = 0
+
+    # Additional stats
+    tasks_this_month = Task.objects.filter(
+        user=request.user,
+        created_at__month=today.month,
+        created_at__year=today.year
+    ).count()
+
+    # Average daily spend
+    avg_daily_spend_result = Expense.objects.filter(
+        user=request.user,
+        date__month=today.month,
+        date__year=today.year
+    ).aggregate(Avg('amount'))
+    avg_daily_spend = avg_daily_spend_result['amount__avg'] or 0
+
+    context = {
+        # Budget data
+        'balance': balance,
+        'total_income': total_income,
+        'total_expense': total_expense,
+        'savings_percentage': savings_percentage,
+        'incomes': incomes,
+        'expenses': expenses,
+
+        # Notes data
+        'notes': notes,
+
+        # Todos data
+        'tasks': tasks,
+        'completed_count': completed_count,
+        'pending_count': pending_count,
+        'overdue_count': overdue_count,
+        'today': today,
+
+        # Calendar data
+        'calendar_days': calendar_days,
+        'task_days': task_days,
+        'week_days': week_days,
+        'current_date': current_date,
+
+        # Additional stats
+        'tasks_this_month': tasks_this_month,
+        'avg_daily_spend': avg_daily_spend,
+        'productivity_score': productivity_score,
+    }
+
+    return render(request, 'homepage.html', context)
 
 def register_user(request):
     if request.method == "POST":
