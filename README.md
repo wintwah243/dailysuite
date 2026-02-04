@@ -55,7 +55,7 @@ cd dailysuite
 ### 2. Create Virtual Environment
 ```bash
 python3 -m venv venv
-source venv/bin/activate   # Mac/Linux
+source .venv/bin/activate   # Mac/Linux
 venv\Scripts\activate      # Windows
 ```
 

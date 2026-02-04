@@ -27,5 +27,6 @@ urlpatterns = [
     path('home/', home),
     path('budget/',include('budget.urls')),
     path('todo/', include('todos.urls')),
+    path('note/', include('notes.urls')),
 
 ]
