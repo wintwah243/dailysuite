@@ -15,12 +15,15 @@ def dashboard(request):
     total_expense = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
     balance = total_income - total_expense
 
+    categories = Category.objects.filter(user=request.user)
+
     context = {
         'total_income': total_income,
         'total_expense': total_expense,
         'balance': balance,
         'incomes': incomes,
         'expenses': expenses,
+        'categories': categories,
     }
 
     return render(request, 'budget/budget_home.html', context)
@@ -56,16 +59,76 @@ def add_expense(request):
 @login_required
 def add_category(request):
     if request.method == 'POST':
-        form = CategoryForm(request.POST)
+        form = CategoryForm(request.POST, user=request.user)
         if form.is_valid():
-            category = form.save(commit=False)  # don't save yet
-            category.user = request.user       # attach logged-in user
-            category.save()                    # now save
+            category = form.save(commit=False)
+            category.user = request.user
+            category.save()
             return redirect('add_expense')
-        else:
-            print(form.errors)  # debug any other form issues
     else:
-        form = CategoryForm()
+        form = CategoryForm(user=request.user)
 
     return render(request, 'budget/add_category.html', {'form': form})
+
+@login_required
+def update_income(request, pk):
+    income = Income.objects.get(id=pk, user=request.user)
+
+    if request.method == 'POST':
+        form = IncomeForm(request.POST, instance=income)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = IncomeForm(instance=income)
+
+    return render(request, 'budget/update_income.html', {'form': form})
+
+@login_required
+def update_expense(request, pk):
+    expense = Expense.objects.get(id=pk, user=request.user)
+
+    if request.method == 'POST':
+        form = ExpenseForm(request.POST, instance=expense, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = ExpenseForm(instance=expense, user=request.user)
+
+    return render(request, 'budget/update_expense.html', {'form': form})
+
+@login_required
+def update_category(request, pk):
+    category = Category.objects.get(id=pk, user=request.user)
+
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category,user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('add_expense')
+    else:
+        form = CategoryForm(instance=category,user=request.user)
+
+    return render(request, 'budget/update_category.html', {'form': form})
+
+@login_required
+def delete_income(request, pk):
+    income = Income.objects.get(id=pk, user=request.user)
+    income.delete()
+    return redirect('dashboard')
+
+@login_required
+def delete_expense(request, pk):
+    expense = Expense.objects.get(id=pk, user=request.user)
+    expense.delete()
+    return redirect('dashboard')
+
+@login_required
+def delete_category(request, pk):
+    category = Category.objects.get(id=pk, user=request.user)
+    category.delete()
+    return redirect('dashboard')
+
+
 
