@@ -131,191 +131,64 @@
         <!-- Right Column - Tasks -->
         <div class="lg:col-span-2">
             <!-- Header -->
-            <div class="mb-6">
-                <div class="flex items-center justify-between -mt-3">
-                    <h1 class="text-3xl font-bold text-gray-900">Tasks</h1>
-<!--                    <button onclick="openAddModal()"-->
-<!--                            class="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">-->
-<!--                        <span>+</span>-->
-<!--                        <span>New Task</span>-->
-<!--                    </button>-->
+            <section id="tasks">
+                <div class="mb-6">
+                    <div class="flex items-center justify-between -mt-3">
+                        <h1 class="text-3xl font-bold text-gray-900">Tasks</h1>
+    <!--                    <button onclick="openAddModal()"-->
+    <!--                            class="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">-->
+    <!--                        <span>+</span>-->
+    <!--                        <span>New Task</span>-->
+    <!--                    </button>-->
 
-                        <!-- Search Bar -->
-                        <form method="get" class="mb-6">
-                            <div class="relative max-w-md">
-                                <input
-                                    type="text"
-                                    name="q"
-                                    value="{{ query }}"
-                                    placeholder="Search tasks..."
-                                    class="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2
-                                           focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
-                                />
+                            <!-- Search Bar -->
+                            <form method="get" class="mb-6">
+                                <div class="relative max-w-md">
+                                    <input
+                                        type="text"
+                                        name="q"
+                                        value="{{ query }}"
+                                        placeholder="Search tasks..."
+                                        class="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2
+                                               focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+                                    />
 
-                                <!-- Search icon -->
-                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                                <!-- Clear button (only show when searching) -->
-                                {% if query %}
-                                    <a href="{% url 'todolist' %}"
-                                       class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
-                                        ✕
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </form>
-                </div>
-                <p class="text-gray-600">A clean and thoughtfully organized workspace built to streamline your daily tasks.</p>
-            </div>
-
-            <!-- Add task button - Notion style -->
-            <div class="mb-6">
-                <button onclick="openAddModal()"
-                        class="group flex items-center gap-3 w-full p-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm">
-                    <div class="w-6 h-6 rounded border border-gray-400 flex items-center justify-center group-hover:border-gray-600">
-                        <span class="text-gray-500 group-hover:text-gray-700">+</span>
-                    </div>
-                    <span class="text-gray-600 group-hover:text-gray-900">New task</span>
-                </button>
-            </div>
-
-            <!-- Task List -->
-            <div class="space-y-2">
-                {% for task in tasks %}
-                <div class="group relative">
-                    <!-- Task Card -->
-                    <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200">
-                        <div class="flex items-start gap-4">
-                            <!-- Checkbox - Notion style -->
-                            <div class="pt-0.5">
-                                <form action="{% url 'toggle_task' task.id %}" method="post" onclick="event.stopPropagation();">
-                                    {% csrf_token %}
-                                    <input type="checkbox"
-                                           onchange="this.form.submit()"
-                                           {% if task.is_completed %}checked{% endif %}
-                                           class="w-4 h-4 rounded border-2 border-gray-300 checked:bg-black checked:border-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 cursor-pointer transition-all">
-                                </form>
-                            </div>
-
-                            <!-- Task Content -->
-                            <div class="flex-1 min-w-0">
-                                <!-- Task Name -->
-                                <h3 class="text-gray-900 font-medium {% if task.is_completed %}line-through text-gray-400{% endif %} mb-2">
-                                    {{ task.name }}
-                                </h3>
-
-                                <!-- Tags & Status -->
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <!-- Due Date -->
-                                    {% if task.due_date %}
-                                    <div class="flex items-center gap-1 text-sm">
-                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span class="text-gray-600">{{ task.due_date|date:"M j, Y" }}</span>
-                                    </div>
-                                    {% endif %}
-
-                                    <!-- Status Badge -->
-                                    {% if task.is_completed %}
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        ✓ Completed
-                                    </span>
-                                    {% elif task.days_left is not None %}
-                                        {% if task.days_left > 3 %}
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            {{ task.days_left }} days left
-                                        </span>
-                                        {% elif task.days_left > 0 %}
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                            {{ task.days_left }} days left
-                                        </span>
-                                        {% elif task.days_left == 0 %}
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                                            Due today!
-                                        </span>
-                                        {% else %}
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            Overdue by {{ task.days_left_abs }} days
-                                        </span>
-                                        {% endif %}
+                                    <!-- Search icon -->
+                                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                    <!-- Clear button (only show when searching) -->
+                                    {% if query %}
+                                        <a href="{% url 'todolist' %}"
+                                           class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
+                                            ✕
+                                        </a>
                                     {% endif %}
                                 </div>
-                            </div>
-
-                            <!-- Action Buttons - Hidden until hover -->
-                            <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                                 onclick="event.stopPropagation();">
-                                <button onclick="openEditModal('{{ task.id }}')"
-                                        class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                </button>
-
-                                <form action="{% url 'deletetask' task.id %}" method="post" class="inline">
-                                    {% csrf_token %}
-                                    <button type="submit"
-                                            class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                                            onclick="return confirm('Delete this task?')">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
+                            </form>
                     </div>
+                    <p class="text-gray-600">A clean and thoughtfully organized workspace built to streamline your daily tasks.</p>
                 </div>
-                {% empty %}
-                <!-- Empty State -->
-                <div class="text-center py-12">
-                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">No tasks yet</h3>
-                    <p class="text-gray-600 mb-4">Get started by creating your first task</p>
+
+                <!-- Add task button - Notion style -->
+                <div class="mb-6">
                     <button onclick="openAddModal()"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-                        <span>+ New Task</span>
+                            class="group flex items-center gap-3 w-full p-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm">
+                        <div class="w-6 h-6 rounded border border-gray-400 flex items-center justify-center group-hover:border-gray-600">
+                            <span class="text-gray-500 group-hover:text-gray-700">+</span>
+                        </div>
+                        <span class="text-gray-600 group-hover:text-gray-900">New task</span>
                     </button>
                 </div>
-                {% endfor %}
-            </div>
 
-            <div class="flex items-center justify-center mt-8 mb-4">
-                    <h1 class="text-3xl font-bold text-gray-900">Task Status</h1>
-            </div>
-            <div class="flex items-center gap-6 border-b border-gray-200 mb-6 tab-links">
-                <a href="#" data-tab="pending"
-                   class="pb-3 text-lg font-medium px-4 py-2 text-black border-b-2 border-black font-bold">
-                    Pending
-                </a>
-
-                <a href="#" data-tab="overdue"
-                   class="pb-3 text-lg font-medium px-4 py-2 text-gray-700 hover:text-black">
-                    Overdue
-                </a>
-
-                <a href="#" data-tab="done"
-                   class="pb-3 text-lg font-medium px-4 py-2 text-gray-700 hover:text-black">
-                    Done
-                </a>
-            </div>
-
-            <!-- Pending Column -->
-            <div id="pending" class="tab-content">
                 <!-- Task List -->
                 <div class="space-y-2">
-                    {% for task in inprogress %}
+                    {% for task in tasks %}
                     <div class="group relative">
                         <!-- Task Card -->
-                        <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 mb-3">
+                        <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200">
                             <div class="flex items-start gap-4">
                                 <!-- Checkbox - Notion style -->
                                 <div class="pt-0.5">
@@ -408,21 +281,41 @@
                         </div>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">No tasks yet</h3>
                         <p class="text-gray-600 mb-4">Get started by creating your first task</p>
-<!--                        <button onclick="openAddModal()"-->
-<!--                                class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">-->
-<!--                            <span>+ New Task</span>-->
-<!--                        </button>-->
+                        <button onclick="openAddModal()"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
+                            <span>+ New Task</span>
+                        </button>
                     </div>
                     {% endfor %}
                 </div>
+            </section>
 
-            </div>
+            <section id="status">
+                <div class="flex items-center justify-center mt-8 mb-4">
+                        <h1 class="text-3xl font-bold text-gray-900">Task Status</h1>
+                </div>
+                <div class="flex items-center gap-6 border-b border-gray-200 mb-6 tab-links">
+                    <a href="#" data-tab="pending"
+                       class="pb-3 text-lg font-medium px-4 py-2 text-black border-b-2 border-black font-bold">
+                        Pending
+                    </a>
 
-            <!-- Done Column -->
-            <div id="done" class="tab-content hidden">
-                <!-- Task List -->
+                    <a href="#" data-tab="overdue"
+                       class="pb-3 text-lg font-medium px-4 py-2 text-gray-700 hover:text-black">
+                        Overdue
+                    </a>
+
+                    <a href="#" data-tab="done"
+                       class="pb-3 text-lg font-medium px-4 py-2 text-gray-700 hover:text-black">
+                        Done
+                    </a>
+                </div>
+
+                <!-- Pending Column -->
+                <div id="pending" class="tab-content">
+                    <!-- Task List -->
                     <div class="space-y-2">
-                        {% for task in done %}
+                        {% for task in inprogress %}
                         <div class="group relative">
                             <!-- Task Card -->
                             <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 mb-3">
@@ -516,135 +409,244 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
                             </div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">No tasks yet</h3>
-                            <p class="text-gray-600 mb-4">Get started by creating your first task</p>
-<!--                            <button onclick="openAddModal()"-->
-<!--                                    class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">-->
-<!--                                <span>+ New Task</span>-->
-<!--                            </button>-->
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">No pending tasks yet</h3>
+    <!--                        <p class="text-gray-600 mb-4">Get started by creating your first task</p>-->
+    <!--                        <button onclick="openAddModal()"-->
+    <!--                                class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">-->
+    <!--                            <span>+ New Task</span>-->
+    <!--                        </button>-->
                         </div>
                         {% endfor %}
                     </div>
-            </div>
 
-            <!-- Overdue Column -->
-            <div id="overdue" class="tab-content hidden">
-                <!-- Task List -->
-                    <div class="space-y-2">
-                        {% for task in overdue %}
-                        <div class="group relative">
-                            <!-- Task Card -->
-                            <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 mb-3">
-                                <div class="flex items-start gap-4">
-                                    <!-- Checkbox - Notion style -->
-                                    <div class="pt-0.5">
-                                        <form action="{% url 'toggle_task' task.id %}" method="post" onclick="event.stopPropagation();">
-                                            {% csrf_token %}
-                                            <input type="checkbox"
-                                                   onchange="this.form.submit()"
-                                                   {% if task.is_completed %}checked{% endif %}
-                                                   class="w-4 h-4 rounded border-2 border-gray-300 checked:bg-black checked:border-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 cursor-pointer transition-all">
-                                        </form>
-                                    </div>
+                </div>
 
-                                    <!-- Task Content -->
-                                    <div class="flex-1 min-w-0">
-                                        <!-- Task Name -->
-                                        <h3 class="text-gray-900 font-medium {% if task.is_completed %}line-through text-gray-400{% endif %} mb-2">
-                                            {{ task.name }}
-                                        </h3>
-
-                                        <!-- Tags & Status -->
-                                        <div class="flex flex-wrap items-center gap-2">
-                                            <!-- Due Date -->
-                                            {% if task.due_date %}
-                                            <div class="flex items-center gap-1 text-sm">
-                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                                </svg>
-                                                <span class="text-gray-600">{{ task.due_date|date:"M j, Y" }}</span>
-                                            </div>
-                                            {% endif %}
-
-                                            <!-- Status Badge -->
-                                            {% if task.is_completed %}
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                ✓ Completed
-                                            </span>
-                                            {% elif task.days_left is not None %}
-                                                {% if task.days_left > 3 %}
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                    {{ task.days_left }} days left
-                                                </span>
-                                                {% elif task.days_left > 0 %}
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                    {{ task.days_left }} days left
-                                                </span>
-                                                {% elif task.days_left == 0 %}
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                                                    Due today!
-                                                </span>
-                                                {% else %}
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                    Overdue by {{ task.days_left_abs }} days
-                                                </span>
-                                                {% endif %}
-                                            {% endif %}
+                <!-- Done Column -->
+                <div id="done" class="tab-content hidden">
+                    <!-- Task List -->
+                        <div class="space-y-2">
+                            {% for task in done %}
+                            <div class="group relative">
+                                <!-- Task Card -->
+                                <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 mb-3">
+                                    <div class="flex items-start gap-4">
+                                        <!-- Checkbox - Notion style -->
+                                        <div class="pt-0.5">
+                                            <form action="{% url 'toggle_task' task.id %}" method="post" onclick="event.stopPropagation();">
+                                                {% csrf_token %}
+                                                <input type="checkbox"
+                                                       onchange="this.form.submit()"
+                                                       {% if task.is_completed %}checked{% endif %}
+                                                       class="w-4 h-4 rounded border-2 border-gray-300 checked:bg-black checked:border-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 cursor-pointer transition-all">
+                                            </form>
                                         </div>
-                                    </div>
 
-                                    <!-- Action Buttons - Hidden until hover -->
-                                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                                         onclick="event.stopPropagation();">
-                                        <button onclick="openEditModal('{{ task.id }}')"
-                                                class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                        </button>
+                                        <!-- Task Content -->
+                                        <div class="flex-1 min-w-0">
+                                            <!-- Task Name -->
+                                            <h3 class="text-gray-900 font-medium {% if task.is_completed %}line-through text-gray-400{% endif %} mb-2">
+                                                {{ task.name }}
+                                            </h3>
 
-                                        <form action="{% url 'deletetask' task.id %}" method="post" class="inline">
-                                            {% csrf_token %}
-                                            <button type="submit"
-                                                    class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                                                    onclick="return confirm('Delete this task?')">
+                                            <!-- Tags & Status -->
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <!-- Due Date -->
+                                                {% if task.due_date %}
+                                                <div class="flex items-center gap-1 text-sm">
+                                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <span class="text-gray-600">{{ task.due_date|date:"M j, Y" }}</span>
+                                                </div>
+                                                {% endif %}
+
+                                                <!-- Status Badge -->
+                                                {% if task.is_completed %}
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    ✓ Completed
+                                                </span>
+                                                {% elif task.days_left is not None %}
+                                                    {% if task.days_left > 3 %}
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                        {{ task.days_left }} days left
+                                                    </span>
+                                                    {% elif task.days_left > 0 %}
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                        {{ task.days_left }} days left
+                                                    </span>
+                                                    {% elif task.days_left == 0 %}
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                                        Due today!
+                                                    </span>
+                                                    {% else %}
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                        Overdue by {{ task.days_left_abs }} days
+                                                    </span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Action Buttons - Hidden until hover -->
+                                        <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                             onclick="event.stopPropagation();">
+                                            <button onclick="openEditModal('{{ task.id }}')"
+                                                    class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                 </svg>
                                             </button>
-                                        </form>
+
+                                            <form action="{% url 'deletetask' task.id %}" method="post" class="inline">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                                        onclick="return confirm('Delete this task?')">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        {% empty %}
-                        <!-- Empty State -->
-                        <div class="text-center py-12">
-                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                </svg>
+                            {% empty %}
+                            <!-- Empty State -->
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No done tasks yet</h3>
+    <!--                            <p class="text-gray-600 mb-4">Get started by creating your first task</p>-->
+    <!--                            <button onclick="openAddModal()"-->
+    <!--                                    class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">-->
+    <!--                                <span>+ New Task</span>-->
+    <!--                            </button>-->
                             </div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">No tasks yet</h3>
-                            <p class="text-gray-600 mb-4">Get started by creating your first task</p>
-<!--                            <button onclick="openAddModal()"-->
-<!--                                    class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">-->
-<!--                                <span>+ New Task</span>-->
-<!--                            </button>-->
+                            {% endfor %}
                         </div>
-                        {% endfor %}
-                    </div>
-            </div>
+                </div>
 
+                <!-- Overdue Column -->
+                <div id="overdue" class="tab-content hidden">
+                    <!-- Task List -->
+                        <div class="space-y-2">
+                            {% for task in overdue %}
+                            <div class="group relative">
+                                <!-- Task Card -->
+                                <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 mb-3">
+                                    <div class="flex items-start gap-4">
+                                        <!-- Checkbox - Notion style -->
+                                        <div class="pt-0.5">
+                                            <form action="{% url 'toggle_task' task.id %}" method="post" onclick="event.stopPropagation();">
+                                                {% csrf_token %}
+                                                <input type="checkbox"
+                                                       onchange="this.form.submit()"
+                                                       {% if task.is_completed %}checked{% endif %}
+                                                       class="w-4 h-4 rounded border-2 border-gray-300 checked:bg-black checked:border-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 cursor-pointer transition-all">
+                                            </form>
+                                        </div>
 
+                                        <!-- Task Content -->
+                                        <div class="flex-1 min-w-0">
+                                            <!-- Task Name -->
+                                            <h3 class="text-gray-900 font-medium {% if task.is_completed %}line-through text-gray-400{% endif %} mb-2">
+                                                {{ task.name }}
+                                            </h3>
+
+                                            <!-- Tags & Status -->
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <!-- Due Date -->
+                                                {% if task.due_date %}
+                                                <div class="flex items-center gap-1 text-sm">
+                                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <span class="text-gray-600">{{ task.due_date|date:"M j, Y" }}</span>
+                                                </div>
+                                                {% endif %}
+
+                                                <!-- Status Badge -->
+                                                {% if task.is_completed %}
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    ✓ Completed
+                                                </span>
+                                                {% elif task.days_left is not None %}
+                                                    {% if task.days_left > 3 %}
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                        {{ task.days_left }} days left
+                                                    </span>
+                                                    {% elif task.days_left > 0 %}
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                        {{ task.days_left }} days left
+                                                    </span>
+                                                    {% elif task.days_left == 0 %}
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                                        Due today!
+                                                    </span>
+                                                    {% else %}
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                        Overdue by {{ task.days_left_abs }} days
+                                                    </span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Action Buttons - Hidden until hover -->
+                                        <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                             onclick="event.stopPropagation();">
+                                            <button onclick="openEditModal('{{ task.id }}')"
+                                                    class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </button>
+
+                                            <form action="{% url 'deletetask' task.id %}" method="post" class="inline">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                                        onclick="return confirm('Delete this task?')">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <!-- Empty State -->
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No overdue tasks yet</h3>
+    <!--                            <p class="text-gray-600 mb-4">Get started by creating your first task</p>-->
+    <!--                            <button onclick="openAddModal()"-->
+    <!--                                    class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">-->
+    <!--                                <span>+ New Task</span>-->
+    <!--                            </button>-->
+                            </div>
+                            {% endfor %}
+                        </div>
+                </div>
+            </section>
         </div>
     </div>
 </div>
 
 <!-- ADD Task Modal -->
 <div id="addModal"
-     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl w-full max-w-md shadow-2xl animate-slide-up">
+     class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
+    <div class="relative bg-white rounded-xl w-full max-w-md shadow-2xl animate-slide-up overflow-visible">
         <div class="p-6">
             <h2 class="text-3xl font-semibold text-gray-900 mb-4">Add New Task</h2>
 
@@ -688,7 +690,7 @@
 <!-- Edit Task Modals -->
 {% for task in tasks %}
 <div id="editModal-{{ task.id }}"
-     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+     class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-xl w-full max-w-md shadow-2xl animate-slide-up">
         <div class="p-6">
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Edit task</h2>
@@ -699,7 +701,7 @@
                     <!-- Task Name with Emoji -->
                     <div>
                         <!-- <label class="block text-sm font-medium text-gray-700 mb-2">Task name</label>-->
-                        <div class="flex items-center rounded-lg focus-within:ring-2 focus-within:ring-black focus-within:border-black">
+                        <div class=" relative flex items-center rounded-lg focus-within:ring-2 focus-within:ring-black focus-within:border-black">
                             <button type="button"
                                     class="text-3xl hover:bg-gray-100 rounded transition-colors"
                                     onclick="openEmojiPicker('task-name-{{ task.id}}', this)">
@@ -784,8 +786,7 @@ window.openEmojiPicker = function(inputId, button) {
         window.pickers[inputId] = new EmojiButton({
             position: 'right-start',
             zIndex: 99999,
-            rootElement: document.body,
-            theme: 'auto'
+            theme: 'auto',
         });
         window.pickers[inputId].on('emoji', emoji => {
             let value = input.value.trim();
