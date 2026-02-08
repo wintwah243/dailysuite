@@ -7,50 +7,57 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .notion-bg { background-color: #ffffff; }
-        .notion-sidebar {
-            background-color: #191919;
-            border-right: 1px solid #2e2e2e;
+        .main-bg { background-color: #f9fafb; }
+        .sidebar {
+            background-color: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
-        .notion-card {
+        .card {
             background: #ffffff;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            transition: all 0.2s ease;
         }
-        .notion-card:hover {
-            border-color: #d4d4d4;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        .card:hover {
+            border-color: #d1d5db;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
-        .notion-text { color: #37352f; }
-        .notion-text-secondary { color: #6b7280; }
-        .notion-text-muted { color: #9ca3af; }
-        .notion-title { color: #1f2937; }
+        .text { color: #111827; }
+        .text-secondary { color: #6b7280; }
+        .text-muted { color: #9ca3af; }
+        .title { color: #1f2937; }
 
+        /* Status badges */
         .status-high {
-            background-color: #fee2e2;
-            color: #991b1b;
+            background-color: #fef2f2;
+            color: #dc2626;
             border: 1px solid #fecaca;
+            border-radius: 20px;
         }
         .status-medium {
-            background-color: #fef3c7;
-            color: #92400e;
+            background-color: #fffbeb;
+            color: #d97706;
             border: 1px solid #fde68a;
+            border-radius: 20px;
         }
         .status-low {
-            background-color: #d1fae5;
-            color: #065f46;
+            background-color: #f0fdf4;
+            color: #059669;
             border: 1px solid #a7f3d0;
+            border-radius: 20px;
         }
         .status-completed {
-            background-color: #dcfce7;
-            color: #166534;
+            background-color: #f0fdf4;
+            color: #059669;
             border: 1px solid #86efac;
+            border-radius: 20px;
         }
         .status-overdue {
             background-color: #fef2f2;
-            color: #991b1b;
+            color: #dc2626;
             border: 1px solid #fecaca;
+            border-radius: 20px;
         }
 
         /* Calendar */
@@ -58,7 +65,7 @@
             width: calc(100% / 7);
             height: 85px;
             padding: 6px;
-            border: 1px solid #f5f5f5;
+            border: 1px solid #f3f4f6;
             background: #ffffff;
         }
         .calendar-day:hover {
@@ -97,6 +104,7 @@
             overflow: hidden;
         }
 
+        /* sidebar icons */
         .sidebar-icon {
             width: 100%;
             height: 44px;
@@ -104,19 +112,127 @@
             align-items: center;
             padding: 0 12px;
             margin-bottom: 4px;
-            border-radius: 6px;
+            border-radius: 10px;
             transition: all 0.2s ease;
-            color: #9ca3af;
+            color: #6b7280;
         }
         .sidebar-icon:hover {
-            background-color: #2e2e2e;
-            color: #ffffff;
+            background-color: #f3f4f6;
+            color: #111827;
         }
         .sidebar-icon.active {
             background-color: #3b82f6;
             color: #ffffff;
         }
 
+        /* Progress bar */
+        .level-progress {
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .level-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 4px;
+        }
+
+        /* Header styling */
+        .dashboard-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0) 70%);
+        }
+
+        /* Stats cards */
+        .stat-card {
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+        .stat-card .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .budget-stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .budget-stat-card::before {
+            background: radial-gradient(circle, #ffffff 0%, transparent 70%);
+            top: -30px;
+            right: -30px;
+        }
+
+        .task-stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .task-stat-card::before {
+            background: radial-gradient(circle, #ffffff 0%, transparent 70%);
+            top: -40px;
+            right: -20px;
+        }
+
+        .overdue-task-stat-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);
+        }
+        .overdue-task-stat-card::before {
+            background: radial-gradient(circle, #ffffff 0%, transparent 70%);
+            top: -25px;
+            right: -25px;
+        }
+
+        .note-stat-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .note-stat-card::before {
+            background: radial-gradient(circle, #ffffff 0%, transparent 70%);
+            top: -35px;
+            right: -15px;
+        }
+
+        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -139,6 +255,7 @@
             }
         }
 
+        /* Typography */
         h1, h2, h3, h4 {
             font-weight: 600;
             letter-spacing: -0.025em;
@@ -149,36 +266,41 @@
         }
     </style>
 </head>
-<body class="notion-bg font-sans text-gray-800 antialiased">
+<body class="main-bg font-sans text-gray-800 antialiased">
     <!-- Header -->
-    <div class="fixed top-0 left-0 right-0 h-14 bg-white border-b border-gray-100 px-6 flex items-center justify-between z-50 shadow-sm">
+    <div class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 px-6 flex items-center justify-between z-50 shadow-sm">
         <div class="flex items-center space-x-4">
-            <h1 class="text-2xl font-bold text-gray-900">Daily<span class="text-black font-extrabold">Suite</span></h1>
-            <div class="text-sm notion-text-secondary bg-gray-50 px-3 py-1 rounded-full">
+            <!-- logo starts here -->
+            <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center shadow-md">
+                <i class="fas fa-tasks text-white"></i>
+            </div>
+            <!-- logo ends here -->
+            <h1 class="text-2xl font-bold text-gray-900">DailySuite</h1>
+            <div class="text-sm text-secondary bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
                 <i class="far fa-calendar-alt mr-2"></i>{{ today|date:"F d, Y" }}
             </div>
         </div>
         <div class="flex items-center space-x-4">
-            <div class="text-sm notion-text bg-gray-50 px-3 py-1.5 rounded-full">
-                <i class="fas fa-user-circle mr-2"></i>{{ request.user.username }}
+            <div class="text-sm text bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
+                <i class="fas fa-user-circle mr-2 text-gray-500"></i>{{ request.user.username }}
             </div>
-            <a href="/accounts/logout/" class="text-sm px-4 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                Logout
+            <a href="/accounts/logout/" class="text-sm px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+                <i class="fas fa-sign-out-alt mr-2"></i>Logout
             </a>
         </div>
     </div>
 
     <!-- Main Layout -->
-    <div class="flex pt-14">
+    <div class="flex pt-16">
         <!-- Sidebar -->
-        <div class="fixed left-0 w-64 notion-sidebar h-screen flex flex-col py-6 space-y-2 z-40">
+        <div class="fixed left-0 w-64 sidebar h-screen flex flex-col py-6 space-y-2 z-40">
             <!-- Logo -->
             <div class="px-4 mb-6">
-                <div class="text-lg font-semibold text-white mb-2">Workspace</div>
-                <div class="text-xs text-gray-400">Personal dashboard</div>
+                <div class="text-lg font-bold text-gray-900 mb-2">My Workspace</div>
+                <div class="text-xs text-gray-500">Personal dashboard</div>
             </div>
 
-            <!-- Navigation bar -->
+            <!-- Navigation -->
             <div class="px-3">
                 <a href="/todo/todolist/" class="sidebar-icon" title="Todos">
                     <i class="fas fa-tasks w-5 mr-3"></i>
@@ -192,79 +314,100 @@
                     <i class="fas fa-wallet w-5 mr-3"></i>
                     <span class="text-sm font-medium">Budget</span>
                 </a>
-            </div>
-
-            <div class="flex-1"></div>
-
-            <!-- Bottom Navigation -->
-            <div class="px-3 border-t border-gray-800 pt-4">
-                <a href="/" class="sidebar-icon active" title="Dashboard">
-                    <i class="fas fa-home w-5 mr-3"></i>
+                <a href="/home" class="sidebar-icon active" title="Dashboard">
+                    <i class="fas fa-chart-line w-5 mr-3"></i>
                     <span class="text-sm font-medium">Dashboard</span>
                 </a>
             </div>
+
+            <div class="flex-1"></div>
         </div>
 
         <!-- Main Content -->
         <div class="main-content flex-1 p-8">
-            <!-- Welcome Header -->
-            <div class="mb-10">
-                <h1 class="text-3xl font-bold notion-title mb-2 tracking-tight">Welcome back, {{ request.user.username }}!</h1>
-                <p class="notion-text-secondary text-lg">Here's your productivity overview for today.</p>
-            </div>
 
             <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
-                <div class="notion-card p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <!-- Budget Card -->
+                <div class="stat-card budget-stat-card">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm notion-text-secondary mb-2">Budget Balance</p>
-                            <p class="text-2xl font-bold {% if balance >= 0 %}text-green-700{% else %}text-red-700{% endif %}">
+                            <p class="text-sm text-white/90 mb-2 font-medium">Budget Balance</p>
+                            <p class="text-3xl font-bold text-white">
                                 ${{ balance|floatformat:2 }}
                             </p>
+                            <p class="text-xs text-white/80 mt-2">
+                                {% if balance >= 0 %}
+                                    <i class="fas fa-arrow-up mr-1"></i>Positive balance
+                                {% else %}
+                                    <i class="fas fa-arrow-down mr-1"></i>Negative balance
+                                {% endif %}
+                            </p>
                         </div>
-                        <div class="w-12 h-12 rounded-full flex items-center justify-center {% if balance >= 0 %}bg-green-50 text-green-700 border border-green-100{% else %}bg-red-50 text-red-700 border border-red-100{% endif %}">
-                            <i class="fas fa-wallet text-lg"></i>
+                        <div class="stat-icon">
+                            <i class="fas fa-wallet"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="notion-card p-6">
+                <!-- Tasks Completed Card -->
+                <div class="stat-card task-stat-card">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm notion-text-secondary mb-2">Tasks Completed</p>
-                            <p class="text-2xl font-bold notion-title">
+                            <p class="text-sm text-white/90 mb-2 font-medium">Tasks Completed</p>
+                            <p class="text-3xl font-bold text-white">
                                 {{ completed_count }}/{{ tasks.count }}
                             </p>
-                        </div>
-                        <div class="w-12 h-12 rounded-full flex items-center justify-center bg-blue-50 text-blue-700 border border-blue-100">
-                            <i class="fas fa-check-circle text-lg"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="notion-card p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm notion-text-secondary mb-2">Overdue Tasks</p>
-                            <p class="text-2xl font-bold {% if overdue_count > 0 %}text-red-700{% else %}text-green-700{% endif %}">
-                                {{ overdue_count }}
+                            <p class="text-xs text-white/80 mt-2">
+                                {% if tasks.count > 0 %}
+                                    {% widthratio completed_count tasks.count 100 %}% completed
+                                {% else %}
+                                    No tasks
+                                {% endif %}
                             </p>
                         </div>
-                        <div class="w-12 h-12 rounded-full flex items-center justify-center {% if overdue_count > 0 %}bg-red-50 text-red-700 border border-red-100{% else %}bg-green-50 text-green-700 border border-green-100{% endif %}">
-                            <i class="fas fa-exclamation-triangle text-lg"></i>
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="notion-card p-6">
+                <!-- Overdue Tasks Card -->
+                <div class="stat-card overdue-task-stat-card">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm notion-text-secondary mb-2">Recent Notes</p>
-                            <p class="text-2xl font-bold notion-title">{{ notes.count }}</p>
+                            <p class="text-sm text-white/90 mb-2 font-medium">Overdue Tasks</p>
+                            <p class="text-3xl font-bold text-white">
+                                {{ overdue_count }}
+                            </p>
+                            <p class="text-xs text-white/80 mt-2">
+                                {% if overdue_count > 0 %}
+                                    <i class="fas fa-exclamation-circle mr-1"></i>Needs attention
+                                {% else %}
+                                    <i class="fas fa-check mr-1"></i>All caught up
+                                {% endif %}
+                            </p>
                         </div>
-                        <div class="w-12 h-12 rounded-full flex items-center justify-center bg-purple-50 text-purple-700 border border-purple-100">
-                            <i class="fas fa-sticky-note text-lg"></i>
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Card -->
+                <div class="stat-card note-stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-white/90 mb-2 font-medium">Recent Notes</p>
+                            <p class="text-3xl font-bold text-white">
+                                {{ notes.count }}
+                            </p>
+                            <p class="text-xs text-white/80 mt-2">
+                                <i class="fas fa-pen mr-1"></i>{{ notes_last_week|default:"0" }} this week
+                            </p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-sticky-note"></i>
                         </div>
                     </div>
                 </div>
@@ -275,26 +418,26 @@
                 <!-- Left Column: Calendar -->
                 <div class="lg:col-span-2">
                     <!-- Calendar Section -->
-                    <div class="notion-card p-7 mb-8">
+                    <div class="card p-7 mb-8">
                         <div class="flex justify-between items-center mb-7">
-                            <h2 class="text-xl font-bold notion-title">Task Calendar</h2>
+                            <h2 class="text-xl font-bold title">Task Calendar</h2>
                             <div class="flex space-x-2">
-                                <button class="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <button class="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
                                     <i class="fas fa-chevron-left"></i>
                                 </button>
-                                <span class="px-4 py-2 text-sm notion-text-secondary font-medium">{{ current_date|date:"F Y" }}</span>
-                                <button class="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <span class="px-4 py-2 text-sm text-secondary font-medium">{{ current_date|date:"F Y" }}</span>
+                                <button class="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
                         </div>
 
                         <!-- Calendar Grid -->
-                        <div class="border border-gray-100 rounded-lg overflow-hidden bg-white">
+                        <div class="border border-gray-200 rounded-lg overflow-hidden bg-white">
                             <!-- Weekday Headers -->
-                            <div class="grid grid-cols-7 border-b border-gray-100 bg-gray-50">
+                            <div class="grid grid-cols-7 border-b border-gray-200 bg-gray-50">
                                 {% for day in week_days %}
-                                <div class="py-3 text-center text-sm font-medium notion-text-secondary">
+                                <div class="py-3 text-center text-sm font-medium text-secondary">
                                     {{ day }}
                                 </div>
                                 {% endfor %}
@@ -305,7 +448,7 @@
                                 {% for day in calendar_days %}
                                 <div class="calendar-day {% if day == today.day %}today{% endif %} {% if day in task_days %}has-task{% endif %}">
                                     <div class="flex justify-between items-start h-full">
-                                        <span class="text-sm font-medium {% if day == today.day %}text-blue-600{% else %}notion-text{% endif %}">
+                                        <span class="text-sm font-medium {% if day == today.day %}text-blue-600{% else %}text{% endif %}">
                                             {% if day != 0 %}{{ day }}{% endif %}
                                         </span>
                                         {% if day in task_days %}
@@ -317,7 +460,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-6 text-sm notion-text-secondary flex items-center space-x-6">
+                        <div class="mt-6 text-sm text-secondary flex items-center space-x-6">
                             <div class="flex items-center">
                                 <span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
                                 <span>Tasks</span>
@@ -334,10 +477,10 @@
                     </div>
 
                     <!-- Recent Todos -->
-                    <div class="notion-card p-7">
+                    <div class="card p-7">
                         <div class="flex justify-between items-center mb-7">
-                            <h2 class="text-xl font-bold notion-title">Recent Tasks</h2>
-                            <a href="/todo/todolist/" class="text-sm notion-text-secondary hover:text-gray-900 transition-colors flex items-center">
+                            <h2 class="text-xl font-bold title">Recent Tasks</h2>
+                            <a href="/todo/todolist/" class="text-sm text-secondary hover:text-gray-900 transition-colors flex items-center">
                                 View all <i class="fas fa-arrow-right ml-2"></i>
                             </a>
                         </div>
@@ -345,7 +488,7 @@
                         {% if tasks|slice:":8" %}
                         <div class="space-y-3">
                             {% for task in tasks|slice:":8" %}
-                            <div class="flex items-center p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors group">
+                            <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group">
                                 <div class="flex-shrink-0 mr-4">
                                     {% if task.is_completed %}
                                         <div class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
@@ -356,12 +499,12 @@
                                     {% endif %}
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium notion-text {% if task.is_completed %}line-through text-gray-500{% endif %}">
+                                    <p class="text-sm font-medium text {% if task.is_completed %}line-through text-gray-500{% endif %}">
                                         {{ task.name }}
                                     </p>
                                     <div class="flex items-center mt-2 space-x-3">
                                         {% if task.due_date %}
-                                        <span class="text-xs notion-text-secondary flex items-center">
+                                        <span class="text-xs text-secondary flex items-center">
                                             <i class="far fa-calendar-alt mr-1.5"></i>{{ task.due_date }}
                                         </span>
                                         {% endif %}
@@ -384,8 +527,8 @@
                             <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-tasks text-2xl text-gray-400"></i>
                             </div>
-                            <p class="notion-text-secondary mb-4">No tasks yet</p>
-                            <a href="/todo/todolist/" class="inline-flex items-center px-5 py-2.5 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800 transition-colors">
+                            <p class="text-secondary mb-4">No tasks yet</p>
+                            <a href="/todo/todolist/" class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm hover:opacity-90 transition-all">
                                 <i class="fas fa-plus mr-2.5"></i>
                                 Create task
                             </a>
@@ -397,14 +540,14 @@
                 <!-- Right Column: Charts & Notes -->
                 <div class="space-y-8">
                     <!-- Budget Charts -->
-                    <div class="notion-card p-7">
-                        <h2 class="text-xl font-bold notion-title mb-7">Budget Overview</h2>
+                    <div class="card p-7">
+                        <h2 class="text-xl font-bold title mb-7">Budget Overview</h2>
 
                         <!-- Pie Chart -->
                         <div class="mb-7">
                             <div class="flex justify-between items-center mb-5">
-                                <h3 class="font-medium notion-text">Income vs Expenses</h3>
-                                <div class="text-sm notion-text-secondary font-medium">
+                                <h3 class="font-medium text">Income vs Expenses</h3>
+                                <div class="text-sm text-secondary font-medium">
                                     {% if total_income > 0 %}
                                         {{ savings_percentage|floatformat:1 }}% saved
                                     {% else %}
@@ -421,8 +564,8 @@
                         <div class="space-y-5">
                             <div>
                                 <div class="flex justify-between text-sm mb-2">
-                                    <span class="notion-text font-medium">Income</span>
-                                    <span class="font-bold text-green-700">${{ total_income|floatformat:2 }}</span>
+                                    <span class="text font-medium">Income</span>
+                                    <span class="font-bold text-green-600">${{ total_income|floatformat:2 }}</span>
                                 </div>
                                 <div class="w-full bg-gray-100 rounded-full h-2">
                                     <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
@@ -430,8 +573,8 @@
                             </div>
                             <div>
                                 <div class="flex justify-between text-sm mb-2">
-                                    <span class="notion-text font-medium">Expenses</span>
-                                    <span class="font-bold text-red-700">${{ total_expense|floatformat:2 }}</span>
+                                    <span class="text font-medium">Expenses</span>
+                                    <span class="font-bold text-red-600">${{ total_expense|floatformat:2 }}</span>
                                 </div>
                                 <div class="w-full bg-gray-100 rounded-full h-2">
                                     <div class="bg-red-500 h-2 rounded-full"
@@ -448,10 +591,10 @@
                     </div>
 
                     <!-- Recent Notes -->
-                    <div class="notion-card p-7">
+                    <div class="card p-7">
                         <div class="flex justify-between items-center mb-7">
-                            <h2 class="text-xl font-bold notion-title">Recent Notes</h2>
-                            <a href="/note/" class="text-sm notion-text-secondary hover:text-gray-900 transition-colors flex items-center">
+                            <h2 class="text-xl font-bold title">Recent Notes</h2>
+                            <a href="/note/" class="text-sm text-secondary hover:text-gray-900 transition-colors flex items-center">
                                 View all <i class="fas fa-arrow-right ml-2"></i>
                             </a>
                         </div>
@@ -459,14 +602,14 @@
                         {% if notes|slice:":5" %}
                         <div class="space-y-4">
                             {% for note in notes|slice:":5" %}
-                            <div class="p-5 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
-                                <h4 class="font-medium notion-text mb-3">{{ note.title|truncatechars:40 }}</h4>
-                                <p class="text-sm notion-text-secondary mb-4 line-clamp-2">{{ note.content|truncatechars:100 }}</p>
+                            <div class="p-5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <h4 class="font-medium text mb-3">{{ note.title|truncatechars:40 }}</h4>
+                                <p class="text-sm text-secondary mb-4 line-clamp-2">{{ note.content|truncatechars:100 }}</p>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-xs notion-text-muted flex items-center">
+                                    <span class="text-xs text-muted flex items-center">
                                         <i class="far fa-clock mr-1.5"></i>{{ note.created_at|date:"M d, Y" }}
                                     </span>
-                                    <a href="/notes/update/{{ note.id }}/" class="text-xs notion-text-secondary hover:text-gray-900 transition-colors flex items-center">
+                                    <a href="/notes/update/{{ note.id }}/" class="text-xs text-secondary hover:text-gray-900 transition-colors flex items-center">
                                         Edit <i class="fas fa-pen ml-1.5"></i>
                                     </a>
                                 </div>
@@ -478,8 +621,8 @@
                             <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-sticky-note text-2xl text-gray-400"></i>
                             </div>
-                            <p class="notion-text-secondary mb-4">No notes yet</p>
-                            <a href="/notes/create/" class="inline-flex items-center px-5 py-2.5 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800 transition-colors">
+                            <p class="text-secondary mb-4">No notes yet</p>
+                            <a href="/notes/create/" class="inline-flex items-center px-5 py-2.5 bg-black text-white rounded-lg text-sm hover:opacity-90 transition-all">
                                 <i class="fas fa-plus mr-2.5"></i>
                                 Create note
                             </a>
@@ -488,39 +631,39 @@
                     </div>
 
                     <!-- Quick Stats -->
-                    <div class="notion-card p-7">
-                        <h2 class="text-xl font-bold notion-title mb-7">Quick Stats</h2>
+                    <div class="card p-7">
+                        <h2 class="text-xl font-bold title mb-7">Quick Stats</h2>
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-4 border border-blue-100">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center mr-4 border border-blue-200">
                                         <i class="fas fa-calendar-alt text-blue-600"></i>
                                     </div>
                                     <div>
-                                        <p class="text-sm notion-text-secondary">Tasks This Month</p>
-                                        <p class="font-bold notion-text text-lg">{{ tasks_this_month }}</p>
+                                        <p class="text-sm text-secondary">Tasks This Month</p>
+                                        <p class="font-bold text text-lg">{{ tasks_this_month }}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center mr-4 border border-green-100">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center mr-4 border border-green-200">
                                         <i class="fas fa-money-bill-wave text-green-600"></i>
                                     </div>
                                     <div>
-                                        <p class="text-sm notion-text-secondary">Avg. Daily Spend</p>
-                                        <p class="font-bold notion-text text-lg">${{ avg_daily_spend|floatformat:2 }}</p>
+                                        <p class="text-sm text-secondary">Avg. Daily Spend</p>
+                                        <p class="font-bold text text-lg">${{ avg_daily_spend|floatformat:2 }}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center mr-4 border border-purple-100">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center mr-4 border border-purple-200">
                                         <i class="fas fa-chart-line text-purple-600"></i>
                                     </div>
                                     <div>
-                                        <p class="text-sm notion-text-secondary">Productivity Score</p>
-                                        <p class="font-bold notion-text text-lg">{{ productivity_score|floatformat:0 }}%</p>
+                                        <p class="text-sm text-secondary">Productivity Score</p>
+                                        <p class="font-bold text text-lg">{{ productivity_score|floatformat:0 }}%</p>
                                     </div>
                                 </div>
                             </div>
