@@ -27,3 +27,6 @@ db.sqlite3
 .vscode/
 .idea/
 .DS_Storedb.sqlite3
+__pycache__/
+*.pyc
+.DS_Store
