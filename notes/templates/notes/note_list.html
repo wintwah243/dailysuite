@@ -5,6 +5,8 @@
     <!-- Add Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .main-bg { background-color: #f9fafb; }
         .sidebar {
@@ -12,7 +14,7 @@
             border-right: 1px solid #e5e7eb;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
-        
+
         .sidebar-icon {
             width: 100%;
             height: 44px;
@@ -29,7 +31,7 @@
             color: #111827;
         }
         .sidebar-icon.active {
-            background-color: #3b82f6;
+            background-color: black;
             color: #ffffff;
         }
 
@@ -50,6 +52,68 @@
             border-color: #d1d5db;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 90%;
+            width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Calendar styles */
+        .calendar-day {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .calendar-day:hover {
+            background-color: #f3f4f6;
+        }
+        .calendar-day.active {
+            background-color: #000;
+            color: white;
+        }
+        .calendar-day.has-notes {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        /* Tag colors */
+        .tag-personal { background-color: #dbeafe; color: #1e40af; }
+        .tag-work { background-color: #fef3c7; color: #92400e; }
+        .tag-ideas { background-color: #f0f9ff; color: #0c4a6e; }
+        .tag-important { background-color: #fef2f2; color: #991b1b; }
     </style>
 </head>
 <body class="main-bg font-sans text-gray-800 antialiased">
@@ -122,11 +186,85 @@
                             <h1 class="text-3xl font-bold text-gray-900">Notes Dashboard</h1>
                             <p class="text-gray-600 mt-2">Capture your thoughts, ideas, and important information.</p>
                         </div>
-                        <a href="{% url 'note_create' %}"
-                           class="inline-flex items-center gap-2 px-4 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all">
-                            <i class="fas fa-plus"></i>
-                            <span>New Note</span>
-                        </a>
+                        <div class="flex items-center gap-3">
+                            <!-- Calendar Button -->
+                            <button onclick="toggleCalendar()"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
+                                <i class="far fa-calendar"></i>
+                                <span>Calendar</span>
+                            </button>
+                            <!-- New Note Button -->
+                            <button onclick="openCreateModal()"
+                                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all">
+                                <i class="fas fa-plus"></i>
+                                <span>New Note</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Section -->
+                <div class="mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Total Notes</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ total_notes }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-sticky-note text-blue-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">This Week</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ this_week_count }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-calendar-week text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Important</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ important_count }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-star text-red-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Work Notes</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ work_count }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-briefcase text-purple-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                <!-- Chart Section -->
+                <div class="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes Created (Last 7 Days)</h3>
+                        <div class="h-64">
+                            <canvas id="notesChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes by Category</h3>
+                        <div class="h-64">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
@@ -134,11 +272,21 @@
                 {% if notes %}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {% for note in notes %}
-                    <div class="note-card p-6">
+                    <div class="note-card p-6 group cursor-pointer" onclick="openEditModal('{{ note.id }}', '{{ note.title|escapejs }}', '{{ note.content|escapejs }}', '{{ note.tag|default:"personal" }}')">
                         <div class="flex items-start justify-between mb-4">
-                            <h3 class="text-xl font-semibold text-gray-900 truncate">{{ note.title }}</h3>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-semibold text-gray-900 truncate">{{ note.title }}</h3>
+                                {% if note.tag %}
+                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full mt-2 tag-{{ note.tag }}">
+                                    {{ note.tag|title }}
+                                </span>
+                                {% endif %}
+                            </div>
                             <div class="flex items-center gap-2">
                                 <span class="text-xs text-gray-500">{{ note.created_at|date:"M d, Y" }}</span>
+                                {% if note.pinned %}
+                                <i class="fas fa-thumbtack text-gray-400"></i>
+                                {% endif %}
                             </div>
                         </div>
 
@@ -149,16 +297,15 @@
                                 <i class="far fa-clock mr-1"></i>
                                 {{ note.updated_at|timesince }} ago
                             </div>
-                            <div class="flex items-center gap-2">
-                                <a href="{% url 'note_update' note.id %}"
+                            <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="event.stopPropagation(); openEditModal('{{ note.id }}', '{{ note.title|escapejs }}', '{{ note.content|escapejs }}', '{{ note.tag|default:"personal" }}')"
                                    class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
                                     <i class="fas fa-edit mr-1"></i>Edit
-                                </a>
-                                <a href="{% url 'note_delete' note.id %}"
-                                   class="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
-                                   onclick="return confirm('Are you sure you want to delete this note?')">
+                                </button>
+                                <button onclick="event.stopPropagation(); confirmDelete('{{ note.id }}')"
+                                   class="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors">
                                     <i class="fas fa-trash mr-1"></i>Delete
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -172,58 +319,270 @@
                     </div>
                     <h3 class="text-xl font-semibold text-gray-900 mb-2">No notes yet</h3>
                     <p class="text-gray-600 mb-6 max-w-md mx-auto">Start capturing your thoughts and ideas by creating your first note.</p>
-                    <a href="{% url 'note_create' %}"
+                    <button onclick="openCreateModal()"
                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all">
                         <i class="fas fa-plus"></i>
                         <span>Create your first note</span>
-                    </a>
+                    </button>
                 </div>
                 {% endif %}
+            </div>
+        </div>
+    </div>
 
-                <!-- Create Note Form -->
-                <div class="mt-12 bg-white rounded-xl border border-gray-200 p-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Create New Note</h2>
+    <!-- Create Note Modal -->
+    <div id="createModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Create New Note</h2>
+                    <button onclick="closeCreateModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
 
-                    <form method="post" action="{% url 'note_create' %}">
-                        {% csrf_token %}
-                        <div class="space-y-6">
-                            <!-- Title Field -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                                <input type="text"
-                                       name="title"
-                                       required
-                                       class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                       placeholder="Enter note title">
-                            </div>
+                <form id="createNoteForm" method="post" action="{% url 'note_create' %}">
+                    {% csrf_token %}
+                    <div class="space-y-6">
+                        <!-- Title Field -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                            <input type="text"
+                                   id="createTitle"
+                                   name="title"
+                                   required
+                                   class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="Enter note title">
+                        </div>
 
-                            <!-- Content Field -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
-                                <textarea
-                                    name="content"
-                                    rows="8"
-                                    required
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="Write your note here..."></textarea>
-                            </div>
-
-                            <!-- Submit Button -->
-                            <div class="flex justify-end">
-                                <button type="submit"
-                                        class="px-6 py-3 bg-black text-white rounded-lg hover:opacity-90 transition-all font-medium">
-                                    <i class="fas fa-save mr-2"></i>Save Note
-                                </button>
+                        <!-- Tag Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="tag" value="personal" class="sr-only peer" checked>
+                                    <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg peer-checked:bg-blue-600 peer-checked:text-white cursor-pointer transition-colors">
+                                        Personal
+                                    </span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="tag" value="work" class="sr-only peer">
+                                    <span class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg peer-checked:bg-yellow-600 peer-checked:text-white cursor-pointer transition-colors">
+                                        Work
+                                    </span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="tag" value="ideas" class="sr-only peer">
+                                    <span class="px-4 py-2 bg-cyan-100 text-cyan-800 rounded-lg peer-checked:bg-cyan-600 peer-checked:text-white cursor-pointer transition-colors">
+                                        Ideas
+                                    </span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="tag" value="important" class="sr-only peer">
+                                    <span class="px-4 py-2 bg-red-100 text-red-800 rounded-lg peer-checked:bg-red-600 peer-checked:text-white cursor-pointer transition-colors">
+                                        Important
+                                    </span>
+                                </label>
                             </div>
                         </div>
-                    </form>
+
+                        <!-- Content Field -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                            <textarea
+                                id="createContent"
+                                name="content"
+                                rows="6"
+                                required
+                                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Write your note here..."></textarea>
+                        </div>
+
+                        <!-- Additional Options -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="pinned" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Pin to top</span>
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button type="button" onclick="closeCreateModal()"
+                                    class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all font-medium">
+                                <i class="fas fa-save mr-2"></i>Save Note
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Note Modal -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Edit Note</h2>
+                    <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="editNoteForm" method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" id="editNoteId" name="note_id">
+                    <div class="space-y-6">
+                        <!-- Title Field -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                            <input type="text"
+                                   id="editTitle"
+                                   name="title"
+                                   required
+                                   class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="Enter note title">
+                        </div>
+
+                        <!-- Tag Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="tag" value="personal" class="sr-only peer">
+                                    <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg peer-checked:bg-blue-600 peer-checked:text-white cursor-pointer transition-colors">
+                                        Personal
+                                    </span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="tag" value="work" class="sr-only peer">
+                                    <span class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg peer-checked:bg-yellow-600 peer-checked:text-white cursor-pointer transition-colors">
+                                        Work
+                                    </span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="tag" value="ideas" class="sr-only peer">
+                                    <span class="px-4 py-2 bg-cyan-100 text-cyan-800 rounded-lg peer-checked:bg-cyan-600 peer-checked:text-white cursor-pointer transition-colors">
+                                        Ideas
+                                    </span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="tag" value="important" class="sr-only peer">
+                                    <span class="px-4 py-2 bg-red-100 text-red-800 rounded-lg peer-checked:bg-red-600 peer-checked:text-white cursor-pointer transition-colors">
+                                        Important
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Content Field -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                            <textarea
+                                id="editContent"
+                                name="content"
+                                rows="6"
+                                required
+                                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Write your note here..."></textarea>
+                        </div>
+
+                        <!-- Additional Options -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="editPinned" name="pinned" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Pin to top</span>
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button type="button" onclick="closeEditModal()"
+                                    class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all font-medium">
+                                <i class="fas fa-save mr-2"></i>Update Note
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar Modal -->
+    <div id="calendarModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Calendar View</h2>
+                    <button onclick="toggleCalendar()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl border border-gray-200 p-4">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="changeMonth(-1)" class="p-2 hover:bg-gray-100 rounded-lg">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h3 class="text-lg font-semibold" id="currentMonth">February 2024</h3>
+                        <button onclick="changeMonth(1)" class="p-2 hover:bg-gray-100 rounded-lg">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-2 mb-4">
+                        <div class="text-center text-sm font-medium text-gray-500 py-2">Sun</div>
+                        <div class="text-center text-sm font-medium text-gray-500 py-2">Mon</div>
+                        <div class="text-center text-sm font-medium text-gray-500 py-2">Tue</div>
+                        <div class="text-center text-sm font-medium text-gray-500 py-2">Wed</div>
+                        <div class="text-center text-sm font-medium text-gray-500 py-2">Thu</div>
+                        <div class="text-center text-sm font-medium text-gray-500 py-2">Fri</div>
+                        <div class="text-center text-sm font-medium text-gray-500 py-2">Sat</div>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-2" id="calendarDays">
+                        <!-- Calendar days will be populated by JavaScript -->
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-gray-100">
+                        <h4 class="font-medium text-gray-900 mb-3">Notes for <span id="selectedDateText">today</span>:</h4>
+                        <div id="dateNotes" class="space-y-3 max-h-40 overflow-y-auto">
+                            <!-- Notes for selected date will appear here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
 <script>
-// Function to format date like Django's |date:"F d, Y" filter
+    const notesByDay = {{ notes_by_day|safe }};
+    const tagsData = {{ tags_data|safe|default:"[]" }};
+    const calendarDaysWithNotes = {{ calendar_days_with_notes|safe|default:"[]" }};
+    const weekDays = {{ week_days|safe }};
+
+    const allNotes = [
+        {% for note in notes %}
+        {
+            id: '{{ note.id }}',
+            title: '{{ note.title|escapejs }}',
+            content: '{{ note.content|escapejs|truncatewords:20 }}',
+            created_at: '{{ note.created_at|date:"Y-m-d" }}',
+            created_at_display: '{{ note.created_at|date:"M d, Y" }}'
+        },
+        {% endfor %}
+    ];
+
+// Function to format date
 function formatDate(date) {
     const months = [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -235,6 +594,14 @@ function formatDate(date) {
     const year = date.getFullYear();
 
     return `${month} ${day}, ${year}`;
+}
+
+// Function to format date as YYYY-MM-DD
+function formatDateYYYYMMDD(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 // Set today's date
@@ -256,11 +623,276 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Try to get username from localStorage (if set by dashboard)
     const username = localStorage.getItem('username');
     if (username) {
         document.getElementById('username').textContent = username;
     }
+
+    // Initialize charts
+    initializeCharts();
+
+    // Initialize calendar with today's date
+    currentDate = new Date();
+    renderCalendar(currentDate);
+
+    // Select today's date by default
+    selectDate(today.getDate());
+});
+
+// Modal Functions
+function openCreateModal() {
+    document.getElementById('createModal').style.display = 'flex';
+    document.getElementById('createTitle').focus();
+}
+
+function closeCreateModal() {
+    document.getElementById('createModal').style.display = 'none';
+}
+
+function openEditModal(id, title, content, tag = 'personal') {
+    const form = document.getElementById('editNoteForm');
+    form.action = `/note/update/${id}/`;
+
+    document.getElementById('editNoteId').value = id;
+    document.getElementById('editTitle').value = title;
+    document.getElementById('editContent').value = content;
+
+    // Set the tag radio button
+    const tagRadios = document.querySelectorAll('input[name="tag"]');
+    tagRadios.forEach(radio => {
+        if (radio.value === tag) {
+            radio.checked = true;
+        }
+    });
+
+    document.getElementById('editModal').style.display = 'flex';
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+function confirmDelete(noteId) {
+    if (confirm('Are you sure you want to delete this note?')) {
+        window.location.href = `/note/delete/${noteId}/`;
+    }
+}
+
+// Calendar Functions
+let currentDate = new Date();
+
+function toggleCalendar() {
+    const modal = document.getElementById('calendarModal');
+    if (modal.style.display === 'flex') {
+        modal.style.display = 'none';
+    } else {
+        modal.style.display = 'flex';
+        renderCalendar(currentDate);
+    }
+}
+
+function changeMonth(direction) {
+    currentDate.setMonth(currentDate.getMonth() + direction);
+    renderCalendar(currentDate);
+}
+
+function renderCalendar(date) {
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+
+    document.getElementById('currentMonth').textContent =
+        `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDay = firstDay.getDay();
+
+    const calendarDays = document.getElementById('calendarDays');
+    calendarDays.innerHTML = '';
+
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < startingDay; i++) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'h-10';
+        calendarDays.appendChild(emptyDiv);
+    }
+
+    // Add days of the month
+    const today = new Date();
+    const currentYear = date.getFullYear();
+    const currentMonth = date.getMonth() + 1; // JavaScript months are 0-based
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
+        dayDiv.textContent = day;
+
+        // Format date as YYYY-MM-DD for comparison
+        const formattedDate = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+        // Check if today
+        if (date.getFullYear() === today.getFullYear() &&
+            date.getMonth() === today.getMonth() &&
+            day === today.getDate()) {
+            dayDiv.classList.add('active');
+        }
+
+        if (calendarDaysWithNotes.includes(formattedDate)) {
+            dayDiv.classList.add('has-notes');
+        }
+
+        // Store date information for click handler
+        dayDiv.dataset.year = currentYear;
+        dayDiv.dataset.month = currentMonth;
+        dayDiv.dataset.day = day;
+        dayDiv.dataset.date = formattedDate;
+
+        dayDiv.onclick = function() {
+            selectCalendarDate(this.dataset.date, day);
+        };
+
+        calendarDays.appendChild(dayDiv);
+    }
+}
+
+function selectCalendarDate(dateString, dayNumber) {
+    // Update selected date text
+    const dateParts = dateString.split('-');
+    const selectedDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+    document.getElementById('selectedDateText').textContent = formatDate(selectedDate);
+
+    // Clear previous notes
+    const dateNotes = document.getElementById('dateNotes');
+    dateNotes.innerHTML = '';
+
+    // Filter notes for the selected date
+    const notesForDate = allNotes.filter(note => note.created_at === dateString);
+
+    if (notesForDate.length === 0) {
+        dateNotes.innerHTML = `
+            <div class="text-sm text-gray-500 italic p-3 bg-gray-50 rounded-lg">
+                No notes for this date
+            </div>
+        `;
+    } else {
+        notesForDate.forEach(note => {
+            const noteElement = document.createElement('div');
+            noteElement.className = 'text-sm text-gray-700 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors';
+            noteElement.innerHTML = `
+                <div class="font-medium truncate">${note.title}</div>
+                <div class="text-xs text-gray-500 mt-1 truncate">${note.content}</div>
+                <div class="text-xs text-gray-400 mt-2">${note.created_at_display}</div>
+            `;
+
+            // Make note clickable to edit
+            noteElement.onclick = function(e) {
+                e.stopPropagation();
+                openEditModal(note.id, note.title, note.content, 'personal');
+            };
+
+            dateNotes.appendChild(noteElement);
+        });
+    }
+
+    // Update calendar day styling
+    const calendarDays = document.querySelectorAll('.calendar-day');
+    calendarDays.forEach(day => {
+        day.classList.remove('active');
+        if (day.dataset.date === dateString) {
+            day.classList.add('active');
+        }
+    });
+}
+
+function selectDate(day) {
+    const selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    const formattedDate = formatDateYYYYMMDD(selectedDate);
+    selectCalendarDate(formattedDate, day);
+}
+
+// Chart Functions
+function initializeCharts() {
+    // Line Chart - Notes Created Last 7 Days
+    const lineCtx = document.getElementById('notesChart').getContext('2d');
+    new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: weekDays,
+            datasets: [{
+                label: 'Notes Created',
+                data: notesByDay,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+    // Doughnut Chart - Notes by Category
+    if (tagsData && tagsData.length > 0) {
+        const doughnutCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(doughnutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: tagsData.map(tag => tag.tag),
+                datasets: [{
+                    data: tagsData.map(tag => tag.count),
+                    backgroundColor: [
+                        '#3b82f6', // Personal
+                        '#f59e0b', // Work
+                        '#06b6d4', // Ideas
+                        '#ef4444'  // Important
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Close modals when clicking outside
+document.addEventListener('click', function(event) {
+    const modals = ['createModal', 'editModal', 'calendarModal'];
+    modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (event.target === modal) {
+            if (modalId === 'calendarModal') {
+                toggleCalendar();
+            } else if (modalId === 'createModal') {
+                closeCreateModal();
+            } else if (modalId === 'editModal') {
+                closeEditModal();
+            }
+        }
+    });
 });
 
 // Add line-clamp utility
@@ -272,9 +904,14 @@ style.textContent = `
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
+
+    .truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 `;
 document.head.appendChild(style);
 </script>
-
 </body>
 </html>
