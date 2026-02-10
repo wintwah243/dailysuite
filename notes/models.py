@@ -9,7 +9,6 @@ class Note(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # New fields for enhanced features
     TAG_CHOICES = [
         ('personal', 'Personal'),
         ('work', 'Work'),

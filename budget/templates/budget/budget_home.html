@@ -130,7 +130,7 @@
                                 <i class="fas fa-money-bill-wave text-green-600"></i>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-green-600">${{ total_income|floatformat:2 }}</p>
+                        <p class="text-3xl font-bold text-green-600">{{ total_income|floatformat:2 }}Ks</p>
                     </div>
 
                     <!-- Expense Card -->
@@ -141,7 +141,7 @@
                                 <i class="fas fa-shopping-cart text-red-600"></i>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-red-600">${{ total_expense|floatformat:2 }}</p>
+                        <p class="text-3xl font-bold text-red-600">{{ total_expense|floatformat:2 }}Ks</p>
                     </div>
 
                     <!-- Balance Card -->
@@ -153,7 +153,7 @@
                             </div>
                         </div>
                         <p class="text-3xl font-bold {% if balance >= 0 %}text-blue-600{% else %}text-orange-600{% endif %}">
-                            ${{ balance|floatformat:2 }}
+                            {{ balance|floatformat:2 }}Ks
                         </p>
                     </div>
                 </div>
@@ -165,7 +165,7 @@
                         <div class="flex items-center justify-between mb-6">
                             <h2 class="text-xl font-bold text-gray-900">Incomes</h2>
                             <a href="{% url 'add_income' %}"
-                               class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:opacity-90 transition-all">
+                               class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:opacity-90 transition-all">
                                 <i class="fas fa-plus"></i>
                                 <span>Add Income</span>
                             </a>
@@ -222,7 +222,7 @@
                         <div class="flex items-center justify-between mb-6">
                             <h2 class="text-xl font-bold text-gray-900">Expenses</h2>
                             <a href="{% url 'add_expense' %}"
-                               class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg hover:opacity-90 transition-all">
+                               class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:opacity-90 transition-all">
                                 <i class="fas fa-plus"></i>
                                 <span>Add Expense</span>
                             </a>
@@ -280,7 +280,7 @@
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-bold text-gray-900">Categories</h2>
                         <a href="{% url 'add_category' %}"
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:opacity-90 transition-all">
+                           class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:opacity-90 transition-all">
                             <i class="fas fa-plus"></i>
                             <span>Add Category</span>
                         </a>

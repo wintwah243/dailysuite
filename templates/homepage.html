@@ -212,7 +212,7 @@
         }
 
         .task-stat-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #006400 0%, #90EE90  100%);
         }
         .task-stat-card::before {
             background: radial-gradient(circle, #ffffff 0%, transparent 70%);
@@ -331,6 +331,11 @@
 
         <!-- Main Content -->
         <div class="main-content flex-1 p-8">
+            <!-- Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
+                    <p class="text-gray-600 mt-2">Track your budget, take important notes, and manage tasks.</p>
+                </div>
 
             <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
@@ -339,8 +344,8 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-white/90 mb-2 font-medium">Budget Balance</p>
-                            <p class="text-3xl font-bold text-white">
-                                ${{ balance|floatformat:2 }}
+                            <p class="text-2xl font-bold text-white">
+                                {{ balance|floatformat }}Ks
                             </p>
                             <p class="text-xs text-white/80 mt-2">
                                 {% if balance >= 0 %}
@@ -571,7 +576,7 @@
                             <div>
                                 <div class="flex justify-between text-sm mb-2">
                                     <span class="text font-medium">Income</span>
-                                    <span class="font-bold text-green-600">${{ total_income|floatformat:2 }}</span>
+                                    <span class="font-bold text-green-600">{{ total_income|floatformat }}Ks</span>
                                 </div>
                                 <div class="w-full bg-gray-100 rounded-full h-2">
                                     <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
@@ -580,7 +585,7 @@
                             <div>
                                 <div class="flex justify-between text-sm mb-2">
                                     <span class="text font-medium">Expenses</span>
-                                    <span class="font-bold text-red-600">${{ total_expense|floatformat:2 }}</span>
+                                    <span class="font-bold text-red-600">{{ total_expense|floatformat }}Ks</span>
                                 </div>
                                 <div class="w-full bg-gray-100 rounded-full h-2">
                                     <div class="bg-red-500 h-2 rounded-full"

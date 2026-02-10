@@ -179,7 +179,6 @@
 
 </div>
 
-
     <!-- Header / Navigation -->
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -863,6 +862,188 @@
                 sendMessage();
             }
         });
+
+        // scroll animation functionality
+window.addEventListener('DOMContentLoaded', function() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .scroll-animate.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-animate-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .scroll-animate-left.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scroll-animate-right {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .scroll-animate-right.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scroll-animate-scale {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .scroll-animate-scale.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .scroll-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .scroll-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .scroll-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        .scroll-delay-4 {
+            transition-delay: 0.4s;
+        }
+
+        .scroll-delay-5 {
+            transition-delay: 0.5s;
+        }
+    `;
+    document.head.appendChild(style);
+
+    function initScrollAnimations() {
+        // Hero section elements
+        const heroElements = document.querySelectorAll('#home .inline-flex, #home h1, #home p, #home .flex.flex-col');
+        heroElements.forEach((el, index) => {
+            el.classList.add('scroll-animate');
+            if (index > 0) el.classList.add(`scroll-delay-${index}`);
+        });
+
+        // Features section
+        const featureCards = document.querySelectorAll('#features .hover-card, #home h1 p text');
+        featureCards.forEach((card, index) => {
+            card.classList.add('scroll-animate');
+            card.classList.add(`scroll-delay-${index + 1}`);
+        });
+
+        // Guidelines section
+        const steps = document.querySelectorAll('#guidelines .flex.items-start');
+        steps.forEach((step, index) => {
+            step.classList.add('scroll-animate-left');
+            step.classList.add(`scroll-delay-${index + 1}`);
+        });
+
+        // Guidelines section
+        const demoSection = document.querySelector('#guidelines .bg-white.rounded-2xl');
+        if (demoSection) {
+            demoSection.classList.add('scroll-animate-right');
+            demoSection.classList.add('scroll-delay-1');
+        }
+
+        // Contact form
+        const contactForm = document.querySelector('#contact .bg-gray-50.rounded-2xl');
+        if (contactForm) {
+            contactForm.classList.add('scroll-animate-left');
+            contactForm.classList.add('scroll-delay-1');
+        }
+
+        // Contact info
+        const contactInfo = document.querySelectorAll('#guidelines .flex.items-start, #contact .flex.items-start');
+        contactInfo.forEach((info, index) => {
+            info.classList.add('scroll-animate');
+            info.classList.add(`scroll-delay-${index + 1}`);
+        });
+
+        // FAQ items
+        const faqItems = document.querySelectorAll('#contact .faq-item');
+        faqItems.forEach((item, index) => {
+            item.classList.add('scroll-animate');
+            item.classList.add(`scroll-delay-${index + 1}`);
+        });
+
+        // Section headers
+        const sectionHeaders = document.querySelectorAll('section .text-center h2, section .text-center p');
+        sectionHeaders.forEach((header, index) => {
+            header.classList.add('scroll-animate-scale');
+            header.classList.add(`scroll-delay-${index}`);
+        });
+
+        // Floating elements in hero
+        const floatingElements = document.querySelectorAll('#home .absolute');
+        floatingElements.forEach((el, index) => {
+            el.classList.add('scroll-animate');
+            el.classList.add(`scroll-delay-${index + 2}`);
+        });
+
+        // Stats section
+        const stats = document.querySelectorAll('#home .flex.-space-x-4, #home .ml-4');
+        stats.forEach((stat, index) => {
+            stat.classList.add('scroll-animate');
+            stat.classList.add(`scroll-delay-${index + 3}`);
+        });
+    }
+
+    // Check if element is in viewport
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.85 &&
+            rect.bottom >= 0
+        );
+    }
+
+    // Handle scroll animations
+    function handleScrollAnimations() {
+        const animatedElements = document.querySelectorAll('.scroll-animate, .scroll-animate-left, .scroll-animate-right, .scroll-animate-scale');
+
+        animatedElements.forEach(element => {
+            if (isInViewport(element)) {
+                element.classList.add('show');
+            }
+        });
+    }
+
+    // Initialize animations and set up scroll listener
+    initScrollAnimations();
+    handleScrollAnimations(); // Run once on load
+
+    // Throttle scroll events for better performance
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        if (!scrollTimeout) {
+            scrollTimeout = setTimeout(function() {
+                handleScrollAnimations();
+                scrollTimeout = null;
+            }, 100);
+        }
+    });
+
+    // Re-run animations on resize
+    window.addEventListener('resize', handleScrollAnimations);
+});
+
     </script>
 </body>
 </html>
