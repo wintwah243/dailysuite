@@ -5,6 +5,10 @@
     <!-- Add Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
         .main-bg { background-color: #f9fafb; }
         .sidebar {
@@ -49,6 +53,60 @@
         .budget-card:hover {
             border-color: #d1d5db;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 90%;
+            width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form styles */
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
@@ -116,8 +174,26 @@
             <div class="max-w-7xl mx-auto">
                 <!-- Header -->
                 <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900">Budget Dashboard</h1>
-                    <p class="text-gray-600 mt-2">Track your income, expenses, and manage your finances.</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Budget Dashboard</h1>
+                            <p class="text-gray-600 mt-2">Track your income, expenses, and manage your finances.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <!-- Export Button -->
+                            <button onclick="exportToExcel()"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">
+                                <i class="fas fa-file-excel"></i>
+                                <span>Export Excel</span>
+                            </button>
+                            <!-- Report Button -->
+                            <button onclick="showReportModal()"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>View Report</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Summary Cards -->
@@ -158,17 +234,79 @@
                     </div>
                 </div>
 
+                <!-- Charts Section -->
+                <div class="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Income vs Expense Chart -->
+                    <div class="budget-card p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Income vs Expense</h3>
+                        <div class="h-64">
+                            <canvas id="incomeExpenseChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Category Breakdown Chart -->
+                    <div class="budget-card p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Expense by Category</h3>
+                        <div class="h-64">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Trend Chart -->
+                    <div class="budget-card p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Monthly Trend</h3>
+                        <div class="h-64">
+                            <canvas id="monthlyTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="budget-card p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h3>
+                        <div class="space-y-3 max-h-64 overflow-y-auto">
+                            {% for income in incomes|slice:":5" %}
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                                        <i class="fas fa-arrow-down text-green-600 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">{{ income.source }}</p>
+                                        <p class="text-xs text-gray-500">{{ income.date }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-sm font-medium text-green-600">+{{ income.amount|floatformat:2 }}Ks</span>
+                            </div>
+                            {% endfor %}
+                            {% for expense in expenses|slice:":5" %}
+                            <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                                        <i class="fas fa-arrow-up text-red-600 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">{{ expense.description }}</p>
+                                        <p class="text-xs text-gray-500">{{ expense.date }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-sm font-medium text-red-600">-{{ expense.amount|floatformat:2 }}Ks</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Main Content Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Incomes Section -->
                     <div class="budget-card p-6">
                         <div class="flex items-center justify-between mb-6">
                             <h2 class="text-xl font-bold text-gray-900">Incomes</h2>
-                            <a href="{% url 'add_income' %}"
-                               class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:opacity-90 transition-all">
+                            <button onclick="openAddIncomeModal()"
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:opacity-90 transition-all">
                                 <i class="fas fa-plus"></i>
                                 <span>Add Income</span>
-                            </a>
+                            </button>
                         </div>
 
                         {% if incomes %}
@@ -187,13 +325,13 @@
                                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                         <td class="py-4 text-sm text-gray-900">{{ income.date }}</td>
                                         <td class="py-4 text-sm text-gray-900">{{ income.source }}</td>
-                                        <td class="py-4 text-sm font-medium text-green-600">${{ income.amount|floatformat:2 }}</td>
+                                        <td class="py-4 text-sm font-medium text-green-600">{{ income.amount|floatformat:2 }}Ks</td>
                                         <td class="py-4">
                                             <div class="flex items-center gap-2">
-                                                <a href="{% url 'update_income' income.id %}"
-                                                   class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
+                                                <button onclick="openEditIncomeModal('{{ income.id }}', '{{ income.date|escapejs }}', '{{ income.source|escapejs }}', '{{ income.amount|escapejs }}')"
+                                                        class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
                                                     <i class="fas fa-edit mr-1"></i>Edit
-                                                </a>
+                                                </button>
                                                 <a href="{% url 'delete_income' income.id %}"
                                                    class="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
                                                    onclick="return confirm('Are you sure you want to delete this income?')">
@@ -221,11 +359,11 @@
                     <div class="budget-card p-6">
                         <div class="flex items-center justify-between mb-6">
                             <h2 class="text-xl font-bold text-gray-900">Expenses</h2>
-                            <a href="{% url 'add_expense' %}"
-                               class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:opacity-90 transition-all">
+                            <button onclick="openAddExpenseModal()"
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:opacity-90 transition-all">
                                 <i class="fas fa-plus"></i>
                                 <span>Add Expense</span>
-                            </a>
+                            </button>
                         </div>
 
                         {% if expenses %}
@@ -235,6 +373,7 @@
                                     <tr class="border-b border-gray-200">
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Description</th>
+                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Category</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Amount</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Actions</th>
                                     </tr>
@@ -244,13 +383,24 @@
                                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                         <td class="py-4 text-sm text-gray-900">{{ expense.date }}</td>
                                         <td class="py-4 text-sm text-gray-900">{{ expense.description }}</td>
-                                        <td class="py-4 text-sm font-medium text-red-600">${{ expense.amount|floatformat:2 }}</td>
+                                        <td class="py-4 text-sm text-gray-600">
+                                            {% if expense.category %}
+                                            <span class="px-2 py-1 bg-gray-100 rounded-full text-xs">
+                                                {{ expense.category.name }}
+                                            </span>
+                                            {% else %}
+                                            <span class="px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-400">
+                                                Uncategorized
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="py-4 text-sm font-medium text-red-600">{{ expense.amount|floatformat:2 }}Ks</td>
                                         <td class="py-4">
                                             <div class="flex items-center gap-2">
-                                                <a href="{% url 'update_expense' expense.id %}"
-                                                   class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
+                                                <button onclick="openEditExpenseModal('{{ expense.id }}', '{{ expense.date|escapejs }}', '{{ expense.description|escapejs }}', '{{ expense.amount|escapejs }}', '{{ expense.category.id|default:'' }}')"
+                                                        class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
                                                     <i class="fas fa-edit mr-1"></i>Edit
-                                                </a>
+                                                </button>
                                                 <a href="{% url 'delete_expense' expense.id %}"
                                                    class="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
                                                    onclick="return confirm('Are you sure you want to delete this expense?')">
@@ -279,43 +429,38 @@
                 <div class="mt-8 budget-card p-6">
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-bold text-gray-900">Categories</h2>
-                        <a href="{% url 'add_category' %}"
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:opacity-90 transition-all">
+                        <button onclick="openAddCategoryModal()"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:opacity-90 transition-all">
                             <i class="fas fa-plus"></i>
                             <span>Add Category</span>
-                        </a>
+                        </button>
                     </div>
 
                     {% if categories %}
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="py-3 text-left text-sm font-medium text-gray-600">Category Name</th>
-                                    <th class="py-3 text-left text-sm font-medium text-gray-600">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for category in categories %}
-                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                    <td class="py-4 text-sm text-gray-900">{{ category.name }}</td>
-                                    <td class="py-4">
-                                        <div class="flex items-center gap-2">
-                                            <a href="{% url 'update_category' category.id %}"
-                                               class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
-                                                <i class="fas fa-edit mr-1"></i>Edit
-                                            </a>
-                                            <a href="{% url 'delete_category' category.id %}"
-                                               class="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
-                                               onclick="return confirm('Are you sure you want to delete this category?')">
-                                                <i class="fas fa-trash mr-1"></i>Delete
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {% for category in categories %}
+                        <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-medium text-gray-900">{{ category.name }}</h3>
+                                    <p class="text-sm text-gray-500">
+                                        {{ category.expense_set.count }} expenses
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="openEditCategoryModal('{{ category.id }}', '{{ category.name|escapejs }}')"
+                                            class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-2 py-1 rounded transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <a href="{% url 'delete_category' category.id %}"
+                                       class="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-2 py-1 rounded transition-colors"
+                                       onclick="return confirm('Are you sure you want to delete this category?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                     {% else %}
                     <div class="text-center py-8">
@@ -331,58 +476,1043 @@
         </div>
     </div>
 
+    <!-- Add Income Modal -->
+    <div id="addIncomeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Add Income</h2>
+                    <button onclick="closeAddIncomeModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="addIncomeForm" method="post" action="{% url 'add_income' %}">
+                    {% csrf_token %}
+                    <div class="space-y-6">
+                        <div>
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" id="incomeDate" required
+                                   class="form-input">
+                        </div>
+
+                        <div>
+                            <label class="form-label">Source</label>
+                            <input type="text" name="source" id="incomeSource" required
+                                   placeholder="e.g., Salary, Freelance"
+                                   class="form-input">
+                        </div>
+
+                        <div>
+                            <label class="form-label">Amount (Ks)</label>
+                            <input type="number" step="0.01" name="amount" id="incomeAmount" required
+                                   placeholder="0.00"
+                                   class="form-input">
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button type="button" onclick="closeAddIncomeModal()"
+                                    class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all font-medium">
+                                <i class="fas fa-save mr-2"></i>Save Income
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Income Modal -->
+    <div id="editIncomeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Edit Income</h2>
+                    <button onclick="closeEditIncomeModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="editIncomeForm" method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" id="editIncomeId" name="income_id">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" id="editIncomeDate" required
+                                   class="form-input">
+                        </div>
+
+                        <div>
+                            <label class="form-label">Source</label>
+                            <input type="text" name="source" id="editIncomeSource" required
+                                   placeholder="e.g., Salary, Freelance"
+                                   class="form-input">
+                        </div>
+
+                        <div>
+                            <label class="form-label">Amount (Ks)</label>
+                            <input type="number" step="0.01" name="amount" id="editIncomeAmount" required
+                                   placeholder="0.00"
+                                   class="form-input">
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button type="button" onclick="closeEditIncomeModal()"
+                                    class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium">
+                                <i class="fas fa-save mr-2"></i>Update Income
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div id="addExpenseModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Add Expense</h2>
+                    <button onclick="closeAddExpenseModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="addExpenseForm" method="post" action="{% url 'add_expense' %}">
+                    {% csrf_token %}
+                    <div class="space-y-6">
+                        <div>
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" id="expenseDate" required
+                                   class="form-input">
+                        </div>
+
+                        <div>
+                            <label class="form-label">Description</label>
+                            <input type="text" name="description" id="expenseDescription" required
+                                   placeholder="e.g., Groceries, Rent"
+                                   class="form-input">
+                        </div>
+
+                        <div>
+                            <label class="form-label">Category</label>
+                            <select name="category" id="expenseCategory" class="form-input">
+                                <option value="">Select Category</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="form-label">Amount (Ks)</label>
+                            <input type="number" step="0.01" name="amount" id="expenseAmount" required
+                                   placeholder="0.00"
+                                   class="form-input">
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button type="button" onclick="closeAddExpenseModal()"
+                                    class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all font-medium">
+                                <i class="fas fa-save mr-2"></i>Save Expense
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Expense Modal -->
+    <div id="editExpenseModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Edit Expense</h2>
+                    <button onclick="closeEditExpenseModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="editExpenseForm" method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" id="editExpenseId" name="expense_id">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" id="editExpenseDate" required
+                                   class="form-input">
+                        </div>
+
+                        <div>
+                            <label class="form-label">Description</label>
+                            <input type="text" name="description" id="editExpenseDescription" required
+                                   placeholder="e.g., Groceries, Rent"
+                                   class="form-input">
+                        </div>
+
+                        <div>
+                            <label class="form-label">Category</label>
+                            <select name="category" id="editExpenseCategory" class="form-input">
+                                <option value="">Select Category</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="form-label">Amount (Ks)</label>
+                            <input type="number" step="0.01" name="amount" id="editExpenseAmount" required
+                                   placeholder="0.00"
+                                   class="form-input">
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button type="button" onclick="closeEditExpenseModal()"
+                                    class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium">
+                                <i class="fas fa-save mr-2"></i>Update Expense
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="addCategoryModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Add Category</h2>
+                    <button onclick="closeAddCategoryModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="addCategoryForm" method="post" action="{% url 'add_category' %}">
+                    {% csrf_token %}
+                    <div class="space-y-6">
+                        <div>
+                            <label class="form-label">Category Name</label>
+                            <input type="text" name="name" id="categoryName" required
+                                   placeholder="e.g., Food, Transport, Entertainment"
+                                   class="form-input">
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button type="button" onclick="closeAddCategoryModal()"
+                                    class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-medium">
+                                <i class="fas fa-save mr-2"></i>Save Category
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div id="editCategoryModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Edit Category</h2>
+                    <button onclick="closeEditCategoryModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="editCategoryForm" method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" id="editCategoryId" name="category_id">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="form-label">Category Name</label>
+                            <input type="text" name="name" id="editCategoryName" required
+                                   placeholder="e.g., Food, Transport, Entertainment"
+                                   class="form-input">
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button type="button" onclick="closeEditCategoryModal()"
+                                    class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium">
+                                <i class="fas fa-save mr-2"></i>Update Category
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="modal-overlay">
+        <div class="modal-content max-w-4xl">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Budget Report</h2>
+                    <button onclick="closeReportModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Report Summary -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <p class="text-sm text-green-600">Total Income</p>
+                            <p class="text-2xl font-bold text-green-700" id="reportTotalIncome">{{ total_income|floatformat:2 }}Ks</p>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <p class="text-sm text-red-600">Total Expense</p>
+                            <p class="text-2xl font-bold text-red-700" id="reportTotalExpense">{{ total_expense|floatformat:2 }}Ks</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <p class="text-sm text-blue-600">Balance</p>
+                            <p class="text-2xl font-bold {% if balance >= 0 %}text-blue-700{% else %}text-orange-700{% endif %}" id="reportBalance">
+                                {{ balance|floatformat:2 }}Ks
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-sm text-gray-600">Savings Rate</p>
+                            <p class="text-2xl font-bold" id="reportSavingsRate">
+                                {% if total_income > 0 %}
+                                    {% widthratio balance total_income 100 %}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Charts -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Monthly Breakdown</h3>
+                            <div class="h-64">
+                                <canvas id="reportMonthlyChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Category Distribution</h3>
+                            <div class="h-64">
+                                <canvas id="reportCategoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Export Options -->
+                    <div class="pt-6 border-t border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Export Options</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <button onclick="exportDetailedReport()"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">
+                                <i class="fas fa-file-excel"></i>
+                                <span>Export Detailed Report</span>
+                            </button>
+                            <button onclick="exportIncomeReport()"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
+                                <i class="fas fa-file-excel"></i>
+                                <span>Export Income Report</span>
+                            </button>
+                            <button onclick="exportExpenseReport()"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all">
+                                <i class="fas fa-file-excel"></i>
+                                <span>Export Expense Report</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <script>
-// Function to format date like Django's |date:"F d, Y" filter
-function formatDate(date) {
-    const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
+    // Function to format date
+    function formatDate(date) {
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
 
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const year = date.getFullYear();
+        const month = months[date.getMonth()];
+        const day = date.getDate();
+        const year = date.getFullYear();
 
-    return `${month} ${day}, ${year}`;
-}
-
-// Set today's date
-document.addEventListener('DOMContentLoaded', function() {
-    const today = new Date();
-    const dateElement = document.getElementById('current-date');
-    dateElement.innerHTML = `<i class="far fa-calendar-alt mr-2"></i>${formatDate(today)}`;
-
-    // Set active sidebar item based on current URL
-    const currentPath = window.location.pathname;
-    const sidebarIcons = document.querySelectorAll('.sidebar-icon');
-
-    sidebarIcons.forEach(icon => {
-        const link = icon.getAttribute('href');
-        if (currentPath.includes(link) || (currentPath === '/budget/' && link === '/budget/')) {
-            icon.classList.add('active');
-        } else {
-            icon.classList.remove('active');
-        }
-    });
-
-    // Try to get username from localStorage (if set by dashboard)
-    const username = localStorage.getItem('username');
-    if (username) {
-        document.getElementById('username').textContent = username;
+        return `${month} ${day}, ${year}`;
     }
-});
 
-// Format currency display
-document.addEventListener('DOMContentLoaded', function() {
-    // You can add additional currency formatting here if needed
-    const currencyElements = document.querySelectorAll('[data-currency]');
-    currencyElements.forEach(el => {
-        const value = parseFloat(el.textContent.replace('$', ''));
-        if (!isNaN(value)) {
-            el.textContent = '$' + value.toFixed(2);
+    // Set today's date
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        const dateElement = document.getElementById('current-date');
+        dateElement.innerHTML = `<i class="far fa-calendar-alt mr-2"></i>${formatDate(today)}`;
+
+        // Set today's date in date inputs
+        const todayStr = today.toISOString().split('T')[0];
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        dateInputs.forEach(input => {
+            if (!input.value) {
+                input.value = todayStr;
+            }
+        });
+
+        // Set active sidebar item based on current URL
+        const currentPath = window.location.pathname;
+        const sidebarIcons = document.querySelectorAll('.sidebar-icon');
+
+        sidebarIcons.forEach(icon => {
+            const link = icon.getAttribute('href');
+            if (currentPath.includes(link) || (currentPath === '/budget/' && link === '/budget/')) {
+                icon.classList.add('active');
+            } else {
+                icon.classList.remove('active');
+            }
+        });
+
+        const username = localStorage.getItem('username');
+        if (username) {
+            document.getElementById('username').textContent = username;
         }
+
+        // Initialize charts
+        initializeCharts();
     });
-});
+
+    // Chart data preparation from Django context
+    const budgetData = {
+        total_income: {{ total_income|default:0 }},
+        total_expense: {{ total_expense|default:0 }},
+        balance: {{ balance|default:0 }},
+        incomes: [
+            {% for income in incomes %}
+            {
+                id: '{{ income.id }}',
+                source: '{{ income.source|escapejs }}',
+                amount: {{ income.amount|default:0 }},
+                date: '{{ income.date|escapejs }}'
+            },
+            {% endfor %}
+        ],
+        expenses: [
+            {% for expense in expenses %}
+            {
+                id: '{{ expense.id }}',
+                description: '{{ expense.description|escapejs }}',
+                amount: {{ expense.amount|default:0 }},
+                date: '{{ expense.date|escapejs }}',
+                category: '{{ expense.category.name|escapejs|default:"Uncategorized" }}',
+                category_id: '{{ expense.category.id|default:"" }}'
+            },
+            {% endfor %}
+        ],
+        categories: [
+            {% for category in categories %}
+            {
+                id: '{{ category.id }}',
+                name: '{{ category.name|escapejs }}',
+                count: {{ category.expense_set.count|default:0 }}
+            },
+            {% endfor %}
+        ]
+    };
+
+    // Initialize Charts
+    function initializeCharts() {
+        // 1. Income vs Expense Chart (Bar Chart)
+        const ieCtx = document.getElementById('incomeExpenseChart').getContext('2d');
+        new Chart(ieCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Income', 'Expense'],
+                datasets: [{
+                    label: 'Amount (Ks)',
+                    data: [budgetData.total_income, budgetData.total_expense],
+                    backgroundColor: [
+                        'rgba(34, 197, 94, 0.7)',  // Green for income
+                        'rgba(239, 68, 68, 0.7)'   // Red for expense
+                    ],
+                    borderColor: [
+                        'rgb(34, 197, 94)',
+                        'rgb(239, 68, 68)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + 'Ks';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(2) + 'Ks';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. Category Breakdown Chart (Doughnut)
+        if (budgetData.expenses.length > 0) {
+            const categoryMap = {};
+            budgetData.expenses.forEach(expense => {
+                const cat = expense.category || 'Uncategorized';
+                categoryMap[cat] = (categoryMap[cat] || 0) + expense.amount;
+            });
+
+            const categories = Object.keys(categoryMap);
+            const amounts = Object.values(categoryMap);
+
+            // Generate colors for categories
+            const colors = generateColors(categories.length);
+
+            const catCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(catCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: amounts,
+                        backgroundColor: colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed;
+                                    const total = amounts.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${context.label}: ${value.toFixed(2)}Ks (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 3. Monthly Trend Chart (Line Chart)
+        const monthlyData = processMonthlyData();
+        const trendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: monthlyData.months,
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: monthlyData.income,
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Expense',
+                        data: monthlyData.expense,
+                        borderColor: 'rgb(239, 68, 68)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}Ks`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(2) + 'Ks';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Process monthly data from transactions
+    function processMonthlyData() {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const incomeByMonth = new Array(12).fill(0);
+        const expenseByMonth = new Array(12).fill(0);
+        const currentYear = new Date().getFullYear();
+
+        // Process incomes
+        budgetData.incomes.forEach(income => {
+            const date = new Date(income.date);
+            if (date.getFullYear() === currentYear) {
+                incomeByMonth[date.getMonth()] += income.amount;
+            }
+        });
+
+        // Process expenses
+        budgetData.expenses.forEach(expense => {
+            const date = new Date(expense.date);
+            if (date.getFullYear() === currentYear) {
+                expenseByMonth[date.getMonth()] += expense.amount;
+            }
+        });
+
+        return {
+            months: months,
+            income: incomeByMonth,
+            expense: expenseByMonth
+        };
+    }
+
+    // Generate colors for categories
+    function generateColors(count) {
+        const colors = [];
+        const hueStep = 360 / count;
+
+        for (let i = 0; i < count; i++) {
+            const hue = i * hueStep;
+            colors.push(`hsl(${hue}, 70%, 65%)`);
+        }
+
+        return colors;
+    }
+
+    // Income Modal Functions
+    function openAddIncomeModal() {
+        document.getElementById('addIncomeModal').style.display = 'flex';
+    }
+
+    function closeAddIncomeModal() {
+        document.getElementById('addIncomeModal').style.display = 'none';
+    }
+
+    function openEditIncomeModal(id, date, source, amount) {
+        const form = document.getElementById('editIncomeForm');
+        form.action = `/budget/income/update/${id}/`;
+
+        document.getElementById('editIncomeId').value = id;
+        document.getElementById('editIncomeDate').value = date;
+        document.getElementById('editIncomeSource').value = source;
+        document.getElementById('editIncomeAmount').value = amount;
+
+        document.getElementById('editIncomeModal').style.display = 'flex';
+    }
+
+    function closeEditIncomeModal() {
+        document.getElementById('editIncomeModal').style.display = 'none';
+    }
+
+    // Expense Modal Functions
+    function openAddExpenseModal() {
+        document.getElementById('addExpenseModal').style.display = 'flex';
+    }
+
+    function closeAddExpenseModal() {
+        document.getElementById('addExpenseModal').style.display = 'none';
+    }
+
+    function openEditExpenseModal(id, date, description, amount, categoryId) {
+        const form = document.getElementById('editExpenseForm');
+        form.action = `/budget/expense/update/${id}/`;
+
+        document.getElementById('editExpenseId').value = id;
+        document.getElementById('editExpenseDate').value = date;
+        document.getElementById('editExpenseDescription').value = description;
+        document.getElementById('editExpenseAmount').value = amount;
+
+        const categorySelect = document.getElementById('editExpenseCategory');
+        if (categorySelect) {
+            categorySelect.value = categoryId;
+        }
+
+        document.getElementById('editExpenseModal').style.display = 'flex';
+    }
+
+    function closeEditExpenseModal() {
+        document.getElementById('editExpenseModal').style.display = 'none';
+    }
+
+    // Category Modal Functions
+    function openAddCategoryModal() {
+        document.getElementById('addCategoryModal').style.display = 'flex';
+    }
+
+    function closeAddCategoryModal() {
+        document.getElementById('addCategoryModal').style.display = 'none';
+    }
+
+    function openEditCategoryModal(id, name) {
+        const form = document.getElementById('editCategoryForm');
+        form.action = `/budget/category/update/${id}/`;
+
+        document.getElementById('editCategoryId').value = id;
+        document.getElementById('editCategoryName').value = name;
+
+        document.getElementById('editCategoryModal').style.display = 'flex';
+    }
+
+    function closeEditCategoryModal() {
+        document.getElementById('editCategoryModal').style.display = 'none';
+    }
+
+    // Export to Excel functions
+    function exportToExcel() {
+        const workbook = XLSX.utils.book_new();
+
+        // Create Income Sheet
+        const incomeData = [
+            ['Date', 'Source', 'Amount (Ks)'],
+            ...budgetData.incomes.map(income => [
+                income.date,
+                income.source,
+                income.amount
+            ]),
+            ['', 'Total Income', budgetData.total_income]
+        ];
+        const incomeSheet = XLSX.utils.aoa_to_sheet(incomeData);
+        XLSX.utils.book_append_sheet(workbook, incomeSheet, 'Incomes');
+
+        // Create Expense Sheet
+        const expenseData = [
+            ['Date', 'Description', 'Category', 'Amount (Ks)'],
+            ...budgetData.expenses.map(expense => [
+                expense.date,
+                expense.description,
+                expense.category,
+                expense.amount
+            ]),
+            ['', '', 'Total Expense', budgetData.total_expense]
+        ];
+        const expenseSheet = XLSX.utils.aoa_to_sheet(expenseData);
+        XLSX.utils.book_append_sheet(workbook, expenseSheet, 'Expenses');
+
+        // Create Summary Sheet
+        const savingsRate = budgetData.total_income > 0 ?
+            ((budgetData.balance / budgetData.total_income) * 100).toFixed(2) + '%' : '0%';
+
+        const summaryData = [
+            ['Budget Summary', ''],
+            ['Total Income', budgetData.total_income],
+            ['Total Expense', budgetData.total_expense],
+            ['Balance', budgetData.balance],
+            ['Savings Rate', savingsRate]
+        ];
+        const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+        XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
+
+        // Generate file name with current date
+        const today = new Date();
+        const fileName = `budget_report_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}.xlsx`;
+
+        // Download the file
+        XLSX.writeFile(workbook, fileName);
+        showNotification('Excel file exported successfully!', 'success');
+    }
+
+    function exportDetailedReport() {
+        const workbook = XLSX.utils.book_new();
+
+        // Detailed transaction sheet
+        const allData = [
+            ['Type', 'Date', 'Description/Source', 'Category', 'Amount (Ks)'],
+            ...budgetData.incomes.map(income => [
+                'Income',
+                income.date,
+                income.source,
+                'N/A',
+                income.amount
+            ]),
+            ...budgetData.expenses.map(expense => [
+                'Expense',
+                expense.date,
+                expense.description,
+                expense.category,
+                -expense.amount  // Negative for expenses
+            ])
+        ];
+
+        const sheet = XLSX.utils.aoa_to_sheet(allData);
+        XLSX.utils.book_append_sheet(workbook, sheet, 'All Transactions');
+
+        const fileName = `detailed_budget_report_${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(workbook, fileName);
+        showNotification('Detailed report exported successfully!', 'success');
+    }
+
+    function exportIncomeReport() {
+        const workbook = XLSX.utils.book_new();
+
+        const incomeData = [
+            ['Income Report', '', ''],
+            ['Total Income:', budgetData.total_income + 'Ks', ''],
+            ['', '', ''],
+            ['Date', 'Source', 'Amount (Ks)'],
+            ...budgetData.incomes.map(income => [
+                income.date,
+                income.source,
+                income.amount
+            ]),
+            ['', 'Total', budgetData.total_income]
+        ];
+
+        const sheet = XLSX.utils.aoa_to_sheet(incomeData);
+        XLSX.utils.book_append_sheet(workbook, sheet, 'Income Report');
+
+        const fileName = `income_report_${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(workbook, fileName);
+        showNotification('Income report exported successfully!', 'success');
+    }
+
+    function exportExpenseReport() {
+        const workbook = XLSX.utils.book_new();
+
+        const expenseData = [
+            ['Expense Report', '', '', ''],
+            ['Total Expense:', budgetData.total_expense + 'Ks', '', ''],
+            ['', '', '', ''],
+            ['Date', 'Description', 'Category', 'Amount (Ks)'],
+            ...budgetData.expenses.map(expense => [
+                expense.date,
+                expense.description,
+                expense.category,
+                expense.amount
+            ]),
+            ['', '', 'Total', budgetData.total_expense]
+        ];
+
+        const sheet = XLSX.utils.aoa_to_sheet(expenseData);
+        XLSX.utils.book_append_sheet(workbook, sheet, 'Expense Report');
+
+        const fileName = `expense_report_${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(workbook, fileName);
+        showNotification('Expense report exported successfully!', 'success');
+    }
+
+    // Report Modal Functions
+    function showReportModal() {
+        document.getElementById('reportModal').style.display = 'flex';
+        initializeReportCharts();
+    }
+
+    function closeReportModal() {
+        document.getElementById('reportModal').style.display = 'none';
+    }
+
+    function initializeReportCharts() {
+        // Report Monthly Chart
+        const monthlyData = processMonthlyData();
+        const reportMonthlyCtx = document.getElementById('reportMonthlyChart').getContext('2d');
+        new Chart(reportMonthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: monthlyData.months,
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: monthlyData.income,
+                        backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                        borderColor: 'rgb(34, 197, 94)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Expense',
+                        data: monthlyData.expense,
+                        backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                        borderColor: 'rgb(239, 68, 68)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}Ks`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(2) + 'Ks';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Report Category Chart
+        if (budgetData.expenses.length > 0) {
+            const categoryMap = {};
+            budgetData.expenses.forEach(expense => {
+                const cat = expense.category || 'Uncategorized';
+                categoryMap[cat] = (categoryMap[cat] || 0) + expense.amount;
+            });
+
+            const categories = Object.keys(categoryMap);
+            const amounts = Object.values(categoryMap);
+
+            const colors = generateColors(categories.length);
+
+            const reportCatCtx = document.getElementById('reportCategoryChart').getContext('2d');
+            new Chart(reportCatCtx, {
+                type: 'pie',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: amounts,
+                        backgroundColor: colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed;
+                                    const total = amounts.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${context.label}: ${value.toFixed(2)}Ks (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // Notification function
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium z-50 transform transition-transform duration-300 ${
+            type === 'success' ? 'bg-green-600' :
+            type === 'error' ? 'bg-red-600' : 'bg-blue-600'
+        }`;
+        notification.textContent = message;
+        notification.style.transform = 'translateX(100%)';
+
+        document.body.appendChild(notification);
+
+        // Animate in
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 10);
+
+        // Animate out and remove
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    // Close modals when clicking outside
+    document.addEventListener('click', function(event) {
+        const modals = [
+            'addIncomeModal', 'editIncomeModal',
+            'addExpenseModal', 'editExpenseModal',
+            'addCategoryModal', 'editCategoryModal',
+            'reportModal'
+        ];
+
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (event.target === modal) {
+                if (modalId === 'reportModal') {
+                    closeReportModal();
+                } else if (modalId === 'addIncomeModal') {
+                    closeAddIncomeModal();
+                } else if (modalId === 'editIncomeModal') {
+                    closeEditIncomeModal();
+                } else if (modalId === 'addExpenseModal') {
+                    closeAddExpenseModal();
+                } else if (modalId === 'editExpenseModal') {
+                    closeEditExpenseModal();
+                } else if (modalId === 'addCategoryModal') {
+                    closeAddCategoryModal();
+                } else if (modalId === 'editCategoryModal') {
+                    closeEditCategoryModal();
+                }
+            }
+        });
+    });
 </script>
 
 </body>
