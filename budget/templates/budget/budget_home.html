@@ -45,7 +45,6 @@
 
         /* Card styling */
         .budget-card {
-            background: white;
             border: 1px solid #e5e7eb;
             border-radius: 12px;
             transition: all 0.2s ease;
@@ -108,6 +107,235 @@
             color: #374151;
             margin-bottom: 0.5rem;
         }
+
+        /* Chatbot */
+        .budget-chat-widget {
+            position: fixed !important;
+            bottom: 24px !important;
+            right: 24px !important;
+            width: 380px;
+            height: 550px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 35px -8px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            z-index: 999999 !important;
+            overflow: hidden;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            border: 1px solid #e5e7eb;
+        }
+
+        .budget-chat-widget.collapsed {
+            height: 60px;
+            width: 380px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .budget-chat-header {
+            padding: 16px 20px;
+            background: black;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1000000;
+        }
+
+        .budget-chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .budget-chat-header-left i {
+            font-size: 1.2rem;
+        }
+
+        .budget-chat-header-left span {
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+        }
+
+        .budget-chat-close-btn {
+            color: rgba(255,255,255,0.7);
+            transition: color 0.2s;
+        }
+
+        .budget-chat-close-btn:hover {
+            color: white;
+        }
+
+        .budget-chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .budget-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: messageAppear 0.2s ease;
+            white-space: pre-line;
+            word-break: break-word;
+        }
+
+        .budget-user-message {
+            background: #059669;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .budget-bot-message {
+            background: white;
+            color: #1e293b;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .budget-chat-input-container {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1000000;
+        }
+
+        .budget-chat-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            outline: none;
+            background: white;
+            color: #1e293b;
+        }
+
+        .budget-chat-input:focus {
+            border-color: black;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .budget-chat-send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: black;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .budget-chat-send-btn:hover {
+            background: #047857;
+            transform: scale(1.05);
+        }
+
+        .budget-command-suggestion {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-block;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        .budget-command-suggestion:hover {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .typing-indicator {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            display: inline-block;
+            border: 1px solid #e2e8f0;
+            align-self: flex-start;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 640px) {
+            .budget-chat-widget {
+                width: 100%;
+                height: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+            .budget-chat-widget.collapsed {
+                width: 100%;
+                height: 60px;
+            }
+        }
     </style>
 </head>
 <body class="main-bg font-sans text-gray-800 antialiased">
@@ -140,7 +368,7 @@
     <div class="flex pt-16">
         <!-- Sidebar -->
         <div class="fixed left-0 w-64 sidebar h-screen flex flex-col py-6 space-y-2 z-40">
-            <!-- Logo -->
+            <!-- sidebar small text -->
             <div class="px-4 mb-6">
                 <div class="text-lg font-bold text-gray-900 mb-2">My Workspace</div>
                 <div class="text-xs text-gray-500">Personal dashboard</div>
@@ -182,7 +410,7 @@
                         <div class="flex items-center gap-3">
                             <!-- Export Button -->
                             <button onclick="exportToExcel()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-black text-white rounded-lg hover:bg-green-700 transition-all">
                                 <i class="fas fa-file-excel"></i>
                                 <span>Export Excel</span>
                             </button>
@@ -193,36 +421,36 @@
                 <!-- Summary Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <!-- Income Card -->
-                    <div class="budget-card p-6 border-l-4 border-l-green-500">
+                    <div class="budget-card p-6 bg-gradient-to-r from-emerald-400 to-teal-600">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900">Total Income</h3>
+                            <h3 class="text-lg font-semibold text-white">Total Income</h3>
                             <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
                                 <i class="fas fa-money-bill-wave text-green-600"></i>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-green-600">{{ total_income|floatformat:2 }}Ks</p>
+                        <p class="text-3xl font-bold text-white">{{ total_income|floatformat:2 }}Ks</p>
                     </div>
 
                     <!-- Expense Card -->
-                    <div class="budget-card p-6 border-l-4 border-l-red-500">
+                    <div class="budget-card p-6 bg-gradient-to-r from-rose-400 to-red-500">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900">Total Expense</h3>
+                            <h3 class="text-lg font-semibold text-white">Total Expense</h3>
                             <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
                                 <i class="fas fa-shopping-cart text-red-600"></i>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-red-600">{{ total_expense|floatformat:2 }}Ks</p>
+                        <p class="text-3xl font-bold text-white">{{ total_expense|floatformat:2 }}Ks</p>
                     </div>
 
                     <!-- Balance Card -->
-                    <div class="budget-card p-6 border-l-4 {% if balance >= 0 %}border-l-blue-500{% else %}border-l-orange-500{% endif %}">
+                    <div class="budget-card p-6 bg-gradient-to-br from-slate-100 to-slate-300">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900">Balance</h3>
+                            <h3 class="text-lg font-semibold text-gray-900">Total Balance</h3>
                             <div class="w-10 h-10 rounded-full {% if balance >= 0 %}bg-blue-50{% else %}bg-orange-50{% endif %} flex items-center justify-center">
-                                <i class="fas fa-wallet {% if balance >= 0 %}text-blue-600{% else %}text-orange-600{% endif %}"></i>
+                                <i class="fas fa-wallet text-black"></i>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold {% if balance >= 0 %}text-blue-600{% else %}text-orange-600{% endif %}">
+                        <p class="text-3xl font-bold text-black">
                             {{ balance|floatformat:2 }}Ks
                         </p>
                     </div>
@@ -767,6 +995,40 @@
         </div>
     </div>
 
+    <!-- Budget Assistant Chat pop up  -->
+    <div id="budgetChatWidget" class="budget-chat-widget collapsed">
+        <!-- Header -->
+        <div class="budget-chat-header" onclick="toggleBudgetChat()">
+            <div class="budget-chat-header-left">
+                <i class="fas fa-wallet"></i>
+                <span>Budget Assistant</span>
+            </div>
+            <div class="budget-chat-close-btn">
+                <i id="budgetChatToggleIcon" class="fas fa-chevron-up"></i>
+            </div>
+        </div>
+
+        <!-- Messages Container -->
+        <div id="budgetChatMessages" class="budget-chat-messages hidden">
+            <!-- Welcome message will be provided in the js section script tag :))))))-->
+        </div>
+
+        <!-- Input Container -->
+        <div id="budgetChatInputContainer" class="budget-chat-input-container hidden">
+            <input
+                type="text"
+                id="budgetChatInput"
+                class="budget-chat-input"
+                placeholder="Ask me about your budget..."
+                autocomplete="off"
+            >
+            <button class="budget-chat-send-btn" id="budgetChatSendBtn" onclick="sendBudgetChatMessage()">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+        </div>
+    </div>
+    <!--BUDGET ASSISTANT CHATBOT pop up ends here-->
+
 <script>
     // Function to format date
     function formatDate(date) {
@@ -819,7 +1081,7 @@
         initializeCharts();
     });
 
-    // Chart data preparation from Django context
+    // Chart data preparation
     const budgetData = {
         total_income: {{ total_income|default:0 }},
         total_expense: {{ total_expense|default:0 }},
@@ -907,7 +1169,7 @@
             }
         });
 
-        // 2. Category Breakdown Chart (Doughnut)
+        //  Category Breakdown Chart (Doughnut)
         if (budgetData.expenses.length > 0) {
             const categoryMap = {};
             budgetData.expenses.forEach(expense => {
@@ -954,7 +1216,7 @@
             });
         }
 
-        // 3. Monthly Trend Chart (Line Chart)
+        // Monthly Trend Chart (Line Chart)
         const monthlyData = processMonthlyData();
         const trendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
         new Chart(trendCtx, {
@@ -1236,6 +1498,268 @@
             }
         });
     });
+
+    // BUDGET CHATBOT FUNCTIONALITY starts here
+    let isBudgetChatOpen = false;
+    let isBudgetSending = false;
+
+    // Toggle chat open/closed
+    window.toggleBudgetChat = function() {
+        const widget = document.getElementById('budgetChatWidget');
+        const messages = document.getElementById('budgetChatMessages');
+        const inputContainer = document.getElementById('budgetChatInputContainer');
+        const toggleIcon = document.getElementById('budgetChatToggleIcon');
+
+        if (isBudgetChatOpen) {
+            widget.classList.add('collapsed');
+            messages.classList.add('hidden');
+            inputContainer.classList.add('hidden');
+            toggleIcon.classList.remove('fa-chevron-down');
+            toggleIcon.classList.add('fa-chevron-up');
+            isBudgetChatOpen = false;
+        } else {
+            widget.classList.remove('collapsed');
+            messages.classList.remove('hidden');
+            inputContainer.classList.remove('hidden');
+            toggleIcon.classList.remove('fa-chevron-up');
+            toggleIcon.classList.add('fa-chevron-down');
+            isBudgetChatOpen = true;
+
+            if (document.querySelectorAll('.budget-bot-message').length === 0) {
+                addBudgetBotMessage(`👋 Hi ${budgetData.username || 'there'}! I'm your Budget Assistant.
+
+I can help you manage your finances with commands like:
+
+ **Income:**
+• "add income 5000 salary today"
+• "delete income 5"
+• "delete last income"
+
+ **Expenses:**
+• "add expense 25.50 for lunch food"
+• "how much did I spend on food"
+• "delete expense 3"
+• "delete last expense"
+
+ **Reports:**
+• "show my budget summary"
+• "show my expenses this month"
+• "show my recent transactions"
+
+Try typing something!`);
+
+                setTimeout(() => {
+                    addBudgetSuggestionChips();
+                }, 100);
+            }
+
+            setTimeout(() => {
+                const input = document.getElementById('budgetChatInput');
+                if (input) input.focus();
+            }, 200);
+        }
+    };
+
+    // Add suggestion chips
+    function addBudgetSuggestionChips() {
+        const messagesDiv = document.getElementById('budgetChatMessages');
+        const suggestionsDiv = document.createElement('div');
+        suggestionsDiv.className = 'flex flex-wrap gap-2 mt-2 mb-1';
+        suggestionsDiv.id = 'budgetSuggestionChips';
+
+        const suggestions = [
+            'show my budget summary',
+            'show my expenses this month',
+            'add income 5000 salary',
+            'add expense 15.50 for coffee',
+            'how much on food'
+        ];
+
+        suggestions.forEach(cmd => {
+            const chip = document.createElement('span');
+            chip.className = 'budget-command-suggestion';
+            chip.textContent = cmd;
+            chip.onclick = () => {
+                const input = document.getElementById('budgetChatInput');
+                if (input) {
+                    input.value = cmd;
+                    sendBudgetChatMessage();
+                }
+            };
+            suggestionsDiv.appendChild(chip);
+        });
+
+        messagesDiv.appendChild(suggestionsDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Add user message
+    function addBudgetUserMessage(message) {
+        const messagesDiv = document.getElementById('budgetChatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'budget-message budget-user-message';
+        messageDiv.textContent = message;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Add bot message
+    function addBudgetBotMessage(message) {
+        const messagesDiv = document.getElementById('budgetChatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'budget-message budget-bot-message';
+        messageDiv.innerHTML = message.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Show typing indicator
+    function showBudgetTypingIndicator() {
+        const messagesDiv = document.getElementById('budgetChatMessages');
+        removeBudgetTypingIndicator();
+        const indicator = document.createElement('div');
+        indicator.className = 'typing-indicator';
+        indicator.id = 'budgetTypingIndicator';
+        indicator.innerHTML = `
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        `;
+        messagesDiv.appendChild(indicator);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Remove typing indicator
+    function removeBudgetTypingIndicator() {
+        const indicator = document.getElementById('budgetTypingIndicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+
+    // Send chat message
+    window.sendBudgetChatMessage = function() {
+        if (isBudgetSending) return;
+
+        const input = document.getElementById('budgetChatInput');
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        isBudgetSending = true;
+        const sendBtn = document.getElementById('budgetChatSendBtn');
+        sendBtn.disabled = true;
+
+        input.value = '';
+
+        addBudgetUserMessage(message);
+        showBudgetTypingIndicator();
+
+        fetch('/budget/api/chat-command/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getBudgetCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                message: message
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            removeBudgetTypingIndicator();
+
+            if (data.success) {
+                addBudgetBotMessage(data.message);
+
+                if (['add_income', 'add_expense', 'delete_income', 'delete_expense', 'delete_last'].includes(data.action)) {
+                    addBudgetBotMessage(`Refreshing budget data...`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            } else {
+                addBudgetBotMessage(data.message || 'Sorry, I could not process that command.');
+            }
+        })
+        .catch(error => {
+            removeBudgetTypingIndicator();
+            addBudgetBotMessage('Sorry, there was an error processing your command.');
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            isBudgetSending = false;
+            sendBtn.disabled = false;
+            setTimeout(() => {
+                if (isBudgetChatOpen) {
+                    document.getElementById('budgetChatInput').focus();
+                }
+            }, 100);
+        });
+    };
+
+    // Get CSRF token
+    function getBudgetCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Initialize chat
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add username to budgetData
+        const usernameElement = document.getElementById('username');
+        if (usernameElement) {
+            budgetData.username = usernameElement.textContent;
+        }
+
+        // Set initial chat state
+        isBudgetChatOpen = false;
+
+        // Add keyboard shortcut (Cmd/Ctrl + K)
+        document.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                if (!isBudgetChatOpen) {
+                    toggleBudgetChat();
+                } else {
+                    document.getElementById('budgetChatInput').focus();
+                }
+            }
+
+            if (e.key === 'Escape' && isBudgetChatOpen) {
+                toggleBudgetChat();
+            }
+        });
+
+        // Add enter key handler
+        const chatInput = document.getElementById('budgetChatInput');
+        if (chatInput) {
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendBudgetChatMessage();
+                }
+            });
+        }
+    });
+    // BUDGET CHATBOT FUNCTIONALITY ends here
 </script>
 
 </body>
