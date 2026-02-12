@@ -262,7 +262,7 @@
                             <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                                 <div class="flex items-center">
                                     <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                                        <i class="fas fa-arrow-down text-green-600 text-xs"></i>
+                                        <i class="fas fa-arrow-up text-green-600 text-xs"></i>
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">{{ income.source }}</p>
@@ -276,7 +276,7 @@
                             <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                                 <div class="flex items-center">
                                     <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                                        <i class="fas fa-arrow-up text-red-600 text-xs"></i>
+                                        <i class="fas fa-arrow-down text-red-600 text-xs"></i>
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">{{ expense.description }}</p>
@@ -308,7 +308,7 @@
                             <table class="w-full">
                                 <thead>
                                     <tr class="border-b border-gray-200">
-                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>
+<!--                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>-->
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Source</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Amount</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Actions</th>
@@ -317,19 +317,19 @@
                                 <tbody>
                                     {% for income in incomes %}
                                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 text-sm text-gray-900">{{ income.date }}</td>
+<!--                                        <td class="py-4 text-sm text-gray-900">{{ income.date }}</td>-->
                                         <td class="py-4 text-sm text-gray-900">{{ income.source }}</td>
                                         <td class="py-4 text-sm font-medium text-green-600">{{ income.amount|floatformat:2 }}Ks</td>
                                         <td class="py-4">
                                             <div class="flex items-center gap-2">
                                                 <button onclick="openEditIncomeModal('{{ income.id }}', '{{ income.date|escapejs }}', '{{ income.source|escapejs }}', '{{ income.amount|escapejs }}')"
                                                         class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
-                                                    <i class="fas fa-edit mr-1"></i>Edit
+                                                    <i class="fas fa-edit mr-1"></i>
                                                 </button>
                                                 <a href="{% url 'delete_income' income.id %}"
                                                    class="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
                                                    onclick="return confirm('Are you sure you want to delete this income?')">
-                                                    <i class="fas fa-trash mr-1"></i>Delete
+                                                    <i class="fas fa-trash mr-1"></i>
                                                 </a>
                                             </div>
                                         </td>
@@ -365,7 +365,7 @@
                             <table class="w-full">
                                 <thead>
                                     <tr class="border-b border-gray-200">
-                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>
+<!--                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>-->
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Description</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Category</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Amount</th>
@@ -375,7 +375,7 @@
                                 <tbody>
                                     {% for expense in expenses %}
                                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 text-sm text-gray-900">{{ expense.date }}</td>
+<!--                                        <td class="py-4 text-sm text-gray-900">{{ expense.date }}</td>-->
                                         <td class="py-4 text-sm text-gray-900">{{ expense.description }}</td>
                                         <td class="py-4 text-sm text-gray-600">
                                             {% if expense.category %}
@@ -393,12 +393,12 @@
                                             <div class="flex items-center gap-2">
                                                 <button onclick="openEditExpenseModal('{{ expense.id }}', '{{ expense.date|escapejs }}', '{{ expense.description|escapejs }}', '{{ expense.amount|escapejs }}', '{{ expense.category.id|default:'' }}')"
                                                         class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
-                                                    <i class="fas fa-edit mr-1"></i>Edit
+                                                    <i class="fas fa-edit mr-1"></i>
                                                 </button>
                                                 <a href="{% url 'delete_expense' expense.id %}"
                                                    class="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
                                                    onclick="return confirm('Are you sure you want to delete this expense?')">
-                                                    <i class="fas fa-trash mr-1"></i>Delete
+                                                    <i class="fas fa-trash mr-1"></i>
                                                 </a>
                                             </div>
                                         </td>

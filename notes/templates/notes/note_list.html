@@ -214,72 +214,57 @@
 
                 <!-- Stats Section -->
                 <div class="mb-8">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Total Notes</p>
-                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ total_notes }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-sticky-note text-blue-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">This Week</p>
-                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ this_week_count }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-calendar-week text-green-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Important</p>
-                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ important_count }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-star text-red-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Work Notes</p>
-                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ work_count }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-briefcase text-purple-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-                <!-- Chart Section -->
-                <div class="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-xl border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes Created (Last 7 Days)</h3>
-                        <div class="h-64">
-                            <canvas id="notesChart"></canvas>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Total Notes</p>
+                                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ total_notes }}</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-sticky-note text-blue-600 text-xl"></i>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes by Category</h3>
-                        <div class="h-64">
-                            <canvas id="categoryChart"></canvas>
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">This Week</p>
+                                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ this_week_count }}</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-calendar-week text-green-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Important</p>
+                                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ important_count }}</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-star text-red-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Work Notes</p>
+                                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ work_count }}</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-briefcase text-purple-600 text-xl"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Notes Grid -->
+                <!-- Notes Grid - MOVED ABOVE CHARTS -->
                 {% if notes %}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     {% for note in notes %}
                     <div class="note-card p-6 group cursor-pointer" onclick="openReadModal('{{ note.id }}', '{{ note.title|escapejs }}', '{{ note.content|escapejs }}', '{{ note.tag|default:"personal" }}', '{{ note.created_at|date:"M d, Y" }}', '{{ note.updated_at|timesince }} ago', {% if note.pinned %}'True'{% else %}'False'{% endif %})">
                         <div class="flex items-start justify-between mb-4">
@@ -321,8 +306,8 @@
                     {% endfor %}
                 </div>
                 {% else %}
-                <!-- Empty State -->
-                <div class="text-center py-16 bg-white rounded-xl border border-gray-200">
+                <!-- Empty State - MOVED ABOVE CHARTS -->
+                <div class="text-center py-16 bg-white rounded-xl border border-gray-200 mb-8">
                     <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
                         <i class="fas fa-sticky-note text-3xl text-gray-500"></i>
                     </div>
@@ -335,6 +320,22 @@
                     </button>
                 </div>
                 {% endif %}
+
+                <!-- Chart Section - MOVED BELOW NOTES -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes Created (Last 7 Days)</h3>
+                        <div class="h-64">
+                            <canvas id="notesChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes by Category</h3>
+                        <div class="h-64">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
