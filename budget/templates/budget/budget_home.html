@@ -186,12 +186,6 @@
                                 <i class="fas fa-file-excel"></i>
                                 <span>Export Excel</span>
                             </button>
-                            <!-- Report Button -->
-                            <button onclick="showReportModal()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
-                                <i class="fas fa-chart-bar"></i>
-                                <span>View Report</span>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -773,88 +767,6 @@
         </div>
     </div>
 
-    <!-- Report Modal -->
-    <div id="reportModal" class="modal-overlay">
-        <div class="modal-content max-w-4xl">
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900">Budget Report</h2>
-                    <button onclick="closeReportModal()" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-
-                <div class="space-y-6">
-                    <!-- Report Summary -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-green-50 p-4 rounded-lg">
-                            <p class="text-sm text-green-600">Total Income</p>
-                            <p class="text-2xl font-bold text-green-700" id="reportTotalIncome">{{ total_income|floatformat:2 }}Ks</p>
-                        </div>
-                        <div class="bg-red-50 p-4 rounded-lg">
-                            <p class="text-sm text-red-600">Total Expense</p>
-                            <p class="text-2xl font-bold text-red-700" id="reportTotalExpense">{{ total_expense|floatformat:2 }}Ks</p>
-                        </div>
-                        <div class="bg-blue-50 p-4 rounded-lg">
-                            <p class="text-sm text-blue-600">Balance</p>
-                            <p class="text-2xl font-bold {% if balance >= 0 %}text-blue-700{% else %}text-orange-700{% endif %}" id="reportBalance">
-                                {{ balance|floatformat:2 }}Ks
-                            </p>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="text-sm text-gray-600">Savings Rate</p>
-                            <p class="text-2xl font-bold" id="reportSavingsRate">
-                                {% if total_income > 0 %}
-                                    {% widthratio balance total_income 100 %}%
-                                {% else %}
-                                    0%
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Detailed Charts -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Monthly Breakdown</h3>
-                            <div class="h-64">
-                                <canvas id="reportMonthlyChart"></canvas>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Category Distribution</h3>
-                            <div class="h-64">
-                                <canvas id="reportCategoryChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Export Options -->
-                    <div class="pt-6 border-t border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Export Options</h3>
-                        <div class="flex flex-wrap gap-3">
-                            <button onclick="exportDetailedReport()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">
-                                <i class="fas fa-file-excel"></i>
-                                <span>Export Detailed Report</span>
-                            </button>
-                            <button onclick="exportIncomeReport()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
-                                <i class="fas fa-file-excel"></i>
-                                <span>Export Income Report</span>
-                            </button>
-                            <button onclick="exportExpenseReport()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all">
-                                <i class="fas fa-file-excel"></i>
-                                <span>Export Expense Report</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 <script>
     // Function to format date
     function formatDate(date) {
@@ -1271,192 +1183,6 @@
         showNotification('Excel file exported successfully!', 'success');
     }
 
-    function exportDetailedReport() {
-        const workbook = XLSX.utils.book_new();
-
-        // Detailed transaction sheet
-        const allData = [
-            ['Type', 'Date', 'Description/Source', 'Category', 'Amount (Ks)'],
-            ...budgetData.incomes.map(income => [
-                'Income',
-                income.date,
-                income.source,
-                'N/A',
-                income.amount
-            ]),
-            ...budgetData.expenses.map(expense => [
-                'Expense',
-                expense.date,
-                expense.description,
-                expense.category,
-                -expense.amount  // Negative for expenses
-            ])
-        ];
-
-        const sheet = XLSX.utils.aoa_to_sheet(allData);
-        XLSX.utils.book_append_sheet(workbook, sheet, 'All Transactions');
-
-        const fileName = `detailed_budget_report_${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(workbook, fileName);
-        showNotification('Detailed report exported successfully!', 'success');
-    }
-
-    function exportIncomeReport() {
-        const workbook = XLSX.utils.book_new();
-
-        const incomeData = [
-            ['Income Report', '', ''],
-            ['Total Income:', budgetData.total_income + 'Ks', ''],
-            ['', '', ''],
-            ['Date', 'Source', 'Amount (Ks)'],
-            ...budgetData.incomes.map(income => [
-                income.date,
-                income.source,
-                income.amount
-            ]),
-            ['', 'Total', budgetData.total_income]
-        ];
-
-        const sheet = XLSX.utils.aoa_to_sheet(incomeData);
-        XLSX.utils.book_append_sheet(workbook, sheet, 'Income Report');
-
-        const fileName = `income_report_${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(workbook, fileName);
-        showNotification('Income report exported successfully!', 'success');
-    }
-
-    function exportExpenseReport() {
-        const workbook = XLSX.utils.book_new();
-
-        const expenseData = [
-            ['Expense Report', '', '', ''],
-            ['Total Expense:', budgetData.total_expense + 'Ks', '', ''],
-            ['', '', '', ''],
-            ['Date', 'Description', 'Category', 'Amount (Ks)'],
-            ...budgetData.expenses.map(expense => [
-                expense.date,
-                expense.description,
-                expense.category,
-                expense.amount
-            ]),
-            ['', '', 'Total', budgetData.total_expense]
-        ];
-
-        const sheet = XLSX.utils.aoa_to_sheet(expenseData);
-        XLSX.utils.book_append_sheet(workbook, sheet, 'Expense Report');
-
-        const fileName = `expense_report_${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(workbook, fileName);
-        showNotification('Expense report exported successfully!', 'success');
-    }
-
-    // Report Modal Functions
-    function showReportModal() {
-        document.getElementById('reportModal').style.display = 'flex';
-        initializeReportCharts();
-    }
-
-    function closeReportModal() {
-        document.getElementById('reportModal').style.display = 'none';
-    }
-
-    function initializeReportCharts() {
-        // Report Monthly Chart
-        const monthlyData = processMonthlyData();
-        const reportMonthlyCtx = document.getElementById('reportMonthlyChart').getContext('2d');
-        new Chart(reportMonthlyCtx, {
-            type: 'bar',
-            data: {
-                labels: monthlyData.months,
-                datasets: [
-                    {
-                        label: 'Income',
-                        data: monthlyData.income,
-                        backgroundColor: 'rgba(34, 197, 94, 0.7)',
-                        borderColor: 'rgb(34, 197, 94)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Expense',
-                        data: monthlyData.expense,
-                        backgroundColor: 'rgba(239, 68, 68, 0.7)',
-                        borderColor: 'rgb(239, 68, 68)',
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}Ks`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value.toFixed(2) + 'Ks';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Report Category Chart
-        if (budgetData.expenses.length > 0) {
-            const categoryMap = {};
-            budgetData.expenses.forEach(expense => {
-                const cat = expense.category || 'Uncategorized';
-                categoryMap[cat] = (categoryMap[cat] || 0) + expense.amount;
-            });
-
-            const categories = Object.keys(categoryMap);
-            const amounts = Object.values(categoryMap);
-
-            const colors = generateColors(categories.length);
-
-            const reportCatCtx = document.getElementById('reportCategoryChart').getContext('2d');
-            new Chart(reportCatCtx, {
-                type: 'pie',
-                data: {
-                    labels: categories,
-                    datasets: [{
-                        data: amounts,
-                        backgroundColor: colors,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const value = context.parsed;
-                                    const total = amounts.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${context.label}: ${value.toFixed(2)}Ks (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    }
-
     // Notification function
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
@@ -1489,15 +1215,12 @@
             'addIncomeModal', 'editIncomeModal',
             'addExpenseModal', 'editExpenseModal',
             'addCategoryModal', 'editCategoryModal',
-            'reportModal'
         ];
 
         modals.forEach(modalId => {
             const modal = document.getElementById(modalId);
             if (event.target === modal) {
-                if (modalId === 'reportModal') {
-                    closeReportModal();
-                } else if (modalId === 'addIncomeModal') {
+                if (modalId === 'addIncomeModal') {
                     closeAddIncomeModal();
                 } else if (modalId === 'editIncomeModal') {
                     closeEditIncomeModal();
