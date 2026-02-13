@@ -5,6 +5,7 @@
     <!-- Add Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
         .main-bg { background-color: #f9fafb; }
         .sidebar {
@@ -123,9 +124,9 @@
             <!-- Header -->
                 <div class="mb-8">
                     <h1 class="text-3xl font-bold text-gray-900">Task Dashboard</h1>
-<!--                    <p class="text-gray-600 mt-2">Track your income, expenses, and manage your finances.</p>-->
+                    <p class="text-gray-600 mt-2">A clean and thoughtfully organized workspace built to streamline your daily tasks.</p>
                 </div>
-            <div class="min-h-screen bg-gray-50 py-8">
+            <div class="min-h-screen bg-gray-50 py-8 -mt-5">
                 <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Left Column - Calendar and Stats -->
                     <div class="lg:col-span-1 lg:sticky lg:top-24 h-fit self-start">
@@ -254,14 +255,15 @@
                         <!-- Header -->
                         <section id="tasks">
                             <div class="mb-6">
-                                <div class="flex items-center justify-between -mt-3">
+                                <div class="flex items-center justify-between -mt-8">
                                     <h1 class="text-3xl font-bold text-gray-900">Tasks</h1>
                                     <!-- Search Bar -->
                                     <form method="get" class="mb-6">
-                                        <div class="relative max-w-md">
+                                        <div class="relative max-w-md mb-6 group">
                                             <input
                                                 type="text"
-                                                name="q"
+                                                id="search-input"
+
                                                 value="{{ query }}"
                                                 placeholder="Search tasks..."
                                                 class="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2
@@ -275,20 +277,18 @@
                                                       d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                             </svg>
                                             <!-- Clear button (only show when searching) -->
-                                            {% if query %}
-                                                <a href="{% url 'todolist' %}"
-                                                   class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
+                                                <a href="#" id="clear-search"
+                                                   class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black opacity-0 group-hover:opacity-100 transition-opacity">
                                                     ✕
                                                 </a>
-                                            {% endif %}
                                         </div>
                                     </form>
                                 </div>
-                                <p class="text-gray-600">A clean and thoughtfully organized workspace built to streamline your daily tasks.</p>
+<!--                                <p class="text-gray-600">A clean and thoughtfully organized workspace built to streamline your daily tasks.</p>-->
                             </div>
 
                             <!-- Add task button -->
-                            <div class="mb-6">
+                            <div class="mb-6 -mt-6">
                                 <button onclick="openAddModal()"
                                         class="group flex items-center gap-3 w-full p-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm">
                                     <div class="w-6 h-6 rounded border border-gray-400 flex items-center justify-center group-hover:border-gray-600">
@@ -299,11 +299,11 @@
                             </div>
 
                             <!-- Task List -->
-                            <div class="space-y-2">
+                            <div class="space-y-2" id="task-list">
                                 {% for task in tasks %}
-                                <div class="group relative">
+                                <div class="group relative task-item {% if forloop.counter > 5 %} overflow-hidden max-h-0 opacity-0 {% endif %} transition-all duration-500 ease-in-out">
                                     <!-- Task Card -->
-                                    <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200">
+                                    <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 mb-3">
                                         <div class="flex items-start gap-4">
                                             <!-- Checkbox  -->
                                             <div class="pt-0.5">
@@ -403,10 +403,33 @@
                                 </div>
                                 {% endfor %}
                             </div>
+                            <!-- See More / See Less Button -->
+                            {% if tasks|length > 5 %}
+                            <div class="relative text-center -mt-7">
+                                <button id="toggle-tasks-btn"
+                                    class="inline-flex items-center justify-center
+                                           w-12 h-12
+                                           rounded-full
+                                           bg-white/70 backdrop-blur-md
+                                           border border-gray-200
+                                           shadow-lg
+                                           text-gray-600
+                                           hover:text-black
+                                           hover:bg-white
+                                           transition-all duration-300
+                                           opacity-0 hover:opacity-100">
+
+<!--                                    <span id="toggle-text">See More</span>-->
+                                    <i id="expand-icon" class="bi bi-arrows-angle-expand text-lg transition-all duration-300"></i>
+                                    <i id="contract-icon" class="bi bi-arrows-angle-contract text-lg hidden transition-all duration-300"></i>
+
+                                </button>
+                            </div>
+                            {% endif %}
                         </section>
 
-                        <section id="status">
-                            <div class="flex items-center justify-center mt-8 mb-4">
+                        <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm mt-4">
+                            <div class="flex items-center justify-center mt-3 mb-4">
                                     <h1 class="text-3xl font-bold text-gray-900">Task Status</h1>
                             </div>
                             <div class="flex items-center gap-6 border-b border-gray-200 mb-6 tab-links">
@@ -737,7 +760,7 @@
                                         {% endfor %}
                                     </div>
                             </div>
-                        </section>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -944,6 +967,31 @@
 <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
 
 <script type="module">
+const searchInput = document.getElementById("search-input");
+const taskItems = document.querySelectorAll("#task-list .task-item");
+const clearBtn = document.getElementById("clear-search");
+
+// Live filtering while typing
+searchInput.addEventListener("input", function() {
+    const query = this.value.toLowerCase();
+
+    taskItems.forEach(item => {
+        const taskName = item.querySelector("h3").textContent.toLowerCase();
+        if (taskName.includes(query)) {
+            item.style.display = ""; // show
+        } else {
+            item.style.display = "none"; // hide
+        }
+    });
+});
+
+// Clear search
+clearBtn.addEventListener("click", function(e) {
+    e.preventDefault();
+    searchInput.value = "";
+    taskItems.forEach(item => item.style.display = "");
+})
+
 import { EmojiButton } from 'https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js';
 
 window.pickers = {};
@@ -987,6 +1035,37 @@ window.openEmojiPicker = function(inputId, button) {
 
     window.pickers[inputId].togglePicker(button);
 };
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const toggleBtn = document.getElementById('toggle-tasks-btn');
+    const tasks = document.querySelectorAll('.task-item');
+    const expandIcon = document.getElementById('expand-icon');
+    const contractIcon = document.getElementById('contract-icon');
+
+    let expanded = false;
+
+    toggleBtn?.addEventListener('click', function () {
+        expanded = !expanded;
+
+        tasks.forEach((task, index) => {
+            if (index >= 5) {
+
+                if (expanded) {
+                    task.classList.remove('max-h-0', 'opacity-0');
+                    task.classList.add('max-h-[500px]', 'opacity-100');
+                } else {
+                    task.classList.remove('max-h-[500px]', 'opacity-100');
+                    task.classList.add('max-h-0', 'opacity-0');
+                }
+            }
+        });
+
+        expandIcon.classList.toggle('hidden', expanded);
+        contractIcon.classList.toggle('hidden', !expanded);
+    });
+
+});
 
 // Modals
 window.openAddModal = () => {
