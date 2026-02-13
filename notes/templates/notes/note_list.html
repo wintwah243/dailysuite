@@ -180,6 +180,10 @@
                     <i class="fas fa-wallet w-5 mr-3"></i>
                     <span class="text-sm font-medium">Budget</span>
                 </a>
+                <a href="/accounts/profile/" class="sidebar-icon active" title="Profile">
+                    <i class="fas fa-user-circle w-5 mr-3"></i>
+                    <span class="text-sm font-medium">Profile</span>
+                </a>
             </div>
 
             <div class="flex-1"></div>
@@ -214,72 +218,57 @@
 
                 <!-- Stats Section -->
                 <div class="mb-8">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Total Notes</p>
-                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ total_notes }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-sticky-note text-blue-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">This Week</p>
-                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ this_week_count }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-calendar-week text-green-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Important</p>
-                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ important_count }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-star text-red-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Work Notes</p>
-                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ work_count }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-briefcase text-purple-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-                <!-- Chart Section -->
-                <div class="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-xl border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes Created (Last 7 Days)</h3>
-                        <div class="h-64">
-                            <canvas id="notesChart"></canvas>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Total Notes</p>
+                                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ total_notes }}</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-sticky-note text-blue-600 text-xl"></i>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes by Category</h3>
-                        <div class="h-64">
-                            <canvas id="categoryChart"></canvas>
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">This Week</p>
+                                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ this_week_count }}</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-calendar-week text-green-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Important</p>
+                                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ important_count }}</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-star text-red-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Work Notes</p>
+                                    <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ work_count }}</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-briefcase text-purple-600 text-xl"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Notes Grid -->
+                <!-- Notes Grid - MOVED ABOVE CHARTS -->
                 {% if notes %}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     {% for note in notes %}
                     <div class="note-card p-6 group cursor-pointer" onclick="openReadModal('{{ note.id }}', '{{ note.title|escapejs }}', '{{ note.content|escapejs }}', '{{ note.tag|default:"personal" }}', '{{ note.created_at|date:"M d, Y" }}', '{{ note.updated_at|timesince }} ago', {% if note.pinned %}'True'{% else %}'False'{% endif %})">
                         <div class="flex items-start justify-between mb-4">
@@ -321,8 +310,8 @@
                     {% endfor %}
                 </div>
                 {% else %}
-                <!-- Empty State -->
-                <div class="text-center py-16 bg-white rounded-xl border border-gray-200">
+                <!-- Empty State - MOVED ABOVE CHARTS -->
+                <div class="text-center py-16 bg-white rounded-xl border border-gray-200 mb-8">
                     <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
                         <i class="fas fa-sticky-note text-3xl text-gray-500"></i>
                     </div>
@@ -335,102 +324,152 @@
                     </button>
                 </div>
                 {% endif %}
+
+                <!-- Chart Section - MOVED BELOW NOTES -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes Created (Last 7 Days)</h3>
+                        <div class="h-64">
+                            <canvas id="notesChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes by Category</h3>
+                        <div class="h-64">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Create Note Modal -->
-    <div id="createModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900">Create New Note</h2>
-                    <button onclick="closeCreateModal()" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
+<div id="createModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Create New Note</h2>
+                <button onclick="closeCreateModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
 
-                <form id="createNoteForm" method="post" action="{% url 'note_create' %}">
-                    {% csrf_token %}
-                    <div class="space-y-6">
-                        <!-- Title Field -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                            <input type="text"
-                                   id="createTitle"
-                                   name="title"
-                                   required
-                                   class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                   placeholder="Enter note title">
-                        </div>
+            <form id="createNoteForm" method="post" action="{% url 'note_create' %}">
+                {% csrf_token %}
+                <div class="space-y-6">
+                    <!-- Title Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                        <input type="text"
+                               id="createTitle"
+                               name="title"
+                               required
+                               class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="Enter note title">
+                    </div>
 
-                        <!-- Tag Selection -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                            <div class="flex flex-wrap gap-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="tag" value="personal" class="sr-only peer" checked>
-                                    <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg peer-checked:bg-blue-600 peer-checked:text-white cursor-pointer transition-colors">
-                                        Personal
-                                    </span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="tag" value="work" class="sr-only peer">
-                                    <span class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg peer-checked:bg-yellow-600 peer-checked:text-white cursor-pointer transition-colors">
-                                        Work
-                                    </span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="tag" value="ideas" class="sr-only peer">
-                                    <span class="px-4 py-2 bg-cyan-100 text-cyan-800 rounded-lg peer-checked:bg-cyan-600 peer-checked:text-white cursor-pointer transition-colors">
-                                        Ideas
-                                    </span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="tag" value="important" class="sr-only peer">
-                                    <span class="px-4 py-2 bg-red-100 text-red-800 rounded-lg peer-checked:bg-red-600 peer-checked:text-white cursor-pointer transition-colors">
-                                        Important
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Content Field -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
-                            <textarea
-                                id="createContent"
-                                name="content"
-                                rows="6"
-                                required
-                                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Write your note here..."></textarea>
-                        </div>
-
-                        <!-- Additional Options -->
-                        <div class="flex items-center justify-between">
-                            <label class="flex items-center">
-                                <input type="checkbox" name="pinned" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">Pin to top</span>
+                    <!-- Tag Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <div class="flex flex-wrap gap-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="tag" value="personal" class="sr-only peer" checked>
+                                <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg peer-checked:bg-blue-600 peer-checked:text-white cursor-pointer transition-colors">
+                                    Personal
+                                </span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="tag" value="work" class="sr-only peer">
+                                <span class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg peer-checked:bg-yellow-600 peer-checked:text-white cursor-pointer transition-colors">
+                                    Work
+                                </span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="tag" value="ideas" class="sr-only peer">
+                                <span class="px-4 py-2 bg-cyan-100 text-cyan-800 rounded-lg peer-checked:bg-cyan-600 peer-checked:text-white cursor-pointer transition-colors">
+                                    Ideas
+                                </span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="tag" value="important" class="sr-only peer">
+                                <span class="px-4 py-2 bg-red-100 text-red-800 rounded-lg peer-checked:bg-red-600 peer-checked:text-white cursor-pointer transition-colors">
+                                    Important
+                                </span>
                             </label>
                         </div>
-
-                        <!-- Submit Button -->
-                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                            <button type="button" onclick="closeCreateModal()"
-                                    class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                    class="px-6 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all font-medium">
-                                <i class="fas fa-save mr-2"></i>Save Note
-                            </button>
-                        </div>
                     </div>
-                </form>
-            </div>
+
+                    <!-- Content Field with Voice Input -->
+<div>
+    <div class="flex items-center justify-between mb-2">
+        <label class="block text-sm font-medium text-gray-700">Content</label>
+        <div class="flex items-center gap-2">
+            <!-- Language Selector -->
+            <select id="createLanguage" onchange="changeCreateLanguage(this.value)"
+                    class="text-xs border border-gray-300 rounded-lg px-2 py-1.5 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white">
+                <option value="en-US">English</option>
+                <option value="my-MM">Burmese (Myanmar)</option>
+            </select>
+
+            <!-- Voice Recording Button -->
+            <button type="button" id="createVoiceBtn" onclick="toggleCreateRecording()"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm">
+                <i id="createMicIcon" class="fas fa-microphone"></i>
+                <span id="createVoiceText">Voice Input</span>
+            </button>
+            <!-- Recording Timer (hidden by default) -->
+            <span id="createTimer" class="text-sm font-mono text-gray-500 hidden">
+                <i class="fas fa-circle text-red-500 animate-pulse mr-1"></i>
+                <span id="createTimerDisplay">00:00</span>
+            </span>
         </div>
     </div>
+    <textarea
+        id="createContent"
+        name="content"
+        rows="8"
+        required
+        class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        placeholder="Write your note here or click the voice button to speak.">
+
+    </textarea>
+
+    <!-- Character Count -->
+    <div class="flex justify-between mt-2 text-xs text-gray-500">
+        <span id="createCharCount">0 characters</span>
+        <span id="createWordCount">0 words</span>
+    </div>
+</div>
+
+                    <!-- Additional Options -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="pinned" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">Pin to top</span>
+                        </label>
+                        <button type="button" onclick="clearCreateVoiceForm()"
+                                class="text-sm text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-eraser mr-1"></i>Clear
+                        </button>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                        <button type="button" onclick="closeCreateModal()"
+                                class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                class="px-6 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all font-medium">
+                            <i class="fas fa-save mr-2"></i>Save Note
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
     <!-- Read Note Modal -->
     <div id="readModal" class="modal-overlay">
@@ -479,98 +518,130 @@
     </div>
 
     <!-- Edit Note Modal -->
-    <div id="editModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900">Edit Note</h2>
-                    <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
+<div id="editModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Edit Note</h2>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
 
-                <form id="editNoteForm" method="post" action="">
-                    {% csrf_token %}
-                    <input type="hidden" id="editNoteId" name="note_id">
-                    <div class="space-y-6">
-                        <!-- Title Field -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                            <input type="text"
-                                   id="editTitle"
-                                   name="title"
-                                   required
-                                   class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                   placeholder="Enter note title">
-                        </div>
+            <form id="editNoteForm" method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" id="editNoteId" name="note_id">
+                <div class="space-y-6">
+                    <!-- Title Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                        <input type="text"
+                               id="editTitle"
+                               name="title"
+                               required
+                               class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="Enter note title">
+                    </div>
 
-                        <!-- Tag Selection -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                            <div class="flex flex-wrap gap-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="tag" value="personal" class="sr-only peer">
-                                    <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg peer-checked:bg-blue-600 peer-checked:text-white cursor-pointer transition-colors">
-                                        Personal
-                                    </span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="tag" value="work" class="sr-only peer">
-                                    <span class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg peer-checked:bg-yellow-600 peer-checked:text-white cursor-pointer transition-colors">
-                                        Work
-                                    </span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="tag" value="ideas" class="sr-only peer">
-                                    <span class="px-4 py-2 bg-cyan-100 text-cyan-800 rounded-lg peer-checked:bg-cyan-600 peer-checked:text-white cursor-pointer transition-colors">
-                                        Ideas
-                                    </span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="tag" value="important" class="sr-only peer">
-                                    <span class="px-4 py-2 bg-red-100 text-red-800 rounded-lg peer-checked:bg-red-600 peer-checked:text-white cursor-pointer transition-colors">
-                                        Important
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Content Field -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
-                            <textarea
-                                id="editContent"
-                                name="content"
-                                rows="6"
-                                required
-                                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Write your note here..."></textarea>
-                        </div>
-
-                        <!-- Additional Options -->
-                        <div class="flex items-center justify-between">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="editPinned" name="pinned" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">Pin to top</span>
+                    <!-- Tag Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <div class="flex flex-wrap gap-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="tag" value="personal" class="sr-only peer">
+                                <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg peer-checked:bg-blue-600 peer-checked:text-white cursor-pointer transition-colors">
+                                    Personal
+                                </span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="tag" value="work" class="sr-only peer">
+                                <span class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg peer-checked:bg-yellow-600 peer-checked:text-white cursor-pointer transition-colors">
+                                    Work
+                                </span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="tag" value="ideas" class="sr-only peer">
+                                <span class="px-4 py-2 bg-cyan-100 text-cyan-800 rounded-lg peer-checked:bg-cyan-600 peer-checked:text-white cursor-pointer transition-colors">
+                                    Ideas
+                                </span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="tag" value="important" class="sr-only peer">
+                                <span class="px-4 py-2 bg-red-100 text-red-800 rounded-lg peer-checked:bg-red-600 peer-checked:text-white cursor-pointer transition-colors">
+                                    Important
+                                </span>
                             </label>
                         </div>
-
-                        <!-- Submit Button -->
-                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                            <button type="button" onclick="closeEditModal()"
-                                    class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                    class="px-6 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all font-medium">
-                                <i class="fas fa-save mr-2"></i>Update Note
-                            </button>
-                        </div>
                     </div>
-                </form>
-            </div>
+
+                    <!-- Content Field with Voice Input -->
+<div>
+    <div class="flex items-center justify-between mb-2">
+        <label class="block text-sm font-medium text-gray-700">Content</label>
+        <div class="flex items-center gap-2">
+            <!-- Language Selector -->
+            <select id="editLanguage" onchange="changeEditLanguage(this.value)"
+                    class="text-xs border border-gray-300 rounded-lg px-2 py-1.5 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white">
+                <option value="en-US">English</option>
+                <option value="my-MM">Burmese (Myanmar)</option>
+            </select>
+
+            <!-- Voice Recording Button -->
+            <button type="button" id="editVoiceBtn" onclick="toggleEditRecording()"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm">
+                <i id="editMicIcon" class="fas fa-microphone"></i>
+                <span id="editVoiceText">Voice Input</span>
+            </button>
+            <!-- Recording Timer (hidden by default) -->
+            <span id="editTimer" class="text-sm font-mono text-gray-500 hidden">
+                <i class="fas fa-circle text-red-500 animate-pulse mr-1"></i>
+                <span id="editTimerDisplay">00:00</span>
+            </span>
         </div>
     </div>
+    <textarea
+        id="editContent"
+        name="content"
+        rows="8"
+        required
+        class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        placeholder="Write your note here or click the voice button to speak."></textarea>
+
+    <!-- Character Count -->
+    <div class="flex justify-between mt-2 text-xs text-gray-500">
+        <span id="editCharCount">0 characters</span>
+        <span id="editWordCount">0 words</span>
+    </div>
+</div>
+
+                    <!-- Additional Options -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="editPinned" name="pinned" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">Pin to top</span>
+                        </label>
+                        <button type="button" onclick="clearEditVoiceForm()"
+                                class="text-sm text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-eraser mr-1"></i>Clear
+                        </button>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                        <button type="button" onclick="closeEditModal()"
+                                class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                class="px-6 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all font-medium">
+                            <i class="fas fa-save mr-2"></i>Update Note
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
     <!-- Calendar Modal -->
     <div id="calendarModal" class="modal-overlay">
@@ -664,6 +735,539 @@
     const tagsData = {{ tags_data|safe|default:"[]" }};
     const calendarDaysWithNotes = {{ calendar_days_with_notes|safe|default:"[]" }};
     const weekDays = {{ week_days|safe }};
+
+    // SPEECH TO TEXT start here
+let createRecognition = null;
+let editRecognition = null;
+let isCreateRecording = false;
+let isEditRecording = false;
+let createTimer = null;
+let editTimer = null;
+let createSeconds = 0;
+let editSeconds = 0;
+
+// Supported languages
+const languages = {
+    'en-US': 'English',
+    'my-MM': 'Burmese (Myanmar)',
+};
+
+// Check if browser supports Burmese
+function checkBurmeseSupport() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        return false;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const testRecognition = new SpeechRecognition();
+
+    // Test if Burmese language is supported
+    try {
+        testRecognition.lang = 'my-MM';
+        return true;
+    } catch (e) {
+        console.warn('Burmese language may not be fully supported in this browser');
+        return false;
+    }
+}
+
+// Initialize speech recognition for Create modal with language support
+function initCreateSpeechRecognition(lang = 'en-US') {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('Speech recognition is not supported in your browser. Please use Chrome, Edge, or Safari.');
+        return false;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    createRecognition = new SpeechRecognition();
+    createRecognition.continuous = true;
+    createRecognition.interimResults = true;
+    createRecognition.lang = lang;
+    createRecognition.maxAlternatives = 3; // Get more alternatives for better accuracy
+
+    createRecognition.onstart = function() {
+        isCreateRecording = true;
+        document.getElementById('createMicIcon').className = 'fas fa-stop';
+        document.getElementById('createVoiceBtn').classList.add('bg-red-100', 'text-red-700');
+
+        // Update button text based on language
+        const langName = languages[lang] || lang;
+        document.getElementById('createVoiceText').textContent = `Stop (${langName})`;
+
+        document.getElementById('createTimer').classList.remove('hidden');
+        startCreateTimer();
+
+        // Show language indicator
+        showNotification(`🎤 Listening in ${langName}...`, 'info');
+    };
+
+    createRecognition.onresult = function(event) {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+                finalTranscript += transcript + ' ';
+            } else {
+                interimTranscript += transcript;
+            }
+        }
+
+        if (finalTranscript) {
+            const textarea = document.getElementById('createContent');
+            const currentText = textarea.value;
+
+            if (currentText.trim().length > 0 && !currentText.endsWith(' ') && !currentText.endsWith('\n')) {
+                textarea.value = currentText + ' ' + finalTranscript;
+            } else {
+                textarea.value = currentText + finalTranscript;
+            }
+            // Update character count
+            updateCreateTextStats();
+            // Auto-scroll
+            textarea.scrollTop = textarea.scrollHeight;
+        }
+    };
+
+    createRecognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        let errorMessage = '';
+
+        switch(event.error) {
+            case 'not-allowed':
+                errorMessage = 'Microphone access denied. Please allow microphone access.';
+                break;
+            case 'no-speech':
+                errorMessage = 'No speech detected. Please try again.';
+                break;
+            case 'network':
+                errorMessage = 'Network error. Please check your connection.';
+                break;
+            case 'language-not-supported':
+                errorMessage = `${languages[lang] || lang} is not supported in your browser. Try English.`;
+                break;
+            case 'service-not-allowed':
+                errorMessage = 'Speech service not available.';
+                break;
+            default:
+                errorMessage = `Error: ${event.error}`;
+        }
+
+        showNotification(errorMessage, 'error');
+        stopCreateRecording();
+    };
+
+    createRecognition.onend = function() {
+        if (isCreateRecording) {
+            try {
+                createRecognition.start();
+            } catch (e) {
+                console.log('Restart failed:', e);
+            }
+        } else {
+            resetCreateUI();
+        }
+    };
+
+    return true;
+}
+
+// Initialize speech recognition for Edit modal with language support
+function initEditSpeechRecognition(lang = 'en-US') {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('Speech recognition is not supported in your browser. Please use Chrome, Edge, or Safari.');
+        return false;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    editRecognition = new SpeechRecognition();
+    editRecognition.continuous = true;
+    editRecognition.interimResults = true;
+    editRecognition.lang = lang;
+    editRecognition.maxAlternatives = 3;
+
+    editRecognition.onstart = function() {
+        isEditRecording = true;
+        document.getElementById('editMicIcon').className = 'fas fa-stop';
+        document.getElementById('editVoiceBtn').classList.add('bg-red-100', 'text-red-700');
+
+        const langName = languages[lang] || lang;
+        document.getElementById('editVoiceText').textContent = `Stop (${langName})`;
+
+        document.getElementById('editTimer').classList.remove('hidden');
+        startEditTimer();
+
+        showNotification(`🎤 Listening in ${langName}...`, 'info');
+    };
+
+    editRecognition.onresult = function(event) {
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript + ' ';
+            }
+        }
+
+        if (finalTranscript) {
+            const textarea = document.getElementById('editContent');
+            const currentText = textarea.value;
+
+            if (currentText.trim().length > 0 && !currentText.endsWith(' ') && !currentText.endsWith('\n')) {
+                textarea.value = currentText + ' ' + finalTranscript;
+            } else {
+                textarea.value = currentText + finalTranscript;
+            }
+
+            updateEditTextStats();
+            textarea.scrollTop = textarea.scrollHeight;
+        }
+    };
+
+    editRecognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        let errorMessage = '';
+
+        switch(event.error) {
+            case 'not-allowed':
+                errorMessage = 'Microphone access denied. Please allow microphone access.';
+                break;
+            case 'no-speech':
+                errorMessage = 'No speech detected. Please try again.';
+                break;
+            case 'language-not-supported':
+                errorMessage = `${languages[lang] || lang} is not supported in your browser. Try English.`;
+                break;
+            default:
+                errorMessage = `Error: ${event.error}`;
+        }
+
+        showNotification(errorMessage, 'error');
+        stopEditRecording();
+    };
+
+    editRecognition.onend = function() {
+        if (isEditRecording) {
+            try {
+                editRecognition.start();
+            } catch (e) {
+                console.log('Restart failed:', e);
+            }
+        } else {
+            resetEditUI();
+        }
+    };
+
+    return true;
+}
+
+// Change language for Create modal
+function changeCreateLanguage(lang) {
+    if (isCreateRecording) {
+        stopCreateRecording();
+    }
+
+    // Reinitialize with new language
+    createRecognition = null;
+    initCreateSpeechRecognition(lang);
+
+    const langName = languages[lang] || lang;
+    showNotification(`Language changed to ${langName}`, 'success');
+}
+
+// Change language for Edit modal
+function changeEditLanguage(lang) {
+    if (isEditRecording) {
+        stopEditRecording();
+    }
+
+    editRecognition = null;
+    initEditSpeechRecognition(lang);
+
+    const langName = languages[lang] || lang;
+    showNotification(`Language changed to ${langName}`, 'success');
+}
+
+// Toggle Create Recording
+function toggleCreateRecording() {
+    const selectedLang = document.getElementById('createLanguage').value;
+
+    if (!createRecognition) {
+        if (!initCreateSpeechRecognition(selectedLang)) {
+            return;
+        }
+    }
+
+    if (isCreateRecording) {
+        stopCreateRecording();
+    } else {
+        startCreateRecording();
+    }
+}
+
+// Toggle Edit Recording
+function toggleEditRecording() {
+    const selectedLang = document.getElementById('editLanguage').value;
+
+    if (!editRecognition) {
+        if (!initEditSpeechRecognition(selectedLang)) {
+            return;
+        }
+    }
+
+    if (isEditRecording) {
+        stopEditRecording();
+    } else {
+        startEditRecording();
+    }
+}
+
+// Start Create Recording
+function startCreateRecording() {
+    try {
+        createRecognition.start();
+    } catch (error) {
+        console.error('Failed to start recording:', error);
+        createRecognition = null;
+        const selectedLang = document.getElementById('createLanguage').value;
+        if (initCreateSpeechRecognition(selectedLang)) {
+            createRecognition.start();
+        }
+    }
+}
+
+// Start Edit Recording
+function startEditRecording() {
+    try {
+        editRecognition.start();
+    } catch (error) {
+        console.error('Failed to start recording:', error);
+        editRecognition = null;
+        const selectedLang = document.getElementById('editLanguage').value;
+        if (initEditSpeechRecognition(selectedLang)) {
+            editRecognition.start();
+        }
+    }
+}
+
+// Stop Create Recording
+function stopCreateRecording() {
+    if (createRecognition && isCreateRecording) {
+        isCreateRecording = false;
+        createRecognition.stop();
+    }
+    resetCreateUI();
+}
+
+// Stop Edit Recording
+function stopEditRecording() {
+    if (editRecognition && isEditRecording) {
+        isEditRecording = false;
+        editRecognition.stop();
+    }
+    resetEditUI();
+}
+
+// Reset Create UI
+function resetCreateUI() {
+    document.getElementById('createMicIcon').className = 'fas fa-microphone';
+    document.getElementById('createVoiceBtn').classList.remove('bg-red-100', 'text-red-700');
+    document.getElementById('createVoiceText').textContent = 'Voice Input';
+    document.getElementById('createTimer').classList.add('hidden');
+    stopCreateTimer();
+    createSeconds = 0;
+    document.getElementById('createTimerDisplay').textContent = '00:00';
+}
+
+// Reset Edit UI
+function resetEditUI() {
+    document.getElementById('editMicIcon').className = 'fas fa-microphone';
+    document.getElementById('editVoiceBtn').classList.remove('bg-red-100', 'text-red-700');
+    document.getElementById('editVoiceText').textContent = 'Voice Input';
+    document.getElementById('editTimer').classList.add('hidden');
+    stopEditTimer();
+    editSeconds = 0;
+    document.getElementById('editTimerDisplay').textContent = '00:00';
+}
+
+// Timer functions for Create
+function startCreateTimer() {
+    createSeconds = 0;
+    updateCreateTimerDisplay();
+    createTimer = setInterval(updateCreateTimerDisplay, 1000);
+}
+
+function stopCreateTimer() {
+    if (createTimer) {
+        clearInterval(createTimer);
+        createTimer = null;
+    }
+}
+
+function updateCreateTimerDisplay() {
+    const mins = Math.floor(createSeconds / 60);
+    const secs = createSeconds % 60;
+    document.getElementById('createTimerDisplay').textContent =
+        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    createSeconds++;
+}
+
+// Timer functions for Edit
+function startEditTimer() {
+    editSeconds = 0;
+    updateEditTimerDisplay();
+    editTimer = setInterval(updateEditTimerDisplay, 1000);
+}
+
+function stopEditTimer() {
+    if (editTimer) {
+        clearInterval(editTimer);
+        editTimer = null;
+    }
+}
+
+function updateEditTimerDisplay() {
+    const mins = Math.floor(editSeconds / 60);
+    const secs = editSeconds % 60;
+    document.getElementById('editTimerDisplay').textContent =
+        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    editSeconds++;
+}
+
+// Update text statistics for Create
+function updateCreateTextStats() {
+    const textarea = document.getElementById('createContent');
+    const text = textarea.value;
+
+    // Unicode-aware character count
+    const charCount = [...text].length;
+
+    // Unicode-aware word count (splits on whitespace)
+    const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+
+    document.getElementById('createCharCount').textContent = `${charCount} characters`;
+    document.getElementById('createWordCount').textContent = `${wordCount} words`;
+}
+
+// Update text statistics for Edit
+function updateEditTextStats() {
+    const textarea = document.getElementById('editContent');
+    const text = textarea.value;
+
+    const charCount = [...text].length;
+    const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+
+    document.getElementById('editCharCount').textContent = `${charCount} characters`;
+    document.getElementById('editWordCount').textContent = `${wordCount} words`;
+}
+
+// Clear Create voice form
+function clearCreateVoiceForm() {
+    document.getElementById('createContent').value = '';
+    updateCreateTextStats();
+    showNotification('Content cleared', 'info');
+}
+
+// Clear Edit voice form
+function clearEditVoiceForm() {
+    document.getElementById('editContent').value = '';
+    updateEditTextStats();
+    showNotification('Content cleared', 'info');
+}
+
+// Enhanced notification function
+function showNotification(message, type = 'info') {
+    // Remove existing notification if any
+    const existingNotification = document.querySelector('.voice-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+
+    const notification = document.createElement('div');
+    notification.className = `voice-notification fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium z-50 transform transition-all duration-300 ${
+        type === 'success' ? 'bg-green-600' :
+        type === 'error' ? 'bg-red-600' : 'bg-purple-600'
+    }`;
+    notification.textContent = message;
+    notification.style.transform = 'translateY(100%)';
+    notification.style.opacity = '0';
+
+    document.body.appendChild(notification);
+
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateY(0)';
+        notification.style.opacity = '1';
+    }, 10);
+
+    // Animate out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translateY(100%)';
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+
+// Override modal open functions
+const originalOpenCreateModal = openCreateModal;
+window.openCreateModal = function() {
+    stopCreateRecording();
+    originalOpenCreateModal();
+    updateCreateTextStats();
+
+    // Set default language to Burmese if supported
+    const createLangSelect = document.getElementById('createLanguage');
+    if (createLangSelect && checkBurmeseSupport()) {
+        createLangSelect.value = 'my-MM';
+        changeCreateLanguage('my-MM');
+    }
+};
+
+const originalOpenEditModal = openEditModal;
+window.openEditModal = function(id, title, content, tag = 'personal') {
+    stopEditRecording();
+    originalOpenEditModal(id, title, content, tag);
+    setTimeout(updateEditTextStats, 100);
+
+    // Set default language to Burmese if supported
+    const editLangSelect = document.getElementById('editLanguage');
+    if (editLangSelect && checkBurmeseSupport()) {
+        editLangSelect.value = 'my-MM';
+        changeEditLanguage('my-MM');
+    }
+};
+
+const originalCloseCreateModal = closeCreateModal;
+window.closeCreateModal = function() {
+    stopCreateRecording();
+    originalCloseCreateModal();
+};
+
+const originalCloseEditModal = closeEditModal;
+window.closeEditModal = function() {
+    stopEditRecording();
+    originalCloseEditModal();
+};
+
+// Add event listeners for textareas
+document.addEventListener('DOMContentLoaded', function() {
+    // Create modal textarea
+    const createContent = document.getElementById('createContent');
+    if (createContent) {
+        createContent.addEventListener('input', updateCreateTextStats);
+    }
+
+    // Edit modal textarea
+    const editContent = document.getElementById('editContent');
+    if (editContent) {
+        editContent.addEventListener('input', updateEditTextStats);
+    }
+});
+// SPEECH TO TEXT end here
+
 
     const allNotes = [
         {% for note in notes %}
@@ -882,7 +1486,7 @@ function renderCalendar(date) {
     // Add days of the month
     const today = new Date();
     const currentYear = date.getFullYear();
-    const currentMonth = date.getMonth() + 1; // JavaScript months are 0-based
+    const currentMonth = date.getMonth() + 1;
 
     for (let day = 1; day <= daysInMonth; day++) {
         const dayDiv = document.createElement('div');

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import views_chat
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
@@ -14,5 +15,8 @@ urlpatterns = [
     path('delete-income/<int:pk>/', views.delete_income, name='delete_income'),
     path('delete-expense/<int:pk>/', views.delete_expense, name='delete_expense'),
     path('delete-category/<int:pk>/', views.delete_category, name='delete_category'),
+
+    path('api/chat-command/', views_chat.budget_chat_command, name='budget_chat_command'),
+    path('api/budget-data/', views_chat.get_budget_data_json, name='budget_data_json'),
 
 ]

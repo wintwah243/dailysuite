@@ -60,6 +60,226 @@
         .tab-content {
             transition: opacity 0.3s ease;
         }
+        .chat-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 380px;
+        height: 550px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.02);
+        display: flex;
+        flex-direction: column;
+        z-index: 9999;
+        overflow: hidden;
+        transition: all 0.2s ease;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    }
+
+    .chat-widget.collapsed {
+        height: 60px;
+        width: 380px;
+    }
+
+    .chat-header {
+        padding: 16px 20px;
+        background: black;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .chat-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .chat-header-left i {
+        font-size: 1.2rem;
+    }
+
+    .chat-header-left span {
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+    }
+
+    .chat-close-btn {
+        color: rgba(255,255,255,0.7);
+        transition: color 0.2s;
+    }
+
+    .chat-close-btn:hover {
+        color: white;
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background: #fafafa;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .message {
+        max-width: 85%;
+        padding: 12px 16px;
+        border-radius: 16px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        animation: messageAppear 0.2s ease;
+        white-space: pre-line;
+        word-break: break-word;
+    }
+
+    @keyframes messageAppear {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-message {
+        background: black;
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+    }
+
+    .bot-message {
+        background: white;
+        color: #1e293b;
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        border: 1px solid #e2e8f0;
+    }
+
+    .chat-input-container {
+        padding: 16px;
+        background: white;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        gap: 10px;
+    }
+
+    .chat-input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 30px;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        outline: none;
+    }
+
+    .chat-input:focus {
+        border-color: black;
+        box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+    }
+
+    .chat-send-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: black;
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .chat-send-btn:hover {
+        background: #333;
+        transform: scale(1.05);
+    }
+
+    .chat-send-btn i {
+        font-size: 1rem;
+    }
+
+    .typing-indicator {
+        background: white;
+        padding: 12px 16px;
+        border-radius: 16px;
+        border-bottom-left-radius: 4px;
+        display: inline-block;
+        border: 1px solid #e2e8f0;
+        align-self: flex-start;
+    }
+
+    .typing-dots {
+        display: flex;
+        gap: 4px;
+    }
+
+    .typing-dots span {
+        width: 6px;
+        height: 6px;
+        background: #94a3b8;
+        border-radius: 50%;
+        animation: typingBounce 1.4s infinite;
+    }
+
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-6px); }
+    }
+
+    .command-suggestion {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-size: 0.85rem;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-block;
+        margin-right: 6px;
+        margin-bottom: 6px;
+    }
+
+    .command-suggestion:hover {
+        background: black;
+        color: white;
+        border-color: black;
+    }
+
+    .task-preview {
+        background: #f8fafc;
+        border-left: 3px solid black;
+        padding: 10px 14px;
+        border-radius: 8px;
+        margin-top: 8px;
+        font-size: 0.9rem;
+    }
+
+    /* Mobile responsive chatbot */
+    @media (max-width: 640px) {
+        .chat-widget {
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            right: 0;
+            border-radius: 0;
+        }
+        .chat-widget.collapsed {
+            width: 100%;
+            height: 60px;
+        }
+    }
     </style>
 </head>
 <body class="main-bg font-sans text-gray-800 antialiased">
@@ -114,6 +334,10 @@
                     <i class="fas fa-wallet w-5 mr-3"></i>
                     <span class="text-sm font-medium">Budget</span>
                 </a>
+                <a href="/accounts/profile/" class="sidebar-icon active" title="Profile">
+                    <i class="fas fa-user-circle w-5 mr-3"></i>
+                    <span class="text-sm font-medium">Profile</span>
+                </a>
             </div>
 
             <div class="flex-1"></div>
@@ -124,7 +348,11 @@
             <!-- Header -->
                 <div class="mb-8">
                     <h1 class="text-3xl font-bold text-gray-900">Task Dashboard</h1>
+
                     <p class="text-gray-600 mt-2">A clean and thoughtfully organized workspace built to streamline your daily tasks.</p>
+
+                    <p class="text-gray-600 mt-2">Manage your daily tasks and get organized.</p>
+
                 </div>
             <div class="min-h-screen bg-gray-50 py-8 -mt-5">
                 <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -221,7 +449,7 @@
                         </div>
                         <div class="mt-6 bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                             <h2 class="text-lg font-semibold text-gray-900 mb-4">Task Progress</h2>
-                            <!-- Done -->
+                            <!-- completed -->
                             <p class="text-sm text-gray-600 mb-2">Completed</p>
                             <div class="w-full bg-gray-200 rounded-full h-4">
                                 <div class="bg-green-500 h-4 rounded-full"
@@ -963,8 +1191,24 @@
     </div>
     {% endfor %}
 
+    <!-- Chatbot pop up -->
+<script id="chatWidget" class="chat-widget collapsed">
+    <!-- Header -->
+    <div class="chat-header" onclick="toggleChat()">
+        <div class="chat-header-left">
+            <i class="fas fa-robot"></i>
+            <span>Task Assistant</span>
+        </div>
+        <div class="chat-close-btn">
+            <i id="chatToggleIcon" class="fas fa-chevron-up"></i>
+        </div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
+    <!-- Messages Container -->
+    <div id="chatMessages" class="chat-messages hidden">
+        <!--  welcome message will be provided in script tag :))) -->
+    </div>
+
 
 <script type="module">
 const searchInput = document.getElementById("search-input");
@@ -994,12 +1238,29 @@ clearBtn.addEventListener("click", function(e) {
 
 import { EmojiButton } from 'https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js';
 
+    <!-- Input Container -->
+    <div id="chatInputContainer" class="chat-input-container hidden">
+        <input type="text"
+               id="chatInput"
+               class="chat-input"
+               placeholder="Type a command... (e.g., 'delete buy milk')">
+        <button class="chat-send-btn" onclick="sendChatMessage()">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
+</div>
+
+
+<!--  Emoji Picker Import - UMD version -->
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.umd.min.js"></script>
+
+<script>
+// Emoji Picker
 window.pickers = {};
 
 window.openEmojiPicker = function(inputId, button) {
     let input = document.getElementById(inputId);
 
-    // Assign dynamically if input doesn't exist yet
     if (!input) {
         if (inputId === 'task-name-new') {
             input = document.querySelector('form[action="{% url "addtask" %}"] input[name="name"]');
@@ -1007,8 +1268,12 @@ window.openEmojiPicker = function(inputId, button) {
             const taskId = inputId.split('-')[2];
             input = document.querySelector(`#editModal-${taskId} input[name="name"]`);
         }
-        input.id = inputId;
+        if (input) {
+            input.id = inputId;
+        }
     }
+
+    if (!input) return;
 
     if (!window.pickers[inputId]) {
         window.pickers[inputId] = new EmojiButton({
@@ -1018,15 +1283,11 @@ window.openEmojiPicker = function(inputId, button) {
         });
         window.pickers[inputId].on('emoji', emoji => {
             let value = input.value.trim();
-
-            // Regex to detect existing emoji at start
             const emojiRegex = /^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/u;
 
             if (emojiRegex.test(value)) {
-                // Replace old emoji with new one
                 input.value = value.replace(emojiRegex, emoji.emoji);
             } else {
-                // Prepend new emoji
                 input.value = emoji.emoji + ' ' + value;
             }
             input.focus();
@@ -1103,27 +1364,23 @@ document.querySelectorAll('.tab-links a').forEach(link => {
         e.preventDefault();
         const tabName = this.dataset.tab;
 
-        // Hide all tab contents
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.classList.add('hidden');
         });
 
-        // Show the selected tab content
         document.getElementById(tabName).classList.remove('hidden');
 
-        // Remove active state from all tab links
         document.querySelectorAll('.tab-links a').forEach(l => {
             l.classList.remove('border-b-2', 'border-black', 'font-bold', 'text-black');
             l.classList.add('text-gray-700');
         });
 
-        // Add active state to clicked tab link
         this.classList.add('border-b-2', 'border-black', 'font-bold', 'text-black');
         this.classList.remove('text-gray-700');
     });
 });
 
-// Set active sidebar item based on current URL
+// Set active sidebar item
 const currentPath = window.location.pathname;
 const sidebarIcons = document.querySelectorAll('.sidebar-icon');
 
@@ -1136,7 +1393,229 @@ sidebarIcons.forEach(icon => {
     }
 });
 
-</script>
+// CHATBOT FUNCTIONALITY starts here
+let isChatOpen = false;
 
+// Toggle chat function
+window.toggleChat = function() {
+    const widget = document.getElementById('chatWidget');
+    const messages = document.getElementById('chatMessages');
+    const inputContainer = document.getElementById('chatInputContainer');
+    const toggleIcon = document.getElementById('chatToggleIcon');
+
+    if (isChatOpen) {
+        widget.classList.add('collapsed');
+        messages.classList.add('hidden');
+        inputContainer.classList.add('hidden');
+        toggleIcon.classList.remove('fa-chevron-down');
+        toggleIcon.classList.add('fa-chevron-up');
+        isChatOpen = false;
+    } else {
+        widget.classList.remove('collapsed');
+        messages.classList.remove('hidden');
+        inputContainer.classList.remove('hidden');
+        toggleIcon.classList.remove('fa-chevron-up');
+        toggleIcon.classList.add('fa-chevron-down');
+        isChatOpen = true;
+
+        if (document.querySelectorAll('.bot-message').length === 0) {
+            addBotMessage(`👋 Hi {{ request.user.username }}! I'm your Task Assistant.
+
+I can help you manage tasks with commands like:
+
+• "delete buy milk"
+• "complete task 5"
+• "add finish report tomorrow high priority"
+• "show my pending tasks"
+• "clear completed"
+
+Try typing something!`);
+
+            addSuggestionChips();
+        }
+
+        setTimeout(() => {
+            const input = document.getElementById('chatInput');
+            if (input) input.focus();
+        }, 100);
+    }
+};
+
+// Add suggestion chips
+function addSuggestionChips() {
+    const messagesDiv = document.getElementById('chatMessages');
+    const suggestionsDiv = document.createElement('div');
+    suggestionsDiv.className = 'flex flex-wrap gap-2 mt-2 mb-1';
+
+    const suggestions = [
+        'show pending tasks',
+        'add meeting tomorrow',
+        'clear completed',
+        'delete task 1'
+    ];
+
+    suggestions.forEach(cmd => {
+        const chip = document.createElement('span');
+        chip.className = 'command-suggestion';
+        chip.textContent = cmd;
+        chip.onclick = () => {
+            document.getElementById('chatInput').value = cmd;
+            sendChatMessage();
+        };
+        suggestionsDiv.appendChild(chip);
+    });
+
+    messagesDiv.appendChild(suggestionsDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// Add user message
+function addUserMessage(message) {
+    const messagesDiv = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message user-message';
+    messageDiv.textContent = message;
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// Add bot message
+function addBotMessage(message) {
+    const messagesDiv = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message bot-message';
+    messageDiv.innerHTML = message.replace(/\n/g, '<br>');
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const messagesDiv = document.getElementById('chatMessages');
+    removeTypingIndicator();
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = `
+        <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    `;
+    messagesDiv.appendChild(indicator);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// Remove typing indicator
+function removeTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+// Send chat message
+window.sendChatMessage = function() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    input.value = '';
+    addUserMessage(message);
+    showTypingIndicator();
+
+    fetch('/todo/api/chat-command/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            message: message
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        removeTypingIndicator();
+
+        if (data.success) {
+            addBotMessage(data.message);
+
+            if (['delete', 'complete', 'uncomplete', 'add', 'clear_completed'].includes(data.action)) {
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            }
+        } else {
+            addBotMessage(data.message || 'Sorry, I could not process that command.');
+        }
+    })
+    .catch(error => {
+        removeTypingIndicator();
+        addBotMessage('Sorry, there was an error processing your command.');
+        console.error('Error:', error);
+    });
+};
+
+// Get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Enter key handler
+document.addEventListener('DOMContentLoaded', function() {
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+    }
+
+    // Keyboard shortcut
+    document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            if (!isChatOpen) {
+                toggleChat();
+            } else {
+                const input = document.getElementById('chatInput');
+                if (input) input.focus();
+            }
+        }
+
+        if (e.key === 'Escape' && isChatOpen) {
+            toggleChat();
+        }
+    });
+});
+
+// Update task badge
+function updateTaskBadge() {
+    fetch('/todo/api/tasks-json/')
+        .then(response => response.json())
+        .then(data => {
+            // Optional: update something with task count
+        })
+        .catch(console.error);
+}
+
+updateTaskBadge();
+</script>
 </body>
 </html>

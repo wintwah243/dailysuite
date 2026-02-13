@@ -63,10 +63,12 @@
         /* Calendar */
         .calendar-day {
             width: calc(100% / 7);
-            height: 85px;
+            min-height: 85px;
             padding: 6px;
             border: 1px solid #f3f4f6;
             background: #ffffff;
+            display: flex;
+            flex-direction: column;
         }
         .calendar-day:hover {
             background-color: #f9fafb;
@@ -88,6 +90,108 @@
         }
         .calendar-day.has-task {
             background-color: #f0fdf4;
+        }
+
+        /* Calendar task items */
+        .calendar-task-item {
+            font-size: 10px;
+            padding: 2px 4px;
+            margin-top: 2px;
+            border-radius: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            color: #1f2937;
+            background-color: #e0f2fe;
+            display: flex;
+            align-items: center;
+        }
+        .calendar-task-item.overdue {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        .calendar-task-item.completed {
+            background-color: #dcfce7;
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+        .calendar-task-item i {
+            font-size: 8px;
+            margin-right: 3px;
+        }
+        .calendar-tasks-container {
+            margin-top: 4px;
+            max-height: 60px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        .calendar-tasks-container::-webkit-scrollbar {
+            width: 2px;
+        }
+        .calendar-tasks-container::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 2px;
+        }
+
+        /* Task Status Summary */
+        .task-status-summary {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 16px;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 600;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .status-pill i {
+            margin-right: 6px;
+            font-size: 12px;
+        }
+        .status-pill.pending {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        .status-pill.completed {
+            background-color: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .status-pill.overdue {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .status-divider {
+            width: 1px;
+            height: 24px;
+            background: #e2e8f0;
+        }
+        .task-stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .task-stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .task-stat-label {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
         }
 
         .chart-container {
@@ -287,13 +391,14 @@
             </div>
         </div>
         <div class="flex items-center space-x-4">
-            <div class="text-sm text bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
-                <i class="fas fa-user-circle mr-2 text-gray-500"></i>{{ request.user.username }}
-            </div>
-            <a href="/accounts/logout/" class="text-sm px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
-                <i class="fas fa-sign-out-alt mr-2"></i>Logout
-            </a>
-        </div>
+    <a href="/accounts/profile/" class="flex items-center text-sm text bg-gray-50 px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors">
+        <i class="fas fa-user-circle mr-2 text-gray-500"></i>
+        <span>{{ request.user.username }}</span>
+    </a>
+    <a href="/accounts/logout/" class="text-sm px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+    </a>
+    </div>
     </div>
 
     <!-- Main Layout -->
@@ -323,6 +428,10 @@
                 <a href="/budget/" class="sidebar-icon" title="Budget">
                     <i class="fas fa-wallet w-5 mr-3"></i>
                     <span class="text-sm font-medium">Budget</span>
+                </a>
+                <a href="/accounts/profile/" class="sidebar-icon" title="Profile">
+                    <i class="fas fa-user-circle w-5 mr-3"></i>
+                    <span class="text-sm font-medium">Profile</span>
                 </a>
             </div>
 
@@ -458,7 +567,7 @@
                             <div class="flex flex-wrap bg-white">
                                 {% for day in calendar_days %}
                                 <div class="calendar-day {% if day == today.day %}today{% endif %} {% if day in task_days %}has-task{% endif %}">
-                                    <div class="flex justify-between items-start h-full">
+                                    <div class="flex justify-between items-start">
                                         <span class="text-sm font-medium {% if day == today.day %}text-blue-600{% else %}text{% endif %}">
                                             {% if day != 0 %}{{ day }}{% endif %}
                                         </span>
@@ -466,8 +575,54 @@
                                             <span class="w-2 h-2 rounded-full bg-green-500 mt-1"></span>
                                         {% endif %}
                                     </div>
+                                    <!-- Task titles inside calendar day -->
+                                    <div class="calendar-tasks-container">
+                                        {% if day != 0 %}
+                                            {% for task in tasks %}
+                                                {% if task.due_date|date:"j" == day|stringformat:"i" %}
+                                                    <div class="calendar-task-item
+                                                        {% if task.due_date and task.due_date < today and not task.is_completed %}overdue{% endif %}
+                                                        {% if task.is_completed %}completed{% endif %}">
+                                                        <i class="fas
+                                                            {% if task.is_completed %}fa-check-circle
+                                                            {% elif task.due_date and task.due_date < today %}fa-exclamation-circle
+                                                            {% else %}fa-circle{% endif %}"></i>
+                                                        {{ task.name|truncatechars:15 }}
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Task Status Summary  -->
+                        <div class="mt-6 task-status-summary">
+                            <div class="flex items-center justify-between w-full">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-semibold text-gray-700">Task Status:</span>
+                                    <div class="status-pill pending">
+                                        <i class="fas fa-clock"></i>
+                                        <span>Pending: <span class="font-bold">{{ pending_count|default:"0" }}</span></span>
+                                    </div>
+                                    <div class="status-pill completed">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Completed: <span class="font-bold">{{ completed_count|default:"0" }}</span></span>
+                                    </div>
+                                    <div class="status-pill overdue">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <span>Overdue: <span class="font-bold">{{ overdue_count|default:"0" }}</span></span>
+                                    </div>
+                                </div>
+                                <div class="status-divider"></div>
+                                <div class="task-stat-badge">
+                                    <div>
+                                        <span class="task-stat-number">{{ tasks.count|default:"0" }}</span>
+                                        <span class="task-stat-label">Total Tasks</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

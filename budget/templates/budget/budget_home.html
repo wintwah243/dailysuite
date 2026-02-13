@@ -45,7 +45,6 @@
 
         /* Card styling */
         .budget-card {
-            background: white;
             border: 1px solid #e5e7eb;
             border-radius: 12px;
             transition: all 0.2s ease;
@@ -108,6 +107,235 @@
             color: #374151;
             margin-bottom: 0.5rem;
         }
+
+        /* Chatbot */
+        .budget-chat-widget {
+            position: fixed !important;
+            bottom: 24px !important;
+            right: 24px !important;
+            width: 380px;
+            height: 550px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 35px -8px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            z-index: 999999 !important;
+            overflow: hidden;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            border: 1px solid #e5e7eb;
+        }
+
+        .budget-chat-widget.collapsed {
+            height: 60px;
+            width: 380px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .budget-chat-header {
+            padding: 16px 20px;
+            background: black;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1000000;
+        }
+
+        .budget-chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .budget-chat-header-left i {
+            font-size: 1.2rem;
+        }
+
+        .budget-chat-header-left span {
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+        }
+
+        .budget-chat-close-btn {
+            color: rgba(255,255,255,0.7);
+            transition: color 0.2s;
+        }
+
+        .budget-chat-close-btn:hover {
+            color: white;
+        }
+
+        .budget-chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .budget-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: messageAppear 0.2s ease;
+            white-space: pre-line;
+            word-break: break-word;
+        }
+
+        .budget-user-message {
+            background: #059669;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .budget-bot-message {
+            background: white;
+            color: #1e293b;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .budget-chat-input-container {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1000000;
+        }
+
+        .budget-chat-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            outline: none;
+            background: white;
+            color: #1e293b;
+        }
+
+        .budget-chat-input:focus {
+            border-color: black;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .budget-chat-send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: black;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .budget-chat-send-btn:hover {
+            background: #047857;
+            transform: scale(1.05);
+        }
+
+        .budget-command-suggestion {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-block;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        .budget-command-suggestion:hover {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .typing-indicator {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            display: inline-block;
+            border: 1px solid #e2e8f0;
+            align-self: flex-start;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 640px) {
+            .budget-chat-widget {
+                width: 100%;
+                height: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+            .budget-chat-widget.collapsed {
+                width: 100%;
+                height: 60px;
+            }
+        }
     </style>
 </head>
 <body class="main-bg font-sans text-gray-800 antialiased">
@@ -140,7 +368,7 @@
     <div class="flex pt-16">
         <!-- Sidebar -->
         <div class="fixed left-0 w-64 sidebar h-screen flex flex-col py-6 space-y-2 z-40">
-            <!-- Logo -->
+            <!-- sidebar small text -->
             <div class="px-4 mb-6">
                 <div class="text-lg font-bold text-gray-900 mb-2">My Workspace</div>
                 <div class="text-xs text-gray-500">Personal dashboard</div>
@@ -164,6 +392,10 @@
                     <i class="fas fa-wallet w-5 mr-3"></i>
                     <span class="text-sm font-medium">Budget</span>
                 </a>
+                <a href="/accounts/profile/" class="sidebar-icon active" title="Profile">
+                    <i class="fas fa-user-circle w-5 mr-3"></i>
+                    <span class="text-sm font-medium">Profile</span>
+                </a>
             </div>
 
             <div class="flex-1"></div>
@@ -182,15 +414,9 @@
                         <div class="flex items-center gap-3">
                             <!-- Export Button -->
                             <button onclick="exportToExcel()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-black text-white rounded-lg hover:bg-green-700 transition-all">
                                 <i class="fas fa-file-excel"></i>
                                 <span>Export Excel</span>
-                            </button>
-                            <!-- Report Button -->
-                            <button onclick="showReportModal()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
-                                <i class="fas fa-chart-bar"></i>
-                                <span>View Report</span>
                             </button>
                         </div>
                     </div>
@@ -199,36 +425,36 @@
                 <!-- Summary Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <!-- Income Card -->
-                    <div class="budget-card p-6 border-l-4 border-l-green-500">
+                    <div class="budget-card p-6 bg-gradient-to-r from-emerald-400 to-teal-600">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900">Total Income</h3>
+                            <h3 class="text-lg font-semibold text-white">Total Income</h3>
                             <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
                                 <i class="fas fa-money-bill-wave text-green-600"></i>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-green-600">{{ total_income|floatformat:2 }}Ks</p>
+                        <p class="text-3xl font-bold text-white">{{ total_income|floatformat:2 }}Ks</p>
                     </div>
 
                     <!-- Expense Card -->
-                    <div class="budget-card p-6 border-l-4 border-l-red-500">
+                    <div class="budget-card p-6 bg-gradient-to-r from-rose-400 to-red-500">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900">Total Expense</h3>
+                            <h3 class="text-lg font-semibold text-white">Total Expense</h3>
                             <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
                                 <i class="fas fa-shopping-cart text-red-600"></i>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-red-600">{{ total_expense|floatformat:2 }}Ks</p>
+                        <p class="text-3xl font-bold text-white">{{ total_expense|floatformat:2 }}Ks</p>
                     </div>
 
                     <!-- Balance Card -->
-                    <div class="budget-card p-6 border-l-4 {% if balance >= 0 %}border-l-blue-500{% else %}border-l-orange-500{% endif %}">
+                    <div class="budget-card p-6 bg-gradient-to-br from-slate-100 to-slate-300">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900">Balance</h3>
+                            <h3 class="text-lg font-semibold text-gray-900">Total Balance</h3>
                             <div class="w-10 h-10 rounded-full {% if balance >= 0 %}bg-blue-50{% else %}bg-orange-50{% endif %} flex items-center justify-center">
-                                <i class="fas fa-wallet {% if balance >= 0 %}text-blue-600{% else %}text-orange-600{% endif %}"></i>
+                                <i class="fas fa-wallet text-black"></i>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold {% if balance >= 0 %}text-blue-600{% else %}text-orange-600{% endif %}">
+                        <p class="text-3xl font-bold text-black">
                             {{ balance|floatformat:2 }}Ks
                         </p>
                     </div>
@@ -268,7 +494,7 @@
                             <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                                 <div class="flex items-center">
                                     <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                                        <i class="fas fa-arrow-down text-green-600 text-xs"></i>
+                                        <i class="fas fa-arrow-up text-green-600 text-xs"></i>
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">{{ income.source }}</p>
@@ -282,7 +508,7 @@
                             <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                                 <div class="flex items-center">
                                     <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                                        <i class="fas fa-arrow-up text-red-600 text-xs"></i>
+                                        <i class="fas fa-arrow-down text-red-600 text-xs"></i>
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">{{ expense.description }}</p>
@@ -314,7 +540,7 @@
                             <table class="w-full">
                                 <thead>
                                     <tr class="border-b border-gray-200">
-                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>
+<!--                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>-->
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Source</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Amount</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Actions</th>
@@ -323,19 +549,19 @@
                                 <tbody>
                                     {% for income in incomes %}
                                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 text-sm text-gray-900">{{ income.date }}</td>
+<!--                                        <td class="py-4 text-sm text-gray-900">{{ income.date }}</td>-->
                                         <td class="py-4 text-sm text-gray-900">{{ income.source }}</td>
                                         <td class="py-4 text-sm font-medium text-green-600">{{ income.amount|floatformat:2 }}Ks</td>
                                         <td class="py-4">
                                             <div class="flex items-center gap-2">
                                                 <button onclick="openEditIncomeModal('{{ income.id }}', '{{ income.date|escapejs }}', '{{ income.source|escapejs }}', '{{ income.amount|escapejs }}')"
                                                         class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
-                                                    <i class="fas fa-edit mr-1"></i>Edit
+                                                    <i class="fas fa-edit mr-1"></i>
                                                 </button>
                                                 <a href="{% url 'delete_income' income.id %}"
                                                    class="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
                                                    onclick="return confirm('Are you sure you want to delete this income?')">
-                                                    <i class="fas fa-trash mr-1"></i>Delete
+                                                    <i class="fas fa-trash mr-1"></i>
                                                 </a>
                                             </div>
                                         </td>
@@ -371,7 +597,7 @@
                             <table class="w-full">
                                 <thead>
                                     <tr class="border-b border-gray-200">
-                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>
+<!--                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>-->
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Description</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Category</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Amount</th>
@@ -381,7 +607,7 @@
                                 <tbody>
                                     {% for expense in expenses %}
                                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 text-sm text-gray-900">{{ expense.date }}</td>
+<!--                                        <td class="py-4 text-sm text-gray-900">{{ expense.date }}</td>-->
                                         <td class="py-4 text-sm text-gray-900">{{ expense.description }}</td>
                                         <td class="py-4 text-sm text-gray-600">
                                             {% if expense.category %}
@@ -399,12 +625,12 @@
                                             <div class="flex items-center gap-2">
                                                 <button onclick="openEditExpenseModal('{{ expense.id }}', '{{ expense.date|escapejs }}', '{{ expense.description|escapejs }}', '{{ expense.amount|escapejs }}', '{{ expense.category.id|default:'' }}')"
                                                         class="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
-                                                    <i class="fas fa-edit mr-1"></i>Edit
+                                                    <i class="fas fa-edit mr-1"></i>
                                                 </button>
                                                 <a href="{% url 'delete_expense' expense.id %}"
                                                    class="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
                                                    onclick="return confirm('Are you sure you want to delete this expense?')">
-                                                    <i class="fas fa-trash mr-1"></i>Delete
+                                                    <i class="fas fa-trash mr-1"></i>
                                                 </a>
                                             </div>
                                         </td>
@@ -773,87 +999,39 @@
         </div>
     </div>
 
-    <!-- Report Modal -->
-    <div id="reportModal" class="modal-overlay">
-        <div class="modal-content max-w-4xl">
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900">Budget Report</h2>
-                    <button onclick="closeReportModal()" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-
-                <div class="space-y-6">
-                    <!-- Report Summary -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-green-50 p-4 rounded-lg">
-                            <p class="text-sm text-green-600">Total Income</p>
-                            <p class="text-2xl font-bold text-green-700" id="reportTotalIncome">{{ total_income|floatformat:2 }}Ks</p>
-                        </div>
-                        <div class="bg-red-50 p-4 rounded-lg">
-                            <p class="text-sm text-red-600">Total Expense</p>
-                            <p class="text-2xl font-bold text-red-700" id="reportTotalExpense">{{ total_expense|floatformat:2 }}Ks</p>
-                        </div>
-                        <div class="bg-blue-50 p-4 rounded-lg">
-                            <p class="text-sm text-blue-600">Balance</p>
-                            <p class="text-2xl font-bold {% if balance >= 0 %}text-blue-700{% else %}text-orange-700{% endif %}" id="reportBalance">
-                                {{ balance|floatformat:2 }}Ks
-                            </p>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="text-sm text-gray-600">Savings Rate</p>
-                            <p class="text-2xl font-bold" id="reportSavingsRate">
-                                {% if total_income > 0 %}
-                                    {% widthratio balance total_income 100 %}%
-                                {% else %}
-                                    0%
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Detailed Charts -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Monthly Breakdown</h3>
-                            <div class="h-64">
-                                <canvas id="reportMonthlyChart"></canvas>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Category Distribution</h3>
-                            <div class="h-64">
-                                <canvas id="reportCategoryChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Export Options -->
-                    <div class="pt-6 border-t border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Export Options</h3>
-                        <div class="flex flex-wrap gap-3">
-                            <button onclick="exportDetailedReport()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">
-                                <i class="fas fa-file-excel"></i>
-                                <span>Export Detailed Report</span>
-                            </button>
-                            <button onclick="exportIncomeReport()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
-                                <i class="fas fa-file-excel"></i>
-                                <span>Export Income Report</span>
-                            </button>
-                            <button onclick="exportExpenseReport()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all">
-                                <i class="fas fa-file-excel"></i>
-                                <span>Export Expense Report</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    <!-- Budget Assistant Chat pop up  -->
+    <div id="budgetChatWidget" class="budget-chat-widget collapsed">
+        <!-- Header -->
+        <div class="budget-chat-header" onclick="toggleBudgetChat()">
+            <div class="budget-chat-header-left">
+                <i class="fas fa-wallet"></i>
+                <span>Budget Assistant</span>
+            </div>
+            <div class="budget-chat-close-btn">
+                <i id="budgetChatToggleIcon" class="fas fa-chevron-up"></i>
             </div>
         </div>
+
+        <!-- Messages Container -->
+        <div id="budgetChatMessages" class="budget-chat-messages hidden">
+            <!-- Welcome message will be provided in the js section script tag :))))))-->
+        </div>
+
+        <!-- Input Container -->
+        <div id="budgetChatInputContainer" class="budget-chat-input-container hidden">
+            <input
+                type="text"
+                id="budgetChatInput"
+                class="budget-chat-input"
+                placeholder="Ask me about your budget..."
+                autocomplete="off"
+            >
+            <button class="budget-chat-send-btn" id="budgetChatSendBtn" onclick="sendBudgetChatMessage()">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+        </div>
     </div>
+    <!--BUDGET ASSISTANT CHATBOT pop up ends here-->
 
 <script>
     // Function to format date
@@ -907,7 +1085,7 @@
         initializeCharts();
     });
 
-    // Chart data preparation from Django context
+    // Chart data preparation
     const budgetData = {
         total_income: {{ total_income|default:0 }},
         total_expense: {{ total_expense|default:0 }},
@@ -995,7 +1173,7 @@
             }
         });
 
-        // 2. Category Breakdown Chart (Doughnut)
+        //  Category Breakdown Chart (Doughnut)
         if (budgetData.expenses.length > 0) {
             const categoryMap = {};
             budgetData.expenses.forEach(expense => {
@@ -1042,7 +1220,7 @@
             });
         }
 
-        // 3. Monthly Trend Chart (Line Chart)
+        // Monthly Trend Chart (Line Chart)
         const monthlyData = processMonthlyData();
         const trendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
         new Chart(trendCtx, {
@@ -1150,7 +1328,7 @@
 
     function openEditIncomeModal(id, date, source, amount) {
         const form = document.getElementById('editIncomeForm');
-        form.action = `/budget/income/update/${id}/`;
+        form.action = `/budget/update-income/${id}/`;
 
         document.getElementById('editIncomeId').value = id;
         document.getElementById('editIncomeDate').value = date;
@@ -1175,7 +1353,7 @@
 
     function openEditExpenseModal(id, date, description, amount, categoryId) {
         const form = document.getElementById('editExpenseForm');
-        form.action = `/budget/expense/update/${id}/`;
+        form.action = `/budget/update-expense/${id}/`;
 
         document.getElementById('editExpenseId').value = id;
         document.getElementById('editExpenseDate').value = date;
@@ -1205,7 +1383,7 @@
 
     function openEditCategoryModal(id, name) {
         const form = document.getElementById('editCategoryForm');
-        form.action = `/budget/category/update/${id}/`;
+        form.action = `/budget/update-category/${id}/`;
 
         document.getElementById('editCategoryId').value = id;
         document.getElementById('editCategoryName').value = name;
@@ -1271,192 +1449,6 @@
         showNotification('Excel file exported successfully!', 'success');
     }
 
-    function exportDetailedReport() {
-        const workbook = XLSX.utils.book_new();
-
-        // Detailed transaction sheet
-        const allData = [
-            ['Type', 'Date', 'Description/Source', 'Category', 'Amount (Ks)'],
-            ...budgetData.incomes.map(income => [
-                'Income',
-                income.date,
-                income.source,
-                'N/A',
-                income.amount
-            ]),
-            ...budgetData.expenses.map(expense => [
-                'Expense',
-                expense.date,
-                expense.description,
-                expense.category,
-                -expense.amount  // Negative for expenses
-            ])
-        ];
-
-        const sheet = XLSX.utils.aoa_to_sheet(allData);
-        XLSX.utils.book_append_sheet(workbook, sheet, 'All Transactions');
-
-        const fileName = `detailed_budget_report_${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(workbook, fileName);
-        showNotification('Detailed report exported successfully!', 'success');
-    }
-
-    function exportIncomeReport() {
-        const workbook = XLSX.utils.book_new();
-
-        const incomeData = [
-            ['Income Report', '', ''],
-            ['Total Income:', budgetData.total_income + 'Ks', ''],
-            ['', '', ''],
-            ['Date', 'Source', 'Amount (Ks)'],
-            ...budgetData.incomes.map(income => [
-                income.date,
-                income.source,
-                income.amount
-            ]),
-            ['', 'Total', budgetData.total_income]
-        ];
-
-        const sheet = XLSX.utils.aoa_to_sheet(incomeData);
-        XLSX.utils.book_append_sheet(workbook, sheet, 'Income Report');
-
-        const fileName = `income_report_${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(workbook, fileName);
-        showNotification('Income report exported successfully!', 'success');
-    }
-
-    function exportExpenseReport() {
-        const workbook = XLSX.utils.book_new();
-
-        const expenseData = [
-            ['Expense Report', '', '', ''],
-            ['Total Expense:', budgetData.total_expense + 'Ks', '', ''],
-            ['', '', '', ''],
-            ['Date', 'Description', 'Category', 'Amount (Ks)'],
-            ...budgetData.expenses.map(expense => [
-                expense.date,
-                expense.description,
-                expense.category,
-                expense.amount
-            ]),
-            ['', '', 'Total', budgetData.total_expense]
-        ];
-
-        const sheet = XLSX.utils.aoa_to_sheet(expenseData);
-        XLSX.utils.book_append_sheet(workbook, sheet, 'Expense Report');
-
-        const fileName = `expense_report_${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(workbook, fileName);
-        showNotification('Expense report exported successfully!', 'success');
-    }
-
-    // Report Modal Functions
-    function showReportModal() {
-        document.getElementById('reportModal').style.display = 'flex';
-        initializeReportCharts();
-    }
-
-    function closeReportModal() {
-        document.getElementById('reportModal').style.display = 'none';
-    }
-
-    function initializeReportCharts() {
-        // Report Monthly Chart
-        const monthlyData = processMonthlyData();
-        const reportMonthlyCtx = document.getElementById('reportMonthlyChart').getContext('2d');
-        new Chart(reportMonthlyCtx, {
-            type: 'bar',
-            data: {
-                labels: monthlyData.months,
-                datasets: [
-                    {
-                        label: 'Income',
-                        data: monthlyData.income,
-                        backgroundColor: 'rgba(34, 197, 94, 0.7)',
-                        borderColor: 'rgb(34, 197, 94)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Expense',
-                        data: monthlyData.expense,
-                        backgroundColor: 'rgba(239, 68, 68, 0.7)',
-                        borderColor: 'rgb(239, 68, 68)',
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}Ks`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value.toFixed(2) + 'Ks';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Report Category Chart
-        if (budgetData.expenses.length > 0) {
-            const categoryMap = {};
-            budgetData.expenses.forEach(expense => {
-                const cat = expense.category || 'Uncategorized';
-                categoryMap[cat] = (categoryMap[cat] || 0) + expense.amount;
-            });
-
-            const categories = Object.keys(categoryMap);
-            const amounts = Object.values(categoryMap);
-
-            const colors = generateColors(categories.length);
-
-            const reportCatCtx = document.getElementById('reportCategoryChart').getContext('2d');
-            new Chart(reportCatCtx, {
-                type: 'pie',
-                data: {
-                    labels: categories,
-                    datasets: [{
-                        data: amounts,
-                        backgroundColor: colors,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const value = context.parsed;
-                                    const total = amounts.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${context.label}: ${value.toFixed(2)}Ks (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    }
-
     // Notification function
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
@@ -1489,15 +1481,12 @@
             'addIncomeModal', 'editIncomeModal',
             'addExpenseModal', 'editExpenseModal',
             'addCategoryModal', 'editCategoryModal',
-            'reportModal'
         ];
 
         modals.forEach(modalId => {
             const modal = document.getElementById(modalId);
             if (event.target === modal) {
-                if (modalId === 'reportModal') {
-                    closeReportModal();
-                } else if (modalId === 'addIncomeModal') {
+                if (modalId === 'addIncomeModal') {
                     closeAddIncomeModal();
                 } else if (modalId === 'editIncomeModal') {
                     closeEditIncomeModal();
@@ -1513,6 +1502,268 @@
             }
         });
     });
+
+    // BUDGET CHATBOT FUNCTIONALITY starts here
+    let isBudgetChatOpen = false;
+    let isBudgetSending = false;
+
+    // Toggle chat open/closed
+    window.toggleBudgetChat = function() {
+        const widget = document.getElementById('budgetChatWidget');
+        const messages = document.getElementById('budgetChatMessages');
+        const inputContainer = document.getElementById('budgetChatInputContainer');
+        const toggleIcon = document.getElementById('budgetChatToggleIcon');
+
+        if (isBudgetChatOpen) {
+            widget.classList.add('collapsed');
+            messages.classList.add('hidden');
+            inputContainer.classList.add('hidden');
+            toggleIcon.classList.remove('fa-chevron-down');
+            toggleIcon.classList.add('fa-chevron-up');
+            isBudgetChatOpen = false;
+        } else {
+            widget.classList.remove('collapsed');
+            messages.classList.remove('hidden');
+            inputContainer.classList.remove('hidden');
+            toggleIcon.classList.remove('fa-chevron-up');
+            toggleIcon.classList.add('fa-chevron-down');
+            isBudgetChatOpen = true;
+
+            if (document.querySelectorAll('.budget-bot-message').length === 0) {
+                addBudgetBotMessage(`👋 Hi ${budgetData.username || 'there'}! I'm your Budget Assistant.
+
+I can help you manage your finances with commands like:
+
+ **Income:**
+• "add income 5000 salary today"
+• "delete income 5"
+• "delete last income"
+
+ **Expenses:**
+• "add expense 25.50 for lunch food"
+• "how much did I spend on food"
+• "delete expense 3"
+• "delete last expense"
+
+ **Reports:**
+• "show my budget summary"
+• "show my expenses this month"
+• "show my recent transactions"
+
+Try typing something!`);
+
+                setTimeout(() => {
+                    addBudgetSuggestionChips();
+                }, 100);
+            }
+
+            setTimeout(() => {
+                const input = document.getElementById('budgetChatInput');
+                if (input) input.focus();
+            }, 200);
+        }
+    };
+
+    // Add suggestion chips
+    function addBudgetSuggestionChips() {
+        const messagesDiv = document.getElementById('budgetChatMessages');
+        const suggestionsDiv = document.createElement('div');
+        suggestionsDiv.className = 'flex flex-wrap gap-2 mt-2 mb-1';
+        suggestionsDiv.id = 'budgetSuggestionChips';
+
+        const suggestions = [
+            'show my budget summary',
+            'show my expenses this month',
+            'add income 5000 salary',
+            'add expense 15.50 for coffee',
+            'how much on food'
+        ];
+
+        suggestions.forEach(cmd => {
+            const chip = document.createElement('span');
+            chip.className = 'budget-command-suggestion';
+            chip.textContent = cmd;
+            chip.onclick = () => {
+                const input = document.getElementById('budgetChatInput');
+                if (input) {
+                    input.value = cmd;
+                    sendBudgetChatMessage();
+                }
+            };
+            suggestionsDiv.appendChild(chip);
+        });
+
+        messagesDiv.appendChild(suggestionsDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Add user message
+    function addBudgetUserMessage(message) {
+        const messagesDiv = document.getElementById('budgetChatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'budget-message budget-user-message';
+        messageDiv.textContent = message;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Add bot message
+    function addBudgetBotMessage(message) {
+        const messagesDiv = document.getElementById('budgetChatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'budget-message budget-bot-message';
+        messageDiv.innerHTML = message.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Show typing indicator
+    function showBudgetTypingIndicator() {
+        const messagesDiv = document.getElementById('budgetChatMessages');
+        removeBudgetTypingIndicator();
+        const indicator = document.createElement('div');
+        indicator.className = 'typing-indicator';
+        indicator.id = 'budgetTypingIndicator';
+        indicator.innerHTML = `
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        `;
+        messagesDiv.appendChild(indicator);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Remove typing indicator
+    function removeBudgetTypingIndicator() {
+        const indicator = document.getElementById('budgetTypingIndicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+
+    // Send chat message
+    window.sendBudgetChatMessage = function() {
+        if (isBudgetSending) return;
+
+        const input = document.getElementById('budgetChatInput');
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        isBudgetSending = true;
+        const sendBtn = document.getElementById('budgetChatSendBtn');
+        sendBtn.disabled = true;
+
+        input.value = '';
+
+        addBudgetUserMessage(message);
+        showBudgetTypingIndicator();
+
+        fetch('/budget/api/chat-command/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getBudgetCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                message: message
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            removeBudgetTypingIndicator();
+
+            if (data.success) {
+                addBudgetBotMessage(data.message);
+
+                if (['add_income', 'add_expense', 'delete_income', 'delete_expense', 'delete_last'].includes(data.action)) {
+                    addBudgetBotMessage(`Refreshing budget data...`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            } else {
+                addBudgetBotMessage(data.message || 'Sorry, I could not process that command.');
+            }
+        })
+        .catch(error => {
+            removeBudgetTypingIndicator();
+            addBudgetBotMessage('Sorry, there was an error processing your command.');
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            isBudgetSending = false;
+            sendBtn.disabled = false;
+            setTimeout(() => {
+                if (isBudgetChatOpen) {
+                    document.getElementById('budgetChatInput').focus();
+                }
+            }, 100);
+        });
+    };
+
+    // Get CSRF token
+    function getBudgetCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Initialize chat
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add username to budgetData
+        const usernameElement = document.getElementById('username');
+        if (usernameElement) {
+            budgetData.username = usernameElement.textContent;
+        }
+
+        // Set initial chat state
+        isBudgetChatOpen = false;
+
+        // Add keyboard shortcut (Cmd/Ctrl + K)
+        document.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                if (!isBudgetChatOpen) {
+                    toggleBudgetChat();
+                } else {
+                    document.getElementById('budgetChatInput').focus();
+                }
+            }
+
+            if (e.key === 'Escape' && isBudgetChatOpen) {
+                toggleBudgetChat();
+            }
+        });
+
+        // Add enter key handler
+        const chatInput = document.getElementById('budgetChatInput');
+        if (chatInput) {
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendBudgetChatMessage();
+                }
+            });
+        }
+    });
+    // BUDGET CHATBOT FUNCTIONALITY ends here
 </script>
 
 </body>
