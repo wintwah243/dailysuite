@@ -391,13 +391,14 @@
             </div>
         </div>
         <div class="flex items-center space-x-4">
-            <div class="text-sm text bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
-                <i class="fas fa-user-circle mr-2 text-gray-500"></i>{{ request.user.username }}
-            </div>
-            <a href="/accounts/logout/" class="text-sm px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
-                <i class="fas fa-sign-out-alt mr-2"></i>Logout
-            </a>
-        </div>
+    <a href="/accounts/profile/" class="flex items-center text-sm text bg-gray-50 px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors">
+        <i class="fas fa-user-circle mr-2 text-gray-500"></i>
+        <span>{{ request.user.username }}</span>
+    </a>
+    <a href="/accounts/logout/" class="text-sm px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+    </a>
+    </div>
     </div>
 
     <!-- Main Layout -->
@@ -427,6 +428,10 @@
                 <a href="/budget/" class="sidebar-icon" title="Budget">
                     <i class="fas fa-wallet w-5 mr-3"></i>
                     <span class="text-sm font-medium">Budget</span>
+                </a>
+                <a href="/accounts/profile/" class="sidebar-icon" title="Profile">
+                    <i class="fas fa-user-circle w-5 mr-3"></i>
+                    <span class="text-sm font-medium">Profile</span>
                 </a>
             </div>
 

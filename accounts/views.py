@@ -190,3 +190,35 @@ def logout_user(request):
     logout(request)
     # messages.success(request, "Logged out successfully")
     return redirect('login')
+
+
+# for user profile page
+@login_required
+def profile(request):
+
+    context = {
+        'user': request.user,
+        'date_joined': request.user.date_joined.strftime('%B %d, %Y'),
+        'last_login': request.user.last_login.strftime('%B %d, %Y at %I:%M %p') if request.user.last_login else 'Never',
+    }
+    return render(request, 'userprofile.html', context)
+
+
+# user update their username
+@login_required
+def edit_profile(request):
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name', '')
+        last_name = request.POST.get('last_name', '')
+
+        # Update user's name
+        user = request.user
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+
+        messages.success(request, 'Your profile has been updated successfully!')
+        return redirect('profile')
+
+    return render(request, 'edit_profile.html', {'user': request.user})
