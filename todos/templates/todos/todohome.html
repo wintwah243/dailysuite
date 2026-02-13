@@ -1192,7 +1192,7 @@
     {% endfor %}
 
     <!-- Chatbot pop up -->
-<script id="chatWidget" class="chat-widget collapsed">
+<div id="chatWidget" class="chat-widget collapsed">
     <!-- Header -->
     <div class="chat-header" onclick="toggleChat()">
         <div class="chat-header-left">
@@ -1208,6 +1208,18 @@
     <div id="chatMessages" class="chat-messages hidden">
         <!--  welcome message will be provided in script tag :))) -->
     </div>
+
+    <!-- Input Container -->
+    <div id="chatInputContainer" class="chat-input-container hidden">
+        <input type="text"
+               id="chatInput"
+               class="chat-input"
+               placeholder="Type a command... (e.g., 'delete buy milk')">
+        <button class="chat-send-btn" onclick="sendChatMessage()">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
+</div>
 
 
 <script type="module">
