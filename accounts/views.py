@@ -14,6 +14,7 @@ from todos.models import Task
 from budget.models import Income, Expense
 from datetime import date, datetime
 import calendar as pycal
+from collections import defaultdict
 
 def Landing(request):
     return render(request, 'Landing.html')
@@ -66,6 +67,9 @@ def home(request):
 
     # Todos data
     tasks = Task.objects.filter(user=request.user).order_by('-created_at')
+    high_priority_count = tasks.filter(priority='high').count()
+    medium_priority_count = tasks.filter(priority='medium').count()
+    low_priority_count = tasks.filter(priority='low').count()
     completed_count = tasks.filter(is_completed=True).count()
     pending_count = tasks.filter(is_completed=False).count()
     overdue_count = tasks.filter(is_completed=False, due_date__lt=today).count()
@@ -91,6 +95,26 @@ def home(request):
     ).aggregate(Avg('amount'))
     avg_daily_spend = avg_daily_spend_result['amount__avg'] or 0
 
+    # Get expenses
+    expenses = Expense.objects.filter(user=request.user).order_by('-date')[:5]
+
+    # Get all expenses for category breakdown
+    all_expenses = Expense.objects.filter(user=request.user)
+
+    # Group expenses by category name
+    category_counts = defaultdict(int)
+    for expense in all_expenses:
+        category_name = expense.category.name if expense.category else "Uncategorized"
+        category_name = category_name.title()
+        category_counts[category_name] += 1
+
+    expense_categories = [
+        {'name': name, 'count': count}
+        for name, count in sorted(category_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+    ]
+
+    total_expenses_count = all_expenses.count()
+
     context = {
         # Budget data
         'balance': balance,
@@ -99,6 +123,8 @@ def home(request):
         'savings_percentage': savings_percentage,
         'incomes': incomes,
         'expenses': expenses,
+        'expense_categories': expense_categories,
+        'total_expenses_count': total_expenses_count,
 
         # Notes data
         'notes': notes,
@@ -109,6 +135,11 @@ def home(request):
         'pending_count': pending_count,
         'overdue_count': overdue_count,
         'today': today,
+
+        # Priority counts
+        'high_priority_count': high_priority_count,
+        'medium_priority_count': medium_priority_count,
+        'low_priority_count': low_priority_count,
 
         # Calendar data
         'calendar_days': calendar_days,
