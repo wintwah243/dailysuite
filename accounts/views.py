@@ -222,3 +222,5 @@ def edit_profile(request):
         return redirect('profile')
 
     return render(request, 'edit_profile.html', {'user': request.user})
+
+

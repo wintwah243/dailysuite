@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import certifi
+import ssl
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -180,3 +183,29 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email Configuration for Gmail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
+
+if DEBUG:
+    try:
+        from django.contrib.sites.models import Site
+        site = Site.objects.get(id=SITE_ID)
+        site.domain = '127.0.0.1:8000'
+        site.name = 'DailySuite Development'
+        site.save()
+        print(f"Site configured: {site.domain}")
+    except Exception as e:
+        print(f"Could not configure site: {e}")
+        print("  You may need to run: python manage.py migrate")
+
+# Login URLs
+LOGIN_URL = 'login'
+# For development:
+SITE_URL = 'http://127.0.0.1:8000'
