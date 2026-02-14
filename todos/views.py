@@ -131,3 +131,11 @@ def toggle_task(request, id):
     task.is_completed = not task.is_completed
     task.save()
     return redirect("todolist")
+
+# @login_required
+# def toggle_pin(request, id):
+#     task = get_object_or_404(Task, id=id, user=request.user)
+#     task.is_pinned = not task.is_pinned
+#     task.save()
+#     return redirect("todolist")
+

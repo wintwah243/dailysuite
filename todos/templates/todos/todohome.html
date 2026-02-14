@@ -464,7 +464,7 @@
                             <!-- In Progress -->
                             <p class="text-sm text-gray-600 mt-4 mb-2">Pending</p>
                             <div class="w-full bg-gray-200 rounded-full h-4">
-                                <div class="bg-orange-600 h-4 rounded-full"
+                                <div class="bg-blue-600 h-4 rounded-full"
                                      style="width: {{ inprogress_percent }}%">
                                 </div>
                             </div>
@@ -489,15 +489,15 @@
                                 <div class="flex items-center justify-between -mt-8">
                                     <h1 class="text-3xl font-bold text-gray-900">Tasks</h1>
                                     <!-- Search Bar -->
-                                    <form method="get" class="mb-6">
+                                    <form method="get" class="mb-6" onsubmit="return false;">
                                         <div class="relative max-w-md mb-6 group">
                                             <input
                                                 type="text"
                                                 id="search-input"
-
+                                                name="q"
                                                 value="{{ query }}"
                                                 placeholder="Search tasks..."
-                                                class="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2
+                                                class="w-full rounded-lg border border-gray-300 pl-10 pr-10 py-2
                                                        focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
                                             />
 
@@ -507,11 +507,15 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                       d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                             </svg>
-                                            <!-- Clear button (only show when searching) -->
-                                                <a href="#" id="clear-search"
-                                                   class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    ✕
-                                                </a>
+
+                                            <!-- Clear button -->
+                                            <button
+                                                type="button"
+                                                id="clear-search"
+                                                class="absolute right-3 top-1/2 -translate-y-1/2
+                                                       text-gray-400 hover:text-black hidden">
+                                                ✕
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
@@ -596,6 +600,7 @@
                                             <!-- Action Buttons - Hidden until hover -->
                                             <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                                                  onclick="event.stopPropagation();">
+
                                                 <button onclick="openEditModal('{{ task.id }}')"
                                                         class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1226,30 +1231,6 @@
 
 
 <script type="module">
-const searchInput = document.getElementById("search-input");
-const taskItems = document.querySelectorAll("#task-list .task-item");
-const clearBtn = document.getElementById("clear-search");
-
-// Live filtering while typing
-searchInput.addEventListener("input", function() {
-    const query = this.value.toLowerCase();
-
-    taskItems.forEach(item => {
-        const taskName = item.querySelector("h3").textContent.toLowerCase();
-        if (taskName.includes(query)) {
-            item.style.display = ""; // show
-        } else {
-            item.style.display = "none"; // hide
-        }
-    });
-});
-
-// Clear search
-clearBtn.addEventListener("click", function(e) {
-    e.preventDefault();
-    searchInput.value = "";
-    taskItems.forEach(item => item.style.display = "");
-})
 
 import { EmojiButton } from 'https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js';
 
@@ -1631,6 +1612,44 @@ function updateTaskBadge() {
 }
 
 updateTaskBadge();
+
+//Search Bar
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("search-input");
+    const clearBtn = document.getElementById("clear-search");
+
+    function filterTasks() {
+        const query = searchInput.value.toLowerCase();
+        const taskItems = document.querySelectorAll("#task-list .task-item");
+
+        taskItems.forEach(item => {
+            const taskName = item.querySelector("h3").textContent.toLowerCase();
+
+            if (taskName.includes(query)) {
+                item.style.display = "";
+            } else {
+                item.style.display = "none";
+            }
+        });
+
+        // Show or hide clear button
+        if (query.length > 0) {
+            clearBtn.classList.remove("hidden");
+        } else {
+            clearBtn.classList.add("hidden");
+        }
+    }
+
+    // Live search while typing
+    searchInput.addEventListener("input", filterTasks);
+
+    // Clear search
+    clearBtn.addEventListener("click", function () {
+        searchInput.value = "";
+        filterTasks();
+    });
+
+});
 </script>
 </body>
 </html>

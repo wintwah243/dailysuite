@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/chat-command/', views_chat.todo_chat_command, name='todo_chat_command'),
     path('api/tasks-json/', views_chat.get_tasks_json, name='tasks_json'),
 
+    # path('toggle-pin/<int:id>/', views.toggle_pin, name='toggle_pin'),
 ]
