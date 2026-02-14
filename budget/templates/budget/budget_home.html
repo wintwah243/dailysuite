@@ -416,10 +416,15 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <!-- Export Button -->
-                            <button onclick="exportToExcel()"
+                            <button onclick="exportIncomeToExcel()"
                                     class="inline-flex items-center gap-2 px-4 py-2.5 bg-black text-white rounded-lg hover:bg-green-700 transition-all">
                                 <i class="fas fa-file-excel"></i>
-                                <span>Export Excel</span>
+                                <span>Export income</span>
+                            </button>
+                            <button onclick="exportExpenseToExcel()"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-black text-white rounded-lg hover:bg-green-700 transition-all">
+                                <i class="fas fa-file-excel"></i>
+                                <span>Export expense</span>
                             </button>
                         </div>
                     </div>
@@ -1398,59 +1403,58 @@
         document.getElementById('editCategoryModal').style.display = 'none';
     }
 
-    // Export to Excel functions
-    function exportToExcel() {
-        const workbook = XLSX.utils.book_new();
+    // Export Income to Excel
+function exportIncomeToExcel() {
+    const workbook = XLSX.utils.book_new();
 
-        // Create Income Sheet
-        const incomeData = [
-            ['Date', 'Source', 'Amount (Ks)'],
-            ...budgetData.incomes.map(income => [
-                income.date,
-                income.source,
-                income.amount
-            ]),
-            ['', 'Total Income', budgetData.total_income]
-        ];
-        const incomeSheet = XLSX.utils.aoa_to_sheet(incomeData);
-        XLSX.utils.book_append_sheet(workbook, incomeSheet, 'Incomes');
+    // Create Income Sheet only
+    const incomeData = [
+        ['Date', 'Source', 'Amount (Ks)'],
+        ...budgetData.incomes.map(income => [
+            income.date,
+            income.source,
+            income.amount
+        ]),
+        ['', 'Total Income', budgetData.total_income]
+    ];
+    const incomeSheet = XLSX.utils.aoa_to_sheet(incomeData);
+    XLSX.utils.book_append_sheet(workbook, incomeSheet, 'Incomes');
 
-        // Create Expense Sheet
-        const expenseData = [
-            ['Date', 'Description', 'Category', 'Amount (Ks)'],
-            ...budgetData.expenses.map(expense => [
-                expense.date,
-                expense.description,
-                expense.category,
-                expense.amount
-            ]),
-            ['', '', 'Total Expense', budgetData.total_expense]
-        ];
-        const expenseSheet = XLSX.utils.aoa_to_sheet(expenseData);
-        XLSX.utils.book_append_sheet(workbook, expenseSheet, 'Expenses');
+    // Generate file name with current date
+    const today = new Date();
+    const fileName = `income_report_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}.xlsx`;
 
-        // Create Summary Sheet
-        const savingsRate = budgetData.total_income > 0 ?
-            ((budgetData.balance / budgetData.total_income) * 100).toFixed(2) + '%' : '0%';
+    // Download the file
+    XLSX.writeFile(workbook, fileName);
+    showNotification('Income Excel file exported successfully!', 'success');
+}
 
-        const summaryData = [
-            ['Budget Summary', ''],
-            ['Total Income', budgetData.total_income],
-            ['Total Expense', budgetData.total_expense],
-            ['Balance', budgetData.balance],
-            ['Savings Rate', savingsRate]
-        ];
-        const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
-        XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
+// Export Expense to Excel
+function exportExpenseToExcel() {
+    const workbook = XLSX.utils.book_new();
 
-        // Generate file name with current date
-        const today = new Date();
-        const fileName = `budget_report_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}.xlsx`;
+    // Create Expense Sheet only
+    const expenseData = [
+        ['Date', 'Description', 'Category', 'Amount (Ks)'],
+        ...budgetData.expenses.map(expense => [
+            expense.date,
+            expense.description,
+            expense.category,
+            expense.amount
+        ]),
+        ['', '', 'Total Expense', budgetData.total_expense]
+    ];
+    const expenseSheet = XLSX.utils.aoa_to_sheet(expenseData);
+    XLSX.utils.book_append_sheet(workbook, expenseSheet, 'Expenses');
 
-        // Download the file
-        XLSX.writeFile(workbook, fileName);
-        showNotification('Excel file exported successfully!', 'success');
-    }
+    // Generate file name with current date
+    const today = new Date();
+    const fileName = `expense_report_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}.xlsx`;
+
+    // Download the file
+    XLSX.writeFile(workbook, fileName);
+    showNotification('Expense Excel file exported successfully!', 'success');
+}
 
     // Notification function
     function showNotification(message, type = 'info') {
