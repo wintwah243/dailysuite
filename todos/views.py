@@ -10,7 +10,12 @@ from datetime import datetime, date
 
 @login_required
 def todo(request):
-    tasks = Task.objects.filter(user=request.user)
+    tasks = Task.objects.filter(user=request.user).order_by('-is_pinned', 'is_completed', 'due_date')
+
+    # Search
+    q = request.GET.get("q", "")
+    if q:
+        tasks = tasks.filter(name__icontains=q)
 
     for task in tasks:
         task.form = TaskForm(instance=task)
@@ -65,11 +70,6 @@ def todo(request):
         done_percent = 0
         inprogress_percent = 0
         overdue_percent = 0
-
-    # Search
-    q = request.GET.get("q", "")
-    if q:
-        tasks = tasks.filter(name__icontains=q)
 
     context = {
         "tasks": tasks,
@@ -132,10 +132,11 @@ def toggle_task(request, id):
     task.save()
     return redirect("todolist")
 
-# @login_required
-# def toggle_pin(request, id):
-#     task = get_object_or_404(Task, id=id, user=request.user)
-#     task.is_pinned = not task.is_pinned
-#     task.save()
-#     return redirect("todolist")
+@login_required
+def toggle_pin(request, task_id):
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+    task.is_pinned = not task.is_pinned
+    task.save()
+    return redirect('todolist')
+
 

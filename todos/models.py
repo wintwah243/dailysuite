@@ -29,6 +29,7 @@ class Task(models.Model):
 
     name = models.CharField(max_length=100)
     is_completed = models.BooleanField(default=False)
+    is_pinned = models.BooleanField(default=False)
     due_date = models.DateField(null=True, blank=True)
     option = models.CharField(max_length=50, choices=OPTION_CHOICES)
     priority = models.CharField(max_length=50, choices=PRIORITY_CHOICES)
