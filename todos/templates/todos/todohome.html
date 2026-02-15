@@ -1481,36 +1481,7 @@ window.openEmojiPicker = function(inputId, button) {
     window.pickers[inputId].togglePicker(button);
 };
 
-document.addEventListener('DOMContentLoaded', function () {
 
-    const toggleBtn = document.getElementById('toggle-tasks-btn');
-    const tasks = document.querySelectorAll('.task-item');
-    const expandIcon = document.getElementById('expand-icon');
-    const contractIcon = document.getElementById('contract-icon');
-
-    let expanded = false;
-
-    toggleBtn?.addEventListener('click', function () {
-        expanded = !expanded;
-
-        tasks.forEach((task, index) => {
-            if (index >= 5) {
-
-                if (expanded) {
-                    task.classList.remove('max-h-0', 'opacity-0');
-                    task.classList.add('max-h-[500px]', 'opacity-100');
-                } else {
-                    task.classList.remove('max-h-[500px]', 'opacity-100');
-                    task.classList.add('max-h-0', 'opacity-0');
-                }
-            }
-        });
-
-        expandIcon.classList.toggle('hidden', expanded);
-        contractIcon.classList.toggle('hidden', !expanded);
-    });
-
-});
 
 // Modals
 window.openAddModal = () => {
@@ -1803,41 +1774,83 @@ updateTaskBadge();
 
 //Search Bar
 document.addEventListener("DOMContentLoaded", function () {
+
     const searchInput = document.getElementById("search-input");
     const clearBtn = document.getElementById("clear-search");
 
-    function filterTasks() {
+    const toggleBtn = document.getElementById("toggle-tasks-btn");
+    const expandIcon = document.getElementById("expand-icon");
+    const contractIcon = document.getElementById("contract-icon");
+
+    const taskItems = document.querySelectorAll("#task-list .task-item");
+
+    let expanded = false;
+    let searching = false;
+
+    function updateTasks() {
+
         const query = searchInput.value.toLowerCase();
-        const taskItems = document.querySelectorAll("#task-list .task-item");
+        searching = query.length > 0;
 
-        taskItems.forEach(item => {
+        taskItems.forEach((item, index) => {
+
             const taskName = item.querySelector("h3").textContent.toLowerCase();
+            const matches = taskName.includes(query);
 
-            if (taskName.includes(query)) {
-                item.style.display = "";
-            } else {
+            if (!matches) {
                 item.style.display = "none";
+                return;
+            }
+
+            item.style.display = "";
+
+            // If searching → show everything
+            if (searching) {
+                item.classList.remove('max-h-0', 'opacity-0');
+                item.classList.add('max-h-[500px]', 'opacity-100');
+            }
+
+            // If NOT searching → apply see more logic
+            else {
+                if (!expanded && index >= 5) {
+                    item.classList.add('max-h-0', 'opacity-0');
+                    item.classList.remove('max-h-[500px]', 'opacity-100');
+                } else {
+                    item.classList.remove('max-h-0', 'opacity-0');
+                    item.classList.add('max-h-[500px]', 'opacity-100');
+                }
             }
         });
 
-        // Show or hide clear button
-        if (query.length > 0) {
-            clearBtn.classList.remove("hidden");
-        } else {
-            clearBtn.classList.add("hidden");
-        }
+        clearBtn.classList.toggle("hidden", !searching);
     }
+    // see more button
+    toggleBtn?.addEventListener("click", function () {
 
-    // Live search while typing
-    searchInput.addEventListener("input", filterTasks);
+        if (searching) return; //Disable see more while searching
 
-    // Clear search
-    clearBtn.addEventListener("click", function () {
-        searchInput.value = "";
-        filterTasks();
+        expanded = !expanded;
+
+        expandIcon.classList.toggle("hidden", expanded);
+        contractIcon.classList.toggle("hidden", !expanded);
+
+        updateTasks();
     });
 
+    // Search
+    searchInput?.addEventListener("input", updateTasks);
+
+    clearBtn?.addEventListener("click", function () {
+        searchInput.value = "";
+        updateTasks();
+    });
+
+    // Initial load
+    updateTasks();
+
 });
+
+
 </script>
 </body>
 </html>
