@@ -4,10 +4,11 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.db.models import Sum, Avg
 from notes.models import Note
 from todos.models import Task
@@ -15,11 +16,13 @@ from budget.models import Income, Expense
 from datetime import date, datetime
 import calendar as pycal
 from collections import defaultdict
+from django.urls import reverse
 
 def Landing(request):
     return render(request, 'Landing.html')
 
 
+# main dashboard
 @login_required
 def home(request):
     today = date.today()
@@ -254,4 +257,39 @@ def edit_profile(request):
 
     return render(request, 'edit_profile.html', {'user': request.user})
 
+
+# for user who wants to change their password
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+
+        if form.is_valid():
+            # Save the new password
+            user = form.save()
+
+            # Logout the user
+            logout(request)
+
+            # Return success response
+            return JsonResponse({
+                'success': True,
+                'message': 'Password changed successfully',
+                'logout_url': reverse('login')
+            })
+        else:
+            # Return form errors
+            errors = {}
+            for field, error_list in form.errors.items():
+                errors[field] = error_list
+
+            return JsonResponse({
+                'success': False,
+                'errors': errors
+            }, status=400)
+
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    }, status=405)
 

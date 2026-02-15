@@ -76,276 +76,677 @@
         .settings-btn.delete:hover .settings-text {
             color: #ef4444;
         }
+        /* Modal animations */
+        #passwordModal {
+            transition: opacity 0.3s ease;
+        }
+
+        #passwordModal.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #passwordModal:not(.hidden) {
+            opacity: 1;
+        }
+
+        /* Password strength bars */
+            .strength-bar {
+            transition: all 0.3s ease;
+        }
+
+        .strength-bar.weak {
+            background-color: #ef4444;
+        }
+
+        .strength-bar.medium {
+            background-color: #f59e0b;
+        }
+
+        .strength-bar.strong {
+            background-color: #10b981;
+        }
+
+        /* Requirement styling */
+            .requirement.met {
+            color: #10b981;
+            text-decoration: line-through;
+            opacity: 0.7;
+            }
+
+        /* Toast animations */
+            #successToast, #errorToast {
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+           to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body class="main-bg font-sans text-gray-800 antialiased">
-    <!-- Header -->
-    <div class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 px-6 flex items-center justify-between z-50 shadow-sm">
-        <div class="flex items-center space-x-4">
-            <!-- logo starts here -->
-            <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center shadow-md">
-                <i class="fas fa-tasks text-white"></i>
-            </div>
-            <!-- logo ends here -->
-            <h1 class="text-2xl font-bold text-gray-900">DailySuite</h1>
-            <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
-<!--                <i class="far fa-calendar-alt mr-2"></i>-->
-                <span id="current-date"></span>
-            </div>
+<!-- Header -->
+<div class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 px-6 flex items-center justify-between z-50 shadow-sm">
+    <div class="flex items-center space-x-4">
+        <!-- logo starts here -->
+        <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center shadow-md">
+            <i class="fas fa-tasks text-white"></i>
         </div>
-        <div class="flex items-center space-x-4">
-            <a href="/profile/" class="flex items-center text-sm text bg-gray-50 px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors">
-                <i class="fas fa-user-circle mr-2 text-gray-500"></i>
-                <span id="username">{{ request.user.username }}</span>
+        <!-- logo ends here -->
+        <h1 class="text-2xl font-bold text-gray-900">DailySuite</h1>
+        <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
+            <span id="current-date"></span>
+        </div>
+    </div>
+    <div class="flex items-center space-x-4">
+        <a href="/profile/"
+           class="flex items-center text-sm text bg-gray-50 px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors">
+            <i class="fas fa-user-circle mr-2 text-gray-500"></i>
+            <span id="username">{{ request.user.username }}</span>
+        </a>
+        <a href="/accounts/logout/"
+           class="text-sm px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+        </a>
+    </div>
+</div>
+
+<!-- Main Layout -->
+<div class="flex pt-16">
+    <!-- Sidebar -->
+    <div class="fixed left-0 w-64 sidebar h-screen flex flex-col py-6 space-y-2 z-40">
+        <!-- sidebar small text -->
+        <div class="px-4 mb-6">
+            <div class="text-lg font-bold text-gray-900 mb-2">My Workspace</div>
+            <div class="text-xs text-gray-500">Personal dashboard</div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="px-3">
+            <a href="/home" class="sidebar-icon" title="Dashboard">
+                <i class="fas fa-chart-line w-5 mr-3"></i>
+                <span class="text-sm font-medium">Dashboard</span>
             </a>
-            <a href="/accounts/logout/" class="text-sm px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+            <a href="/todo/todolist/" class="sidebar-icon" title="Todos">
+                <i class="fas fa-tasks w-5 mr-3"></i>
+                <span class="text-sm font-medium">Tasks</span>
+            </a>
+            <a href="/note/" class="sidebar-icon" title="Notes">
+                <i class="fas fa-sticky-note w-5 mr-3"></i>
+                <span class="text-sm font-medium">Notes</span>
+            </a>
+            <a href="/budget" class="sidebar-icon" title="Budget">
+                <i class="fas fa-wallet w-5 mr-3"></i>
+                <span class="text-sm font-medium">Budget</span>
+            </a>
+            <a href="/accounts/profile/" class="sidebar-icon active" title="Profile">
+                <i class="fas fa-user-circle w-5 mr-3"></i>
+                <span class="text-sm font-medium">Profile</span>
+            </a>
+            <a href="/accounts/logout/" class="sidebar-icon" title="Logout">
                 <i class="fas fa-sign-out-alt mr-2"></i>Logout
             </a>
         </div>
+
+        <div class="flex-1"></div>
     </div>
 
-    <!-- Main Layout -->
-    <div class="flex pt-16">
-        <!-- Sidebar -->
-        <div class="fixed left-0 w-64 sidebar h-screen flex flex-col py-6 space-y-2 z-40">
-            <!-- sidebar small text -->
-            <div class="px-4 mb-6">
-                <div class="text-lg font-bold text-gray-900 mb-2">My Workspace</div>
-                <div class="text-xs text-gray-500">Personal dashboard</div>
+    <!-- Main Content -->
+    <div class="main-content flex-1 p-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
+                <p class="text-gray-600 mt-2">View and manage your account information</p>
             </div>
 
-            <!-- Navigation -->
-            <div class="px-3">
-                <a href="/home" class="sidebar-icon" title="Dashboard">
-                    <i class="fas fa-chart-line w-5 mr-3"></i>
-                    <span class="text-sm font-medium">Dashboard</span>
-                </a>
-                <a href="/todo/todolist/" class="sidebar-icon" title="Todos">
-                    <i class="fas fa-tasks w-5 mr-3"></i>
-                    <span class="text-sm font-medium">Tasks</span>
-                </a>
-                <a href="/note/" class="sidebar-icon" title="Notes">
-                    <i class="fas fa-sticky-note w-5 mr-3"></i>
-                    <span class="text-sm font-medium">Notes</span>
-                </a>
-                <a href="/budget" class="sidebar-icon" title="Budget">
-                    <i class="fas fa-wallet w-5 mr-3"></i>
-                    <span class="text-sm font-medium">Budget</span>
-                </a>
-                <a href="/accounts/profile/" class="sidebar-icon active" title="Profile">
-                    <i class="fas fa-user-circle w-5 mr-3"></i>
-                    <span class="text-sm font-medium">Profile</span>
-                </a>
-                <a href="/accounts/logout/" class="sidebar-icon" title="Logout">
-                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                </a>
-            </div>
-
-            <div class="flex-1"></div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content flex-1 p-8">
-            <div class="max-w-4xl mx-auto">
-                <!-- Header -->
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
-                    <p class="text-gray-600 mt-2">View and manage your account information</p>
+            <!-- Profile Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <!-- Simple Header -->
+                <div class="px-8 py-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                <i class="fas fa-user-circle text-4xl text-gray-400"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">{{ user.get_full_name|default:user.username }}</h2>
+                                <p class="text-gray-500">@{{ user.username }}</p>
+                            </div>
+                        </div>
+                        <a href="{% url 'edit_profile' %}"
+                           class="px-5 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all flex items-center gap-2 text-sm font-medium">
+                            <i class="fas fa-edit"></i>
+                            Edit Profile
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Profile Card -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    <!-- Simple Header -->
-                    <div class="px-8 py-6 border-b border-gray-200">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                    <i class="fas fa-user-circle text-4xl text-gray-400"></i>
+                <!-- Change Password Modal -->
+                <div id="passwordModal"
+                     class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 transition-opacity">
+                    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-900">Change Password</h3>
+                            <button onclick="closePasswordModal()"
+                                    class="text-gray-400 hover:text-gray-600 transition-colors">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <form id="passwordChangeForm" method="post" action="{% url 'change_password' %}">
+                            {% csrf_token %}
+
+                            <!-- Current Password -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                                <input type="password"
+                                       name="old_password"
+                                       id="id_old_password"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                       required>
+                                <div class="text-red-500 text-sm mt-1 error" id="error_old_password"></div>
+                            </div>
+
+                            <!-- New Password -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                                <input type="password"
+                                       name="new_password1"
+                                       id="id_new_password1"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                       required>
+                                <!-- Password strength indicator -->
+                                <div class="mt-2">
+                                    <div class="flex space-x-1">
+                                        <div class="strength-bar h-1 flex-1 rounded bg-gray-200"></div>
+                                        <div class="strength-bar h-1 flex-1 rounded bg-gray-200"></div>
+                                        <div class="strength-bar h-1 flex-1 rounded bg-gray-200"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1" id="passwordStrengthText">Enter a strong
+                                        password</p>
+                                </div>
+                                <div class="text-red-500 text-sm mt-1 error" id="error_new_password1"></div>
+                            </div>
+
+                            <!-- Confirm New Password -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                                <input type="password"
+                                       name="new_password2"
+                                       id="id_new_password2"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                       required>
+                                <div class="text-red-500 text-sm mt-1 error" id="error_new_password2"></div>
+                            </div>
+
+                            <!-- Password requirements -->
+                            <div class="mb-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
+                                <p class="font-medium mb-1">Password requirements:</p>
+                                <ul class="list-disc pl-4 space-y-1">
+                                    <li class="requirement" id="req-length">At least 8 characters</li>
+                                    <li class="requirement" id="req-uppercase">At least one uppercase letter</li>
+                                    <li class="requirement" id="req-lowercase">At least one lowercase letter</li>
+                                    <li class="requirement" id="req-number">At least one number</li>
+                                    <li class="requirement" id="req-special">At least one special character</li>
+                                </ul>
+                            </div>
+
+                            <!-- Modal buttons -->
+                            <div class="flex justify-end space-x-3">
+                                <button type="button"
+                                        onclick="closePasswordModal()"
+                                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                        id="submitPasswordChange"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Change Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Success Message Toast -->
+                <div id="successToast"
+                     class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50 transform transition-all translate-y-0">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <span>Password changed successfully! Redirecting to login...</span>
+                    </div>
+                </div>
+
+                <!-- Error Message Toast -->
+                <div id="errorToast"
+                     class="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50 transform transition-all translate-y-0">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span id="errorMessage"></span>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="loadingSpinner"
+                     class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 flex items-center justify-center">
+                    <div class="bg-white p-5 rounded-lg shadow-xl flex items-center space-x-3">
+                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                        <span class="text-gray-700">Processing...</span>
+                    </div>
+                </div>
+
+                <!-- Account Info Grid -->
+                <div class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Personal Information -->
+                        <div class="profile-card p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <i class="fas fa-user-circle text-gray-600 mr-2"></i>
+                                Personal Information
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Username</label>
+                                    <p class="mt-1 text-gray-900 font-medium">{{ user.username }}</p>
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl font-bold text-gray-900">{{ user.get_full_name|default:user.username }}</h2>
-                                    <p class="text-gray-500">@{{ user.username }}</p>
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Email
+                                        Address</label>
+                                    <p class="mt-1 text-gray-900">{{ user.email|default:"Not provided" }}</p>
                                 </div>
                             </div>
-                            <a href="{% url 'edit_profile' %}" class="px-5 py-2.5 bg-black text-white rounded-lg hover:opacity-90 transition-all flex items-center gap-2 text-sm font-medium">
-                                <i class="fas fa-edit"></i>
-                                Edit Profile
-                            </a>
                         </div>
-                    </div>
 
-                    <!-- Account Info Grid -->
-                    <div class="p-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Personal Information -->
-                            <div class="profile-card p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <i class="fas fa-user-circle text-gray-600 mr-2"></i>
-                                    Personal Information
-                                </h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Username</label>
-                                        <p class="mt-1 text-gray-900 font-medium">{{ user.username }}</p>
-                                    </div>
-                                    <div>
-                                        <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Email Address</label>
-                                        <p class="mt-1 text-gray-900">{{ user.email|default:"Not provided" }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Account Details -->
-                            <div class="profile-card p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <i class="fas fa-shield-alt text-gray-600 mr-2"></i>
-                                    Account Details
-                                </h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Account Status</label>
-                                        <div class="mt-1">
-                                            {% if user.is_active %}
-                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <!-- Account Details -->
+                        <div class="profile-card p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <i class="fas fa-shield-alt text-gray-600 mr-2"></i>
+                                Account Details
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Account
+                                        Status</label>
+                                    <div class="mt-1">
+                                        {% if user.is_active %}
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                     <i class="fas fa-check-circle mr-1"></i>
                                                     Active
                                                 </span>
-                                            {% else %}
-                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                                     <i class="fas fa-times-circle mr-1"></i>
                                                     Inactive
                                                 </span>
-                                            {% endif %}
-                                        </div>
+                                        {% endif %}
                                     </div>
-                                    <div>
-                                        <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Member Since</label>
-                                        <p class="mt-1 text-gray-900">
-                                            <i class="far fa-calendar-alt mr-2 text-gray-400"></i>
-                                            {{ date_joined }}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</label>
-                                        <p class="mt-1 text-gray-900">
-                                            <i class="far fa-clock mr-2 text-gray-400"></i>
-                                            {{ last_login }}
-                                        </p>
-                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Member
+                                        Since</label>
+                                    <p class="mt-1 text-gray-900">
+                                        <i class="far fa-calendar-alt mr-2 text-gray-400"></i>
+                                        {{ date_joined }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Last
+                                        Login</label>
+                                    <p class="mt-1 text-gray-900">
+                                        <i class="far fa-clock mr-2 text-gray-400"></i>
+                                        {{ last_login }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Simple Settings Section -->
-                        <div class="mt-8">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <i class="fas fa-cog text-gray-600 mr-2"></i>
-                                Account Settings
-                            </h3>
-                            <div class="space-y-3">
-                                <!-- Change Password -->
-                                <button class="settings-btn">
-                                    <div class="flex items-center">
-                                        <div class="settings-icon w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
-                                            <i class="fas fa-key text-blue-600"></i>
-                                        </div>
-                                        <div class="settings-text text-left">
-                                            <p class="font-medium text-gray-900">Change Password</p>
-                                            <p class="text-xs text-gray-500">Update your password regularly for security</p>
-                                        </div>
+                    <!-- Simple Settings Section -->
+                    <div class="mt-8">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-cog text-gray-600 mr-2"></i>
+                            Account Settings
+                        </h3>
+                        <div class="space-y-3">
+                            <!-- Change Password -->
+                            <button class="settings-btn" onclick="openPasswordModal()">
+                                <div class="flex items-center">
+                                    <div class="settings-icon w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
+                                        <i class="fas fa-key text-blue-600"></i>
                                     </div>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
-                                </button>
+                                    <div class="settings-text text-left">
+                                        <p class="font-medium text-gray-900">Change Password</p>
+                                        <p class="text-xs text-gray-500">Update your password regularly for security</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </button>
 
-                                <!-- Forgot Password -->
-                                <button class="settings-btn">
-                                    <div class="flex items-center">
-                                        <div class="settings-icon w-8 h-8 rounded-lg bg-yellow-50 flex items-center justify-center mr-3">
-                                            <i class="fas fa-question-circle text-yellow-600"></i>
-                                        </div>
-                                        <a href="{% url 'password_reset' %}">
+                            <!-- Forgot Password -->
+                            <button class="settings-btn">
+                                <div class="flex items-center">
+                                    <div class="settings-icon w-8 h-8 rounded-lg bg-yellow-50 flex items-center justify-center mr-3">
+                                        <i class="fas fa-question-circle text-yellow-600"></i>
+                                    </div>
+                                    <a href="{% url 'password_reset' %}">
                                         <div class="settings-text text-left">
                                             <p class="font-medium text-gray-900">Forgot Password</p>
                                             <p class="text-xs text-gray-500">Reset your password via email</p>
                                         </div>
-                                        </a>
-                                    </div>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
-                                </button>
+                                    </a>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </button>
 
-                                <!-- Email Preferences -->
-                                <button class="settings-btn">
-                                    <div class="flex items-center">
-                                        <div class="settings-icon w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center mr-3">
-                                            <i class="fas fa-envelope text-green-600"></i>
-                                        </div>
-                                        <div class="settings-text text-left">
-                                            <p class="font-medium text-gray-900">Email Preferences</p>
-                                            <p class="text-xs text-gray-500">Manage notification settings</p>
-                                        </div>
+                            <!-- Email Preferences -->
+                            <button class="settings-btn">
+                                <div class="flex items-center">
+                                    <div class="settings-icon w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center mr-3">
+                                        <i class="fas fa-envelope text-green-600"></i>
                                     </div>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
-                                </button>
+                                    <div class="settings-text text-left">
+                                        <p class="font-medium text-gray-900">Email Preferences</p>
+                                        <p class="text-xs text-gray-500">Manage notification settings</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </button>
 
-                                <!-- Delete Account -->
-                                <button class="settings-btn delete" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.')">
-                                    <div class="flex items-center">
-                                        <div class="settings-icon w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center mr-3">
-                                            <i class="fas fa-trash-alt text-red-600"></i>
-                                        </div>
-                                        <div class="settings-text text-left">
-                                            <p class="font-medium text-gray-900">Delete Account</p>
-                                            <p class="text-xs text-gray-500">Permanently delete your account and all data</p>
-                                        </div>
+                            <!-- Delete Account -->
+                            <button class="settings-btn delete"
+                                    onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.')">
+                                <div class="flex items-center">
+                                    <div class="settings-icon w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center mr-3">
+                                        <i class="fas fa-trash-alt text-red-600"></i>
                                     </div>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
-                                </button>
-                            </div>
+                                    <div class="settings-text text-left">
+                                        <p class="font-medium text-gray-900">Delete Account</p>
+                                        <p class="text-xs text-gray-500">Permanently delete your account and all
+                                            data</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // Function to format date
-        function formatDate(date) {
-            const months = [
-                'January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'
-            ];
-            const month = months[date.getMonth()];
-            const day = date.getDate();
-            const year = date.getFullYear();
-            return `${month} ${day}, ${year}`;
+<script>
+    // Function to format date
+    function formatDate(date) {
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const month = months[date.getMonth()];
+        const day = date.getDate();
+        const year = date.getFullYear();
+        return `${month} ${day}, ${year}`;
+    }
+
+    // Set today's date
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        const dateElement = document.getElementById('current-date');
+        dateElement.innerHTML = `<i class="far fa-calendar-alt mr-2"></i>${formatDate(today)}`;
+
+        // Get username from localStorage
+        const username = localStorage.getItem('username');
+        if (username) {
+            document.getElementById('username').textContent = username;
         }
 
-        // Set today's date
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            const dateElement = document.getElementById('current-date');
-            dateElement.innerHTML = `<i class="far fa-calendar-alt mr-2"></i>${formatDate(today)}`;
+        // Set active sidebar item based on current URL
+        const currentPath = window.location.pathname;
+        const sidebarIcons = document.querySelectorAll('.sidebar-icon');
 
-            // Get username from localStorage
-            const username = localStorage.getItem('username');
-            if (username) {
-                document.getElementById('username').textContent = username;
+        sidebarIcons.forEach(icon => {
+            const link = icon.getAttribute('href');
+            if (currentPath.includes(link)) {
+                icon.classList.add('active');
+            } else {
+                icon.classList.remove('active');
+            }
+        });
+    });
+
+    // Password strength checker
+function checkPasswordStrength(password) {
+    let strength = 0;
+    const requirements = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+
+    // Update requirement indicators
+    document.getElementById('req-length').classList.toggle('met', requirements.length);
+    document.getElementById('req-uppercase').classList.toggle('met', requirements.uppercase);
+    document.getElementById('req-lowercase').classList.toggle('met', requirements.lowercase);
+    document.getElementById('req-number').classList.toggle('met', requirements.number);
+    document.getElementById('req-special').classList.toggle('met', requirements.special);
+
+    // Calculate strength
+    strength = Object.values(requirements).filter(Boolean).length;
+
+    // Update strength bars
+    const bars = document.querySelectorAll('.strength-bar');
+    bars.forEach((bar, index) => {
+        bar.classList.remove('weak', 'medium', 'strong');
+        if (index < strength) {
+            if (strength <= 2) bar.classList.add('weak');
+            else if (strength <= 4) bar.classList.add('medium');
+            else bar.classList.add('strong');
+        }
+    });
+
+    // Update strength text
+    const strengthText = document.getElementById('passwordStrengthText');
+    if (strength <= 2) strengthText.textContent = 'Weak password';
+    else if (strength <= 4) strengthText.textContent = 'Medium password';
+    else strengthText.textContent = 'Strong password';
+
+    return strength;
+}
+
+// Modal functions
+function openPasswordModal() {
+    document.getElementById('passwordModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
+
+    // Reset form when opening
+    resetPasswordForm();
+}
+
+function closePasswordModal() {
+    document.getElementById('passwordModal').classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Restore scrolling
+    resetPasswordForm();
+}
+
+function resetPasswordForm() {
+    document.getElementById('passwordChangeForm').reset();
+    clearErrors();
+
+    // Reset strength indicators
+    document.querySelectorAll('.strength-bar').forEach(bar => {
+        bar.classList.remove('weak', 'medium', 'strong');
+    });
+    document.getElementById('passwordStrengthText').textContent = 'Enter a strong password';
+
+    // Reset requirements
+    document.querySelectorAll('.requirement').forEach(req => {
+        req.classList.remove('met');
+    });
+}
+
+function clearErrors() {
+    document.querySelectorAll('.error').forEach(el => el.textContent = '');
+    document.querySelectorAll('input').forEach(el => {
+        el.classList.remove('border-red-500');
+    });
+}
+
+function showToast(toastId, message = '') {
+    const toast = document.getElementById(toastId);
+    if (message) {
+        document.getElementById('errorMessage').textContent = message;
+    }
+    toast.classList.remove('hidden');
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 3000);
+}
+
+function showLoading() {
+    document.getElementById('loadingSpinner').classList.remove('hidden');
+}
+
+function hideLoading() {
+    document.getElementById('loadingSpinner').classList.add('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const changePasswordBtn = document.querySelector('.settings-btn');
+    if (changePasswordBtn) {
+        changePasswordBtn.onclick = function(e) {
+            e.preventDefault();
+            openPasswordModal();
+        };
+    }
+
+    // Add password strength checker
+    const newPasswordInput = document.getElementById('id_new_password1');
+    if (newPasswordInput) {
+        newPasswordInput.addEventListener('input', function(e) {
+            checkPasswordStrength(e.target.value);
+        });
+    }
+
+    // Confirm password match
+    const confirmPasswordInput = document.getElementById('id_new_password2');
+    const passwordInput = document.getElementById('id_new_password1');
+
+    if (confirmPasswordInput && passwordInput) {
+        confirmPasswordInput.addEventListener('input', function() {
+            if (this.value !== passwordInput.value) {
+                document.getElementById('error_new_password2').textContent = 'Passwords do not match';
+            } else {
+                document.getElementById('error_new_password2').textContent = '';
+            }
+        });
+    }
+});
+
+// Handle form submission
+document.getElementById('passwordChangeForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    // Validate passwords match
+    const password1 = document.getElementById('id_new_password1').value;
+    const password2 = document.getElementById('id_new_password2').value;
+
+    if (password1 !== password2) {
+        document.getElementById('error_new_password2').textContent = 'Passwords do not match';
+        return;
+    }
+
+    // Clear previous errors
+    clearErrors();
+
+    // Show loading
+    showLoading();
+
+    // Disable submit button
+    const submitBtn = document.getElementById('submitPasswordChange');
+    submitBtn.disabled = true;
+
+    // Get form data
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Close modal
+            closePasswordModal();
+
+            // Show success message
+            showToast('successToast');
+
+            // Redirect to login page after 2 seconds
+            setTimeout(() => {
+                window.location.href = data.logout_url;
+            }, 2000);
+        } else {
+            hideLoading();
+            submitBtn.disabled = false;
+
+            // Display errors
+            if (data.errors) {
+                for (const [field, errors] of Object.entries(data.errors)) {
+                    const errorDiv = document.getElementById(`error_${field}`);
+                    const inputField = document.getElementById(`id_${field}`);
+
+                    if (errorDiv) {
+                        errorDiv.textContent = errors.join(', ');
+                    }
+                    if (inputField) {
+                        inputField.classList.add('border-red-500');
+                    }
+                }
             }
 
-            // Set active sidebar item based on current URL
-            const currentPath = window.location.pathname;
-            const sidebarIcons = document.querySelectorAll('.sidebar-icon');
+            // Show general error if any
+            if (data.message) {
+                showToast('errorToast', data.message);
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        hideLoading();
+        submitBtn.disabled = false;
+        showToast('errorToast', 'An error occurred. Please try again.');
+    }
+});
 
-            sidebarIcons.forEach(icon => {
-                const link = icon.getAttribute('href');
-                if (currentPath.includes(link)) {
-                    icon.classList.add('active');
-                } else {
-                    icon.classList.remove('active');
-                }
-            });
-        });
-    </script>
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('passwordModal');
+    if (event.target === modal) {
+        closePasswordModal();
+    }
+};
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePasswordModal();
+    }
+});
+</script>
 </body>
 </html>
