@@ -13,7 +13,7 @@ from django.db.models import Sum, Avg
 from notes.models import Note
 from todos.models import Task
 from budget.models import Income, Expense
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import calendar as pycal
 from collections import defaultdict
 from django.urls import reverse
@@ -25,7 +25,7 @@ def Landing(request):
 # main dashboard
 @login_required
 def home(request):
-    today = date.today()
+    today_date = date.today()
     current_date = datetime.now()
 
     # Generate calendar data
@@ -42,7 +42,6 @@ def home(request):
         for day in week:
             if day.month == current_date.month:
                 calendar_days.append(day.day)
-                # Check if any tasks on this day
                 if all_tasks.filter(due_date__day=day.day, due_date__month=current_date.month,
                                     due_date__year=current_date.year).exists():
                     task_days.append(day.day)
@@ -75,7 +74,7 @@ def home(request):
     low_priority_count = tasks.filter(priority='low').count()
     completed_count = tasks.filter(is_completed=True).count()
     pending_count = tasks.filter(is_completed=False).count()
-    overdue_count = tasks.filter(is_completed=False, due_date__lt=today).count()
+    overdue_count = tasks.filter(is_completed=False, due_date__lt=today_date).count()  # Use today_date
 
     # Productivity score
     if tasks.count() > 0:
@@ -86,15 +85,15 @@ def home(request):
     # Additional stats
     tasks_this_month = Task.objects.filter(
         user=request.user,
-        created_at__month=today.month,
-        created_at__year=today.year
+        created_at__month=today_date.month,
+        created_at__year=today_date.year
     ).count()
 
     # Average daily spend
     avg_daily_spend_result = Expense.objects.filter(
         user=request.user,
-        date__month=today.month,
-        date__year=today.year
+        date__month=today_date.month,
+        date__year=today_date.year
     ).aggregate(Avg('amount'))
     avg_daily_spend = avg_daily_spend_result['amount__avg'] or 0
 
@@ -118,6 +117,28 @@ def home(request):
 
     total_expenses_count = all_expenses.count()
 
+    # task data
+    last_7_days_dates = []
+    last_7_days_completed = []
+    last_7_days_total = []
+
+    for i in range(6, -1, -1):
+        day_date = today_date - timedelta(days=i)
+        last_7_days_dates.append(day_date)
+
+        tasks_on_day = Task.objects.filter(
+            user=request.user,
+            created_at__date=day_date
+        )
+
+        # Count completed tasks
+        completed_on_day = tasks_on_day.filter(
+            is_completed=True,
+        ).count()
+
+        last_7_days_total.append(tasks_on_day.count())
+        last_7_days_completed.append(completed_on_day)
+
     context = {
         # Budget data
         'balance': balance,
@@ -137,7 +158,7 @@ def home(request):
         'completed_count': completed_count,
         'pending_count': pending_count,
         'overdue_count': overdue_count,
-        'today': today,
+        'today': today_date,  # Use today_date
 
         # Priority counts
         'high_priority_count': high_priority_count,
@@ -154,6 +175,11 @@ def home(request):
         'tasks_this_month': tasks_this_month,
         'avg_daily_spend': avg_daily_spend,
         'productivity_score': productivity_score,
+
+        # Task trend data
+        'last_7_days_dates': last_7_days_dates,
+        'last_7_days_completed': last_7_days_completed,
+        'last_7_days_total': last_7_days_total,
     }
 
     return render(request, 'homepage.html', context)
@@ -293,3 +319,33 @@ def change_password(request):
         'message': 'Invalid request method'
     }, status=405)
 
+# user delete their account
+@login_required
+def delete_account(request):
+    try:
+        user = request.user
+        password = request.POST.get('password')
+
+        # Verify password
+        if not user.check_password(password):
+            return JsonResponse({
+                'success': False,
+                'error': 'Incorrect password. Account deletion failed.'
+            })
+
+        # Store username for logging before deletion
+        username = user.username
+
+        # Delete the user account
+        user.delete()
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Account deleted successfully'
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })

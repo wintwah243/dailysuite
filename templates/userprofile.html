@@ -195,7 +195,10 @@
             </a>
         </div>
 
-        <div class="flex-1"></div>
+        <!-- Mini Quote in navigation bar -->
+            <div class="px-4 py-3 mx-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                <p class="text-xs text-gray-600 italic">"{{ daily_quote|default:'Stay productive, stay focused' }}"</p>
+            </div>
     </div>
 
     <!-- Main Content -->
@@ -316,7 +319,59 @@
                     </div>
                 </div>
 
-                <!-- Success Message Toast -->
+                <!-- Delete Account Modal -->
+                <div id="deleteAccountModal"
+                     class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 transition-opacity">
+                    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-900">Delete Account</h3>
+                            <button onclick="closeDeleteModal()"
+                                    class="text-gray-400 hover:text-gray-600 transition-colors">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="mb-4 p-3 bg-red-50 rounded-lg text-sm text-red-600">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <strong>Warning:</strong> This action cannot be undone. All your data will be permanently
+                            deleted.
+                        </div>
+
+                        <form id="deleteAccountForm" method="post" action="{% url 'delete_account' %}">
+                            {% csrf_token %}
+
+                            <!-- Password confirmation for deleting user account -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Enter your password to confirm
+                                </label>
+                                <input type="password"
+                                       name="password"
+                                       id="delete_password"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                                       placeholder="Your password"
+                                       required>
+                                <div class="text-red-500 text-sm mt-1 error" id="delete_error"></div>
+                            </div>
+
+                            <!-- Modal buttons -->
+                            <div class="flex justify-end space-x-3">
+                                <button type="button"
+                                        onclick="closeDeleteModal()"
+                                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                        id="submitDelete"
+                                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all">
+                                    Delete Account
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Success Message Toast for password change -->
                 <div id="successToast"
                      class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50 transform transition-all translate-y-0">
                     <div class="flex items-center">
@@ -325,7 +380,7 @@
                     </div>
                 </div>
 
-                <!-- Error Message Toast -->
+                <!-- Error Message Toast for password change -->
                 <div id="errorToast"
                      class="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50 transform transition-all translate-y-0">
                     <div class="flex items-center">
@@ -334,7 +389,7 @@
                     </div>
                 </div>
 
-                <!-- Loading Spinner -->
+                <!-- Loading Spinner for password change -->
                 <div id="loadingSpinner"
                      class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 flex items-center justify-center">
                     <div class="bg-white p-5 rounded-lg shadow-xl flex items-center space-x-3">
@@ -461,8 +516,7 @@
                             </button>
 
                             <!-- Delete Account -->
-                            <button class="settings-btn delete"
-                                    onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.')">
+                            <button class="settings-btn delete" onclick="openDeleteModal()">
                                 <div class="flex items-center">
                                     <div class="settings-icon w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center mr-3">
                                         <i class="fas fa-trash-alt text-red-600"></i>
@@ -745,6 +799,93 @@ window.onclick = function(event) {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closePasswordModal();
+    }
+});
+
+    // Delete Account Modal functions
+function openDeleteModal() {
+    document.getElementById('deleteAccountModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('delete_password').value = '';
+    document.getElementById('delete_error').textContent = '';
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteAccountModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Handle delete account form submission
+document.getElementById('deleteAccountForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    // Clear previous error
+    document.getElementById('delete_error').textContent = '';
+
+    // Show loading
+    showLoading();
+
+    // Disable submit button
+    const submitBtn = document.getElementById('submitDelete');
+    submitBtn.disabled = true;
+
+    // Get form data
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Close modal
+            closeDeleteModal();
+
+            // Redirect to home page after 2 seconds
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        } else {
+            hideLoading();
+            submitBtn.disabled = false;
+
+            // Display error
+            if (data.error) {
+                document.getElementById('delete_error').textContent = data.error;
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        hideLoading();
+        submitBtn.disabled = false;
+    }
+});
+
+// Update the window.onclick to include delete modal
+window.onclick = function(event) {
+    const passwordModal = document.getElementById('passwordModal');
+    const deleteModal = document.getElementById('deleteAccountModal');
+
+    if (event.target === passwordModal) {
+        closePasswordModal();
+    }
+    if (event.target === deleteModal) {
+        closeDeleteModal();
+    }
+};
+
+// Update keydown event to include delete modal
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePasswordModal();
+        closeDeleteModal();
     }
 });
 </script>
