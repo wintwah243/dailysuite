@@ -1195,200 +1195,246 @@
     </div>
 
     <!-- ADD Task Modal -->
-    <div id="addModal"
-         class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
-        <div class="relative bg-white rounded-xl w-full max-w-2xl shadow-2xl animate-slide-up overflow-visible">
-            <div class="p-4">
-                <h2 class="text-3xl font-semibold text-gray-900 mb-4">Add New Task</h2>
+        <div id="addModal"
+             class="fixed inset-0 hidden flex items-center justify-center bg-black/60 z-50 p-4">
 
-                <form method="post" action="{% url 'addtask' %}">
+            <div class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+                <!-- Header -->
+                <div class="bg-black px-8 py-6">
+                    <h2 class="text-3xl font-bold text-white">Create New Task</h2>
+                    <p class="text-gray-200 text-sm mt-1">
+                        Add details and organize your work efficiently
+                    </p>
+                </div>
+
+                <form method="post" action="{% url 'addtask' %}" class="px-8 py-8">
                     {% csrf_token %}
-                    <div class="space-y-4">
-                        <!-- Task Name with Emoji -->
-                        <div>
-                            <div class="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-black">
-                                <button type="button"
-                                        class="text-3xl hover:bg-gray-100 rounded transition-colors"
-                                        onclick="openEmojiPicker('task-name-new', this)">
-                                    🗒️
-                                </button>
-                                {{ add_form.name }}
-                            </div>
+
+                    <!-- Task Name -->
+                    <div class="mb-8">
+                        <label class="block text-l font-semibold text-gray-700 mb-3">
+                            Task Name
+                        </label>
+
+                        <div class="flex items-center gap-4 border-2 border-gray-200 rounded-xl px-4 py-3 focus-within:border-black transition">
+                            <button type="button"
+                                    class="text-xl hover:scale-110 transition"
+                                    onclick="openEmojiPicker('task-name-new', this)">
+                                🗒️
+                            </button>
+                            {{ add_form.name }}
                         </div>
                     </div>
-                     <!-- Form Fields -->
-                    <div class="space-y-6 mt-6">
 
-                    <!-- Status / Due Date / Option (GRID) -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Grid Layout -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-                            <!-- Status -->
-                            <div>
-                                <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                                    <!-- Status Icon -->
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    Status
-                                </label>
+                        <!-- Status -->
+                        <div>
+                            <label class="block text-l font-semibold text-gray-700 mb-3">
+                                Status
+                            </label>
+
+                            <div class="flex items-center gap-3 border-2 border-gray-200 rounded-xl px-4 py-3 h-12 hover:border-gray-400 transition">
                                 {{ add_form.is_completed }}
+                                <span class="text-sm text-gray-700 select-none">
+                                    Mark as completed
+                                </span>
                             </div>
+                        </div>
 
-                            <!-- Due Date -->
-                            <div>
-                                <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                                    <!-- Calendar Icon -->
-                                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    Due Date
-                                </label>
+                        <!-- Due Date -->
+                        <div>
+                            <label class="block text-l font-semibold text-gray-700 mb-3">
+                                Due Date
+                            </label>
+
+                            <div class="border-2 border-gray-200 rounded-xl px-4 py-3 h-12 hover:border-gray-400 transition flex items-center">
                                 {{ add_form.due_date }}
                             </div>
+                        </div>
 
-                            <!-- Option -->
-                            <div>
-                                <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                                    <!-- Settings Icon -->
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                         d="M3 7h18M3 12h18M3 17h18"/>
-                                     </svg>
-                                    Option
-                                </label>
+                        <!-- Option -->
+                        <div>
+                            <label class="block text-l font-semibold text-gray-700 mb-3">
+                                Option
+                            </label>
+
+                            <div class="border-2 border-gray-200 rounded-xl px-4 py-3 h-12 hover:border-gray-400 transition flex items-center">
                                 {{ add_form.option }}
                             </div>
-
                         </div>
 
-                        <!-- Priority (UNDER GRID) -->
+                        <!-- Priority -->
                         <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                                <!-- Star Icon -->
-                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                     d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l2.064 6.356h6.684c.969 0 1.371 1.24.588 1.81l-5.408 3.93 2.064 6.356c.3.921-.755 1.688-1.54 1.118L12 18.347l-5.403 3.15c-.784.57-1.838-.197-1.539-1.118l2.064-6.356-5.408-3.93c-.783-.57-.38-1.81.588-1.81h6.684l2.063-6.356z"/>
-                                 </svg>
+                            <label class="block text-l font-semibold text-gray-700 mb-3">
                                 Priority
                             </label>
-                            {{ add_form.priority }}
+
+                            <div class="border-2 border-gray-200 rounded-xl px-4 py-3 h-12 hover:border-gray-400 transition flex items-center">
+                                {{ add_form.priority }}
+                            </div>
                         </div>
+
                     </div>
 
-                    <!-- Modal Actions -->
-                    <div class="flex justify-end gap-2 mt-6 pt-4 border-t border-gray-200">
+                    <!-- Footer -->
+                    <div class="flex justify-end gap-4 mt-10 pt-6 border-t border-gray-200">
                         <button type="button"
                                 onclick="closeAddModal()"
                                 class="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                             Cancel
                         </button>
+
                         <button type="submit"
                                 class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-                            Create task
+                            Create Task
                         </button>
                     </div>
+
                 </form>
-             </div>
+            </div>
         </div>
-    </div>
+
+
 
     <!-- Edit Task Modals -->
-    {% for task in tasks %}
-    <div id="editModal-{{ task.id }}"
-         class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-xl w-full max-w-2xl shadow-2xl animate-slide-up">
-            <div class="p-4">
-               <h2 class="text-3xl font-semibold text-gray-900 mb-4">Edit Task</h2>
+        {% for task in tasks %}
+        <div id="editModal-{{ task.id }}"
+             class="fixed inset-0 hidden flex items-center justify-center bg-black/60 z-50 p-4">
 
-                <form method="post" action="{% url 'updatetask' task.id %}">
+            <div class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+                <!-- Header -->
+                <div class="bg-black px-8 py-6">
+                    <h2 class="text-3xl font-bold text-white">Update Task</h2>
+                    <p class="text-gray-200 text-sm mt-1">
+                        Update your task details
+                    </p>
+                </div>
+
+                <form method="post" action="{% url 'updatetask' task.id %}" class="px-8 py-8">
                     {% csrf_token %}
-                    <div class="space-y-4">
-                        <!-- Task Name with Emoji -->
+
+                    <!-- Task Name -->
+                    <div class="mb-8">
+                        <label class="block text-l font-semibold text-gray-700 mb-3">
+                            Task Name
+                        </label>
+
+                        <div class="flex items-center gap-4 border-2 border-gray-200 rounded-xl px-4 py-3 focus-within:border-black transition">
+                            <button type="button"
+                                    class="text-xl hover:scale-110 transition"
+                                    onclick="openEmojiPicker('task-name-{{ task.id }}', this)">
+                                🗒️
+                            </button>
+                            {{ task.form.name }}
+                        </div>
+                    </div>
+
+                    <!-- Grid Layout -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        <!-- Status -->
                         <div>
-                            <div class="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-black">
-                                <button type="button"
-                                        class="text-3xl hover:bg-gray-100 rounded transition-colors"
-                                        onclick="openEmojiPicker('task-name-{{ task.id}}', this)">
-                                    🗒️
-                                </button>
-                                {{ task.form.name }}
+                            <label class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Status
+                            </label>
+
+                            <div class="flex items-center gap-3 border-2 border-gray-200 rounded-xl px-4 py-3 h-12 hover:border-gray-400 transition">
+                                <input type="checkbox"
+                                       name="{{ task.form.is_completed.name }}"
+                                       id="status-{{ task.id }}"
+                                       {% if task.form.is_completed.value %} checked {% endif %}
+                                       class="w-4 h-4 text-green-500 border-gray-300 rounded">
+
+                                <label for="status-{{ task.id }}"
+                                       class="text-sm text-gray-700 select-none cursor-pointer mt-0.5">
+                                    {% if task.form.is_completed.value %}
+                                        Completed
+                                    {% else %}
+                                        Mark as completed
+                                    {% endif %}
+                                </label>
                             </div>
                         </div>
 
+                        <!-- Due Date -->
+                        <div>
+                            <label class="flex items-center gap-2 text-l font-semibold text-gray-700 mb-3">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                Due Date
+                            </label>
 
-                        <!-- Form Fields -->
-                        <div class="space-y-6">
-                            <!-- Status / Due Date / Option (GRID) -->
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                                <!-- Status -->
-                                <div>
-                                    <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Status
-                                    </label>
-                                    {{ task.form.is_completed }}
-                                </div>
-
-                                <!-- Due Date -->
-                                <div>
-                                    <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        Due Date
-                                    </label>
-                                    {{ task.form.due_date }}
-                                </div>
-
-                                <!-- Option -->
-                                <div>
-                                    <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M3 7h18M3 12h18M3 17h18"/>
-                                         </svg>
-                                        Option
-                                    </label>
-                                    {{ task.form.option }}
-                                </div>
-
+                            <div class="border-2 border-gray-200 rounded-xl px-4 py-3 h-12 hover:border-gray-400 transition flex items-center">
+                                {{ task.form.due_date }}
                             </div>
+                        </div>
 
-                            <!-- Priority (UNDER GRID) -->
-                            <div>
-                                <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l2.064 6.356h6.684c.969 0 1.371 1.24.588 1.81l-5.408 3.93 2.064 6.356c.3.921-.755 1.688-1.54 1.118L12 18.347l-5.403 3.15c-.784.57-1.838-.197-1.539-1.118l2.064-6.356-5.408-3.93c-.783-.57-.38-1.81.588-1.81h6.684l2.063-6.356z"/>
-                                     </svg>
-                                    Priority
-                                </label>
+                        <!-- Option -->
+                        <div>
+                            <label class="flex items-center gap-2 text-l font-semibold text-gray-700 mb-3">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M3 7h18M3 12h18M3 17h18"/>
+                                </svg>
+                                Option
+                            </label>
+
+                            <div class="border-2 border-gray-200 rounded-xl px-4 py-3 h-12 hover:border-gray-400 transition flex items-center">
+                                {{ task.form.option }}
+                            </div>
+                        </div>
+
+                        <!-- Priority -->
+                        <div>
+                            <label class="flex items-center gap-2 text-l font-semibold text-gray-700 mb-3">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l2.064 6.356h6.684
+                                          c.969 0 1.371 1.24.588 1.81l-5.408 3.93 2.064 6.356
+                                          c.3.921-.755 1.688-1.54 1.118L12 18.347l-5.403 3.15
+                                          c-.784.57-1.838-.197-1.539-1.118l2.064-6.356-5.408-3.93
+                                          c-.783-.57-.38-1.81.588-1.81h6.684l2.063-6.356z"/>
+                                </svg>
+                                Priority
+                            </label>
+
+                            <div class="border-2 border-gray-200 rounded-xl px-4 py-3 h-12 hover:border-gray-400 transition flex items-center">
                                 {{ task.form.priority }}
                             </div>
                         </div>
+
                     </div>
-                    <!-- Modal Actions -->
-                    <div class="flex justify-end gap-2 mt-6 pt-4 border-t border-gray-200">
+
+                    <!-- Footer -->
+                    <div class="flex justify-end gap-4 mt-10 pt-6 border-t border-gray-200">
                         <button type="button"
                                 onclick="closeEditModal('{{ task.id }}')"
                                 class="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                             Cancel
                         </button>
+
                         <button type="submit"
                                 class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
                             Update Task
                         </button>
                     </div>
+
                 </form>
             </div>
         </div>
-    </div>
-    {% endfor %}
+        {% endfor %}
+
+
 
     <!-- Chatbot pop up -->
 <div id="chatWidget" class="chat-widget collapsed">
@@ -1422,27 +1468,8 @@
 
 
 <script type="module">
-
 import { EmojiButton } from 'https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js';
 
-    <!-- Input Container -->
-    <div id="chatInputContainer" class="chat-input-container hidden">
-        <input type="text"
-               id="chatInput"
-               class="chat-input"
-               placeholder="Type a command... (e.g., 'delete buy milk')">
-        <button class="chat-send-btn" onclick="sendChatMessage()">
-            <i class="fas fa-arrow-up"></i>
-        </button>
-    </div>
-</div>
-
-
-<!--  Emoji Picker Import - UMD version -->
-<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.umd.min.js"></script>
-
-<script>
-// Emoji Picker
 window.pickers = {};
 
 window.openEmojiPicker = function(inputId, button) {
@@ -1455,36 +1482,42 @@ window.openEmojiPicker = function(inputId, button) {
             const taskId = inputId.split('-')[2];
             input = document.querySelector(`#editModal-${taskId} input[name="name"]`);
         }
-        if (input) {
-            input.id = inputId;
-        }
+        if (!input) return;
+        input.id = inputId;
     }
-
-    if (!input) return;
 
     if (!window.pickers[inputId]) {
         window.pickers[inputId] = new EmojiButton({
             position: 'right-start',
+            rootElement: document.body,
             zIndex: 99999,
-            theme: 'auto',
         });
-        window.pickers[inputId].on('emoji', emoji => {
-            let value = input.value.trim();
+
+        window.pickers[inputId].on('emoji', event => {
+            const emojiChar = event.emoji;
+            const value = input.value;
+
             const emojiRegex = /^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/u;
 
             if (emojiRegex.test(value)) {
-                input.value = value.replace(emojiRegex, emoji.emoji);
+                input.value = value.replace(emojiRegex, emojiChar);
             } else {
-                input.value = emoji.emoji + ' ' + value;
+                input.value = emojiChar + ' ' + value;
             }
+
             input.focus();
+            input.selectionStart = input.selectionEnd = input.value.length;
         });
     }
 
     window.pickers[inputId].togglePicker(button);
+
+    const pickerEl = document.querySelector('.emoji-picker');
+    if (pickerEl) {
+        pickerEl.style.position = 'fixed';
+        pickerEl.style.zIndex = '99999';
+    }
 };
-
-
 
 // Modals
 window.openAddModal = () => {
@@ -1827,10 +1860,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         clearBtn.classList.toggle("hidden", !searching);
     }
-    // see more button
+    // See more button
     toggleBtn?.addEventListener("click", function () {
 
-        if (searching) return; //Disable see more while searching
+        if (searching) return;
 
         expanded = !expanded;
 
