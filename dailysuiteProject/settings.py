@@ -13,31 +13,29 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-import certifi
-import ssl
-
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_l*m@h3upk5^und5&$bi!8nn!g0ly(o!cg)ksglgf459r9(08m'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["*"]
 
 load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-_l*m@h3upk5^und5&$bi!8nn!g0ly(o!cg)ksglgf459r9(08m')
+
+IS_RENDER = os.environ.get('RENDER')
+
+if IS_RENDER:
+    DEBUG = False
+    ALLOWED_HOSTS = ['dailysuite.onrender.com']
+    CSRF_TRUSTED_ORIGINS = ['https://dailysuite.onrender.com']
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+else:
+    DEBUG = True
+    ALLOWED_HOSTS = ['*']
+
+# APIs
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,22 +57,24 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
-
-    'widget_tweaks'
+    'widget_tweaks',
 ]
 
-# my site ID
-SITE_ID = 1
+if IS_RENDER:
+    SITE_ID = 2
+else:
+    SITE_ID = 1
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # default
-    'allauth.account.auth_backends.AuthenticationBackend',  # for allauth
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-# Redirect URLs after login/logout
+# Redirect URLs
 LOGIN_REDIRECT_URL = '/home/'
 LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'login'
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -87,10 +87,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# Redirect after Google login only
 SOCIALACCOUNT_LOGIN_REDIRECT_URL = '/accounts/google-redirect/'
-
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -101,10 +98,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
     'allauth.account.middleware.AccountMiddleware',
 ]
-
 
 ROOT_URLCONF = 'dailysuiteProject.urls'
 
@@ -125,10 +120,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dailysuiteProject.wsgi.application'
 
-
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -136,23 +128,12 @@ DATABASES = {
     }
 }
 
-
 # Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 REST_FRAMEWORK = {
@@ -161,35 +142,21 @@ REST_FRAMEWORK = {
     )
 }
 
-
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
+# Static files
 STATIC_URL = 'static/'
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
+# WhiteNoise Storage configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Email Configuration for Gmail
+# Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -198,19 +165,4 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 
-if DEBUG:
-    try:
-        from django.contrib.sites.models import Site
-        site = Site.objects.get(id=SITE_ID)
-        site.domain = '127.0.0.1:8000'
-        site.name = 'DailySuite Development'
-        site.save()
-        print(f"Site configured: {site.domain}")
-    except Exception as e:
-        print(f"Could not configure site: {e}")
-        print("  You may need to run: python manage.py migrate")
-
-# Login URLs
-LOGIN_URL = 'login'
-# For development:
-SITE_URL = 'http://127.0.0.1:8000'
+SITE_URL = 'https://dailysuite.onrender.com' if IS_RENDER else 'http://127.0.0.1:8000'
