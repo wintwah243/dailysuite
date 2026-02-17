@@ -25,19 +25,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-_l*m@h3upk5^und5&$bi!
 IS_RENDER = os.environ.get('RENDER')
 
 if IS_RENDER:
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600
-        )
-    }
+    DEBUG = False
+    ALLOWED_HOSTS = ['dailysuite.onrender.com']
+    CSRF_TRUSTED_ORIGINS = ['https://dailysuite.onrender.com']
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+    DEBUG = True
+    ALLOWED_HOSTS = ['*']
 
 # APIs
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -173,3 +167,15 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 
 SITE_URL = 'https://dailysuite.onrender.com' if IS_RENDER else 'http://127.0.0.1:8000'
+
+if IS_RENDER:
+    from django.db.models.signals import post_migrate
+    from django.dispatch import receiver
+
+    @receiver(post_migrate)
+    def setup_site(sender, **kwargs):
+        from django.contrib.sites.models import Site
+        Site.objects.filter(id=2).update(
+            domain='dailysuite.onrender.com',
+            name='DailySuite'
+        )
