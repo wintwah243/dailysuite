@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import dj_database_url
 
 load_dotenv()
 
@@ -24,13 +25,19 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-_l*m@h3upk5^und5&$bi!
 IS_RENDER = os.environ.get('RENDER')
 
 if IS_RENDER:
-    DEBUG = False
-    ALLOWED_HOSTS = ['dailysuite.onrender.com']
-    CSRF_TRUSTED_ORIGINS = ['https://dailysuite.onrender.com']
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600
+        )
+    }
 else:
-    DEBUG = True
-    ALLOWED_HOSTS = ['*']
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # APIs
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")

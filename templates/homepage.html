@@ -6,6 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .main-bg { background-color: #f9fafb; }
         .sidebar {
@@ -378,9 +379,60 @@
             background: #a3a3a3;
         }
 
+        /* Responsive adjustments */
         @media (min-width: 1024px) {
             .main-content {
                 margin-left: 16rem;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1000;
+                transition: transform 0.3s ease;
+                top: 64px;
+                height: calc(100vh - 64px);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .main-content {
+                width: 100%;
+                padding: 1rem;
+            }
+            .mobile-menu-btn {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                background: white;
+                border: 1px solid #e5e7eb;
+                border-radius: 10px;
+                margin-right: 12px;
+                cursor: pointer;
+                z-index: 1001;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .calendar-day {
+                min-height: 70px;
+                padding: 4px;
+            }
+            .task-status-summary {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .status-divider {
+                display: none;
+            }
+            .status-pill {
+                font-size: 11px;
+                padding: 4px 8px;
             }
         }
 
@@ -394,7 +446,6 @@
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
 
-        /* New styles for added features */
         .trend-up {
             color: #10b981;
             background: #d1fae5;
@@ -433,29 +484,87 @@
             background: #f3f4f6;
             color: #374151;
         }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        /* Responsive header */
+        @media (max-width: 768px) {
+            .fixed.top-0 {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            .fixed.top-0 h1 {
+                font-size: 1.25rem;
+            }
+            .flex.items-center.space-x-4 > a:first-child span {
+                display: none;
+            }
+        }
+
+        /* Grid responsive adjustments */
+        @media (max-width: 768px) {
+            .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            .p-8 {
+                padding: 1rem;
+            }
+            .p-7 {
+                padding: 1.25rem;
+            }
+        }
+
+        /* Overlay for mobile menu */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="main-bg font-sans text-gray-800 antialiased">
+    <!-- Mobile Menu Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileMenu()"></div>
+
     <!-- Header -->
-    <div class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 px-6 flex items-center justify-between z-50 shadow-sm">
-        <div class="flex items-center space-x-4">
+    <div class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 px-4 sm:px-6 flex items-center justify-between z-50 shadow-sm">
+        <div class="flex items-center space-x-2 sm:space-x-4">
+            <!-- Mobile menu button -->
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars text-gray-700 text-xl"></i>
+            </button>
             <!-- logo starts here -->
-            <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center shadow-md">
-                <i class="fas fa-tasks text-white"></i>
+            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-black rounded-lg flex items-center justify-center shadow-md flex-shrink-0">
+                <i class="fas fa-tasks text-white text-sm sm:text-base"></i>
             </div>
             <!-- logo ends here -->
-            <h1 class="text-2xl font-bold text-gray-900">DailySuite</h1>
-            <div class="text-sm text-secondary bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
-                <i class="far fa-calendar-alt mr-2"></i>{{ today|date:"F d, Y" }}
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 truncate">DailySuite</h1>
+            <div class="hidden sm:block text-xs sm:text-sm text-secondary bg-gray-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-gray-200">
+                <i class="far fa-calendar-alt mr-1 sm:mr-2"></i>{{ today|date:"F d, Y" }}
             </div>
         </div>
-        <div class="flex items-center space-x-4">
-    <a href="/accounts/profile/" class="flex items-center text-sm text bg-gray-50 px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors">
-        <i class="fas fa-user-circle mr-2 text-gray-500"></i>
-        <span>{{ request.user.username }}</span>
+        <div class="flex items-center space-x-2 sm:space-x-4">
+    <a href="/accounts/profile/" class="flex items-center text-xs sm:text-sm text bg-gray-50 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors">
+        <i class="fas fa-user-circle mr-1 sm:mr-2 text-gray-500"></i>
+        <span class="hidden sm:inline">{{ request.user.username }}</span>
+        <span class="sm:hidden">{{ request.user.username|truncatechars:8 }}</span>
     </a>
-    <a href="/accounts/logout/" class="text-sm px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
-        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+    <a href="/accounts/logout/" class="text-xs sm:text-sm px-2 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+        <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i><span class="hidden sm:inline">Logout</span>
     </a>
     </div>
     </div>
@@ -463,10 +572,10 @@
     <!-- Main Layout -->
     <div class="flex pt-16">
         <!-- Sidebar -->
-        <div class="fixed left-0 w-64 sidebar h-screen flex flex-col py-6 space-y-2 z-40">
+        <div class="fixed left-0 w-64 sidebar h-screen flex flex-col py-4 sm:py-6 space-y-2 z-[1000] transition-transform duration-300" id="mobileSidebar">
             <!-- Logo -->
-            <div class="px-4 mb-6">
-                <div class="text-lg font-bold text-gray-900 mb-2">My Workspace</div>
+            <div class="px-4 mb-4 sm:mb-6">
+                <div class="text-base sm:text-lg font-bold text-gray-900 mb-1 sm:mb-2">My Workspace</div>
                 <div class="text-xs text-gray-500">Personal dashboard</div>
             </div>
 
@@ -474,54 +583,55 @@
             <div class="px-3">
                 <a href="/home/" class="sidebar-icon active" title="Dashboard">
                     <i class="fas fa-chart-line w-5 mr-3"></i>
-                    <span class="text-sm font-medium">Dashboard</span>
+                    <span class="text-xs sm:text-sm font-medium">Dashboard</span>
                 </a>
                 <a href="/todo/todolist/" class="sidebar-icon" title="Todos">
                     <i class="fas fa-tasks w-5 mr-3"></i>
-                    <span class="text-sm font-medium">Tasks</span>
+                    <span class="text-xs sm:text-sm font-medium">Tasks</span>
                 </a>
                 <a href="/note/" class="sidebar-icon" title="Notes">
                     <i class="fas fa-sticky-note w-5 mr-3"></i>
-                    <span class="text-sm font-medium">Notes</span>
+                    <span class="text-xs sm:text-sm font-medium">Notes</span>
                 </a>
                 <a href="/budget/" class="sidebar-icon" title="Budget">
                     <i class="fas fa-wallet w-5 mr-3"></i>
-                    <span class="text-sm font-medium">Budget</span>
+                    <span class="text-xs sm:text-sm font-medium">Budget</span>
                 </a>
                 <a href="/accounts/profile/" class="sidebar-icon" title="Profile">
                     <i class="fas fa-user-circle w-5 mr-3"></i>
-                    <span class="text-sm font-medium">Profile</span>
+                    <span class="text-xs sm:text-sm font-medium">Profile</span>
                 </a>
                 <a href="/accounts/logout/" class="sidebar-icon" title="Logout">
-                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    <i class="fas fa-sign-out-alt w-5 mr-3"></i>
+                    <span class="text-xs sm:text-sm font-medium">Logout</span>
                 </a>
             </div>
 
             <!-- Mini Quote in navigation bar -->
-            <div class="px-4 py-3 mx-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+            <div class="px-3 sm:px-4 py-2 sm:py-3 mx-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
                 <p class="text-xs text-gray-600 italic">"{{ daily_quote|default:'Stay productive, stay focused' }}"</p>
             </div>
         </div>
 
         <!-- Main Content -->
-        <div class="main-content flex-1 p-8">
+        <div class="main-content flex-1 p-4 sm:p-6 lg:p-8">
             <!-- Header -->
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
-                    <p class="text-gray-600 mt-2">Track your budget, take important notes, and manage tasks.</p>
+                <div class="mb-6 sm:mb-8">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard Overview</h1>
+                    <p class="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">Track your budget, take important notes, and manage tasks.</p>
                 </div>
 
             <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
                 <!-- Budget Card -->
-                <div class="stat-card budget-stat-card">
+                <div class="stat-card budget-stat-card p-4 sm:p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-white/90 mb-2 font-medium">Budget Balance</p>
-                            <p class="text-2xl font-bold text-white">
+                            <p class="text-xs sm:text-sm text-white/90 mb-1 sm:mb-2 font-medium">Budget Balance</p>
+                            <p class="text-xl sm:text-2xl font-bold text-white">
                                 {{ balance|floatformat }}Ks
                             </p>
-                            <p class="text-xs text-white/80 mt-2">
+                            <p class="text-xs text-white/80 mt-1 sm:mt-2">
                                 {% if balance >= 0 %}
                                     <i class="fas fa-arrow-up mr-1"></i>Positive balance
                                 {% else %}
@@ -529,21 +639,21 @@
                                 {% endif %}
                             </p>
                         </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-wallet"></i>
+                        <div class="stat-icon w-10 h-10 sm:w-14 sm:h-14">
+                            <i class="fas fa-wallet text-lg sm:text-2xl"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tasks Completed Card -->
-                <div class="stat-card task-stat-card">
+                <div class="stat-card task-stat-card p-4 sm:p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-white/90 mb-2 font-medium">Tasks Completed</p>
-                            <p class="text-3xl font-bold text-white">
+                            <p class="text-xs sm:text-sm text-white/90 mb-1 sm:mb-2 font-medium">Tasks Completed</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-white">
                                 {{ completed_count }}/{{ tasks.count }}
                             </p>
-                            <p class="text-xs text-white/80 mt-2">
+                            <p class="text-xs text-white/80 mt-1 sm:mt-2">
                                 {% if tasks.count > 0 %}
                                     {% widthratio completed_count tasks.count 100 %}% completed
                                 {% else %}
@@ -551,21 +661,21 @@
                                 {% endif %}
                             </p>
                         </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
+                        <div class="stat-icon w-10 h-10 sm:w-14 sm:h-14">
+                            <i class="fas fa-check-circle text-lg sm:text-2xl"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Overdue Tasks Card -->
-                <div class="stat-card overdue-task-stat-card">
+                <div class="stat-card overdue-task-stat-card p-4 sm:p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-white/90 mb-2 font-medium">Overdue Tasks</p>
-                            <p class="text-3xl font-bold text-white">
+                            <p class="text-xs sm:text-sm text-white/90 mb-1 sm:mb-2 font-medium">Overdue Tasks</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-white">
                                 {{ overdue_count }}
                             </p>
-                            <p class="text-xs text-white/80 mt-2">
+                            <p class="text-xs text-white/80 mt-1 sm:mt-2">
                                 {% if overdue_count > 0 %}
                                     <i class="fas fa-exclamation-circle mr-1"></i>Needs attention
                                 {% else %}
@@ -573,45 +683,45 @@
                                 {% endif %}
                             </p>
                         </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-exclamation-triangle"></i>
+                        <div class="stat-icon w-10 h-10 sm:w-14 sm:h-14">
+                            <i class="fas fa-exclamation-triangle text-lg sm:text-2xl"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Notes Card -->
-                <div class="stat-card note-stat-card">
+                <div class="stat-card note-stat-card p-4 sm:p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-white/90 mb-2 font-medium">Recent Notes</p>
-                            <p class="text-3xl font-bold text-white">
+                            <p class="text-xs sm:text-sm text-white/90 mb-1 sm:mb-2 font-medium">Recent Notes</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-white">
                                 {{ notes.count }}
                             </p>
-                            <p class="text-xs text-white/80 mt-2">
+                            <p class="text-xs text-white/80 mt-1 sm:mt-2">
                                 <i class="fas fa-pen mr-1"></i>{{ notes_last_week|default:"0" }} this week
                             </p>
                         </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-sticky-note"></i>
+                        <div class="stat-icon w-10 h-10 sm:w-14 sm:h-14">
+                            <i class="fas fa-sticky-note text-lg sm:text-2xl"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Main Dashboard Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
                 <!-- Left Column: Calendar and Recent Items -->
-                <div class="lg:col-span-2">
+                <div class="lg:col-span-2 space-y-6 sm:space-y-8">
                     <!-- Calendar Section -->
-                    <div class="card p-7 mb-8">
-                        <div class="flex justify-between items-center mb-7">
-                            <h2 class="text-xl font-bold title">Task Calendar</h2>
-                            <div class="flex space-x-2">
-                                <button class="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+                    <div class="card p-5 sm:p-7">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5 sm:mb-7">
+                            <h2 class="text-lg sm:text-xl font-bold title">Task Calendar</h2>
+                            <div class="flex space-x-2 w-full sm:w-auto">
+                                <button class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
                                     <i class="fas fa-chevron-left"></i>
                                 </button>
-                                <span class="px-4 py-2 text-sm text-secondary font-medium">{{ current_date|date:"F Y" }}</span>
-                                <button class="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+                                <span class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-secondary font-medium">{{ current_date|date:"F Y" }}</span>
+                                <button class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
@@ -622,8 +732,8 @@
                             <!-- Weekday Headers -->
                             <div class="grid grid-cols-7 border-b border-gray-200 bg-gray-50">
                                 {% for day in week_days %}
-                                <div class="py-3 text-center text-sm font-medium text-secondary">
-                                    {{ day }}
+                                <div class="py-2 sm:py-3 text-center text-xs sm:text-sm font-medium text-secondary">
+                                    {{ day|slice:":3" }}
                                 </div>
                                 {% endfor %}
                             </div>
@@ -633,11 +743,11 @@
                                 {% for day in calendar_days %}
                                 <div class="calendar-day {% if day == today.day %}today{% endif %} {% if day in task_days %}has-task{% endif %}">
                                     <div class="flex justify-between items-start">
-                                        <span class="text-sm font-medium {% if day == today.day %}text-blue-600{% else %}text{% endif %}">
+                                        <span class="text-xs sm:text-sm font-medium {% if day == today.day %}text-blue-600{% else %}text{% endif %}">
                                             {% if day != 0 %}{{ day }}{% endif %}
                                         </span>
                                         {% if day in task_days %}
-                                            <span class="w-2 h-2 rounded-full bg-yellow-500 mt-1"></span>
+                                            <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-yellow-500 mt-1"></span>
                                         {% endif %}
                                     </div>
                                     <!-- Task titles inside calendar day -->
@@ -645,14 +755,14 @@
                                         {% if day != 0 %}
                                             {% for task in tasks %}
                                                 {% if task.due_date|date:"j" == day|stringformat:"i" %}
-                                                    <div class="calendar-task-item
+                                                    <div class="calendar-task-item text-[8px] sm:text-[10px]
                                                         {% if task.due_date and task.due_date < today and not task.is_completed %}overdue{% endif %}
                                                         {% if task.is_completed %}completed{% endif %}">
                                                         <i class="fas
                                                             {% if task.is_completed %}fa-check-circle
                                                             {% elif task.due_date and task.due_date < today %}fa-exclamation-circle
                                                             {% else %}fa-circle{% endif %}"></i>
-                                                        {{ task.name|truncatechars:15 }}
+                                                        {{ task.name|truncatechars:10 }}
                                                     </div>
                                                 {% endif %}
                                             {% endfor %}
@@ -663,9 +773,9 @@
                                         {% if day != 0 %}
                                             {% for task in tasks %}
                                                 {% if task.due_date|date:"j" == day|stringformat:"i" %}
-                                                    <div class="calendar-option-item">
+                                                    <div class="calendar-option-item text-[8px] sm:text-[10px]">
                                                         <i class="fas fa-circle"></i>
-                                                        {{ task.priority|truncatechars:15 }}
+                                                        {{ task.priority|truncatechars:8 }}
                                                     </div>
                                                 {% endif %}
                                             {% endfor %}
@@ -677,89 +787,89 @@
                         </div>
 
                         <!-- Task Status Summary  -->
-                        <div class="mt-6 task-status-summary">
-                            <div class="flex items-center justify-between w-full">
-                                <div class="flex items-center gap-4">
-                                    <span class="text-sm font-semibold text-gray-700">Task Status:</span>
-                                    <div class="status-pill pending">
+                        <div class="mt-4 sm:mt-6 task-status-summary flex-col sm:flex-row items-start gap-3 sm:gap-4">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-3 sm:gap-4">
+                                <div class="flex flex-wrap items-center gap-2 sm:gap-4">
+                                    <span class="text-xs sm:text-sm font-semibold text-gray-700">Task Status:</span>
+                                    <div class="status-pill pending text-xs sm:text-sm">
                                         <i class="fas fa-clock"></i>
                                         <span>Pending: <span class="font-bold">{{ pending_count|default:"0" }}</span></span>
                                     </div>
-                                    <div class="status-pill completed">
+                                    <div class="status-pill completed text-xs sm:text-sm">
                                         <i class="fas fa-check-circle"></i>
                                         <span>Completed: <span class="font-bold">{{ completed_count|default:"0" }}</span></span>
                                     </div>
-                                    <div class="status-pill overdue">
+                                    <div class="status-pill overdue text-xs sm:text-sm">
                                         <i class="fas fa-exclamation-circle"></i>
                                         <span>Overdue: <span class="font-bold">{{ overdue_count|default:"0" }}</span></span>
                                     </div>
                                 </div>
-                                <div class="status-divider"></div>
+                                <div class="status-divider hidden sm:block"></div>
                                 <div class="task-stat-badge">
                                     <div>
-                                        <span class="task-stat-number">{{ tasks.count|default:"0" }}</span>
-                                        <span class="task-stat-label">Total Tasks</span>
+                                        <span class="task-stat-number text-base sm:text-lg">{{ tasks.count|default:"0" }}</span>
+                                        <span class="task-stat-label text-xs sm:text-sm">Total Tasks</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-6 text-sm text-secondary flex items-center space-x-6">
+                        <div class="mt-4 sm:mt-6 text-xs sm:text-sm text-secondary flex flex-wrap items-center gap-4 sm:gap-6">
                             <div class="flex items-center">
-                                <span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                                <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-blue-500 mr-1 sm:mr-2"></span>
                                 <span>Tasks</span>
                             </div>
                             <div class="flex items-center">
-                                <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                                <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500 mr-1 sm:mr-2"></span>
                                 <span>Completed</span>
                             </div>
                             <div class="flex items-center">
-                                <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                                <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500 mr-1 sm:mr-2"></span>
                                 <span>Overdue</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Recent Todos -->
-                    <div class="card p-7 mb-8">
-                        <div class="flex justify-between items-center mb-7">
-                            <h2 class="text-xl font-bold title">Recent Tasks</h2>
-                            <a href="/todo/todolist/" class="text-sm text-secondary hover:text-gray-900 transition-colors flex items-center">
-                                View all <i class="fas fa-arrow-right ml-2"></i>
+                    <div class="card p-5 sm:p-7">
+                        <div class="flex justify-between items-center mb-5 sm:mb-7">
+                            <h2 class="text-lg sm:text-xl font-bold title">Recent Tasks</h2>
+                            <a href="/todo/todolist/" class="text-xs sm:text-sm text-secondary hover:text-gray-900 transition-colors flex items-center">
+                                View all <i class="fas fa-arrow-right ml-1 sm:ml-2"></i>
                             </a>
                         </div>
 
                         {% if tasks|slice:":4" %}
-                        <div class="space-y-3">
+                        <div class="space-y-2 sm:space-y-3">
                             {% for task in tasks|slice:":4" %}
-                            <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group">
-                                <div class="flex-shrink-0 mr-4">
+                            <div class="flex items-center p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group">
+                                <div class="flex-shrink-0 mr-3 sm:mr-4">
                                     {% if task.is_completed %}
-                                        <div class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
-                                            <i class="fas fa-check text-white text-xs"></i>
+                                        <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-green-500 flex items-center justify-center">
+                                            <i class="fas fa-check text-white text-[10px] sm:text-xs"></i>
                                         </div>
                                     {% else %}
-                                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-gray-400 transition-colors"></div>
+                                        <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 border-gray-300 group-hover:border-gray-400 transition-colors"></div>
                                     {% endif %}
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text {% if task.is_completed %}line-through text-gray-500{% endif %}">
+                                    <p class="text-xs sm:text-sm font-medium text {% if task.is_completed %}line-through text-gray-500{% endif %}">
                                         {{ task.name }}
                                     </p>
-                                    <div class="flex items-center mt-2 space-x-3">
+                                    <div class="flex flex-wrap items-center mt-1 sm:mt-2 gap-2 sm:gap-3">
                                         {% if task.due_date %}
-                                        <span class="text-xs text-secondary flex items-center">
-                                            <i class="far fa-calendar-alt mr-1.5"></i>{{ task.due_date }}
+                                        <span class="text-[10px] sm:text-xs text-secondary flex items-center">
+                                            <i class="far fa-calendar-alt mr-1 sm:mr-1.5"></i>{{ task.due_date }}
                                         </span>
                                         {% endif %}
-                                        <span class="text-xs px-3 py-1 rounded-full font-medium
+                                        <span class="text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium
                                             {% if task.priority == 'high' %}status-high
                                             {% elif task.priority == 'medium' %}status-medium
                                             {% else %}status-low{% endif %}">
                                             {{ task.get_priority_display }}
                                         </span>
                                         {% if task.due_date and task.due_date < today and not task.is_completed %}
-                                        <span class="text-xs status-overdue px-3 py-1 rounded-full font-medium">Overdue</span>
+                                        <span class="text-[10px] sm:text-xs status-overdue px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium">Overdue</span>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -767,13 +877,13 @@
                             {% endfor %}
                         </div>
                         {% else %}
-                        <div class="text-center py-10">
-                            <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-tasks text-2xl text-gray-400"></i>
+                        <div class="text-center py-6 sm:py-10">
+                            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                <i class="fas fa-tasks text-xl sm:text-2xl text-gray-400"></i>
                             </div>
-                            <p class="text-secondary mb-4">No tasks yet</p>
-                            <a href="/todo/todolist/" class="inline-flex items-center px-5 py-2.5 bg-black text-white rounded-lg text-sm hover:opacity-90 transition-all">
-                                <i class="fas fa-plus mr-2.5"></i>
+                            <p class="text-xs sm:text-sm text-secondary mb-3 sm:mb-4">No tasks yet</p>
+                            <a href="/todo/todolist/" class="inline-flex items-center px-4 sm:px-5 py-2 sm:py-2.5 bg-black text-white rounded-lg text-xs sm:text-sm hover:opacity-90 transition-all">
+                                <i class="fas fa-plus mr-2 sm:mr-2.5"></i>
                                 Create task
                             </a>
                         </div>
@@ -781,36 +891,36 @@
                     </div>
 
                     <!-- Recent Notes  -->
-                    <div class="card p-7">
-                        <div class="flex justify-between items-center mb-7">
-                            <h2 class="text-xl font-bold title">Recent Notes</h2>
-                            <a href="/note/" class="text-sm text-secondary hover:text-gray-900 transition-colors flex items-center">
-                                View all <i class="fas fa-arrow-right ml-2"></i>
+                    <div class="card p-5 sm:p-7">
+                        <div class="flex justify-between items-center mb-5 sm:mb-7">
+                            <h2 class="text-lg sm:text-xl font-bold title">Recent Notes</h2>
+                            <a href="/note/" class="text-xs sm:text-sm text-secondary hover:text-gray-900 transition-colors flex items-center">
+                                View all <i class="fas fa-arrow-right ml-1 sm:ml-2"></i>
                             </a>
                         </div>
 
                         {% if notes|slice:":3" %}
-                        <div class="space-y-4">
+                        <div class="space-y-3 sm:space-y-4">
                             {% for note in notes|slice:":3" %}
-                            <div class="p-5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                <h4 class="font-medium text mb-3">{{ note.title|truncatechars:40 }}</h4>
-                                <p class="text-sm text-secondary mb-4 line-clamp-2">{{ note.content|truncatechars:100 }}</p>
+                            <div class="p-4 sm:p-5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <h4 class="font-medium text text-sm sm:text-base mb-2 sm:mb-3">{{ note.title|truncatechars:40 }}</h4>
+                                <p class="text-xs sm:text-sm text-secondary mb-3 sm:mb-4 line-clamp-2">{{ note.content|truncatechars:100 }}</p>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-xs text-muted flex items-center">
-                                        <i class="far fa-clock mr-1.5"></i>{{ note.created_at|date:"M d, Y" }}
+                                    <span class="text-[10px] sm:text-xs text-muted flex items-center">
+                                        <i class="far fa-clock mr-1 sm:mr-1.5"></i>{{ note.created_at|date:"M d, Y" }}
                                     </span>
                                 </div>
                             </div>
                             {% endfor %}
                         </div>
                         {% else %}
-                        <div class="text-center py-10">
-                            <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-sticky-note text-2xl text-gray-400"></i>
+                        <div class="text-center py-6 sm:py-10">
+                            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                <i class="fas fa-sticky-note text-xl sm:text-2xl text-gray-400"></i>
                             </div>
-                            <p class="text-secondary mb-4">No notes yet</p>
-                            <a href="/notes/create/" class="inline-flex items-center px-5 py-2.5 bg-black text-white rounded-lg text-sm hover:opacity-90 transition-all">
-                                <i class="fas fa-plus mr-2.5"></i>
+                            <p class="text-xs sm:text-sm text-secondary mb-3 sm:mb-4">No notes yet</p>
+                            <a href="/notes/create/" class="inline-flex items-center px-4 sm:px-5 py-2 sm:py-2.5 bg-black text-white rounded-lg text-xs sm:text-sm hover:opacity-90 transition-all">
+                                <i class="fas fa-plus mr-2 sm:mr-2.5"></i>
                                 Create note
                             </a>
                         </div>
@@ -818,39 +928,39 @@
                     </div>
 
                     <!-- Quick Stats -->
-                    <div class="card p-7 mt-7">
-                        <h2 class="text-xl font-bold title mb-7">Quick Stats</h2>
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
+                    <div class="card p-5 sm:p-7">
+                        <h2 class="text-lg sm:text-xl font-bold title mb-5 sm:mb-7">Quick Stats</h2>
+                        <div class="space-y-3 sm:space-y-4">
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center mr-4 border border-blue-200">
-                                        <i class="fas fa-calendar-alt text-blue-600"></i>
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center mr-3 sm:mr-4 border border-blue-200">
+                                        <i class="fas fa-calendar-alt text-blue-600 text-xs sm:text-sm"></i>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-secondary">Tasks This Month</p>
-                                        <p class="font-bold text text-lg">{{ tasks_this_month }}</p>
+                                        <p class="text-[10px] sm:text-xs text-secondary">Tasks This Month</p>
+                                        <p class="font-bold text text-sm sm:text-lg">{{ tasks_this_month }}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center mr-4 border border-green-200">
-                                        <i class="fas fa-money-bill-wave text-green-600"></i>
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center mr-3 sm:mr-4 border border-green-200">
+                                        <i class="fas fa-money-bill-wave text-green-600 text-xs sm:text-sm"></i>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-secondary">Avg. Daily Spend</p>
-                                        <p class="font-bold text text-lg">{{ avg_daily_spend|floatformat:2 }}Ks</p>
+                                        <p class="text-[10px] sm:text-xs text-secondary">Avg. Daily Spend</p>
+                                        <p class="font-bold text text-sm sm:text-lg">{{ avg_daily_spend|floatformat:2 }}Ks</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center mr-4 border border-purple-200">
-                                        <i class="fas fa-chart-line text-purple-600"></i>
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center mr-3 sm:mr-4 border border-purple-200">
+                                        <i class="fas fa-chart-line text-purple-600 text-xs sm:text-sm"></i>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-secondary">Productivity Score</p>
-                                        <p class="font-bold text text-lg">{{ productivity_score|floatformat:0 }}%</p>
+                                        <p class="text-[10px] sm:text-xs text-secondary">Productivity Score</p>
+                                        <p class="font-bold text text-sm sm:text-lg">{{ productivity_score|floatformat:0 }}%</p>
                                     </div>
                                 </div>
                             </div>
@@ -859,35 +969,35 @@
                 </div>
 
                 <!-- Right Column- Budget Analytics and Charts -->
-                <div class="space-y-8">
+                <div class="space-y-6 sm:space-y-8">
                     <!-- Budget Overview -->
-                    <div class="card p-7">
-                        <div class="flex justify-between items-center mb-7">
-                            <h2 class="text-xl font-bold title">Budget Analytics</h2>
-                            <a href="/budget/" class="text-sm text-secondary hover:text-gray-900 transition-colors flex items-center">
-                                Manage <i class="fas fa-arrow-right ml-2"></i>
+                    <div class="card p-5 sm:p-7">
+                        <div class="flex justify-between items-center mb-5 sm:mb-7">
+                            <h2 class="text-lg sm:text-xl font-bold title">Budget Analytics</h2>
+                            <a href="/budget/" class="text-xs sm:text-sm text-secondary hover:text-gray-900 transition-colors flex items-center">
+                                Manage <i class="fas fa-arrow-right ml-1 sm:ml-2"></i>
                             </a>
                         </div>
 
                         <!-- Summary Cards -->
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                <p class="text-xs text-green-600 font-medium mb-1">Total Income</p>
-                                <p class="text-xl font-bold text-green-700">{{ total_income|floatformat }}Ks</p>
-                                <p class="text-xs text-green-600 mt-1">{{ incomes.count }} transactions</p>
+                        <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-5 sm:mb-6">
+                            <div class="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-100">
+                                <p class="text-[10px] sm:text-xs text-green-600 font-medium mb-1">Total Income</p>
+                                <p class="text-base sm:text-xl font-bold text-green-700">{{ total_income|floatformat }}Ks</p>
+                                <p class="text-[8px] sm:text-xs text-green-600 mt-1">{{ incomes.count }} transactions</p>
                             </div>
-                            <div class="bg-red-50 p-4 rounded-lg border border-red-100">
-                                <p class="text-xs text-red-600 font-medium mb-1">Total Expenses</p>
-                                <p class="text-xl font-bold text-red-700">{{ total_expense|floatformat }}Ks</p>
-                                <p class="text-xs text-red-600 mt-1">{{ expenses.count }} transactions</p>
+                            <div class="bg-red-50 p-3 sm:p-4 rounded-lg border border-red-100">
+                                <p class="text-[10px] sm:text-xs text-red-600 font-medium mb-1">Total Expenses</p>
+                                <p class="text-base sm:text-xl font-bold text-red-700">{{ total_expense|floatformat }}Ks</p>
+                                <p class="text-[8px] sm:text-xs text-red-600 mt-1">{{ expenses.count }} transactions</p>
                             </div>
                         </div>
 
                         <!-- Pie Chart -->
-                        <div class="mb-7">
-                            <div class="flex justify-between items-center mb-5">
-                                <h3 class="font-medium text">Income vs Expenses</h3>
-                                <div class="text-sm px-3 py-1 rounded-full {% if savings_percentage > 0 %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %} font-medium">
+                        <div class="mb-5 sm:mb-7">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3 sm:mb-5">
+                                <h3 class="font-medium text text-sm sm:text-base">Income vs Expenses</h3>
+                                <div class="text-[10px] sm:text-xs px-2 sm:px-3 py-1 rounded-full {% if savings_percentage > 0 %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %} font-medium">
                                     {% if total_income > 0 %}
                                         {{ savings_percentage|floatformat:1 }}% saved
                                     {% else %}
@@ -895,29 +1005,29 @@
                                     {% endif %}
                                 </div>
                             </div>
-                            <div class="chart-container">
+                            <div class="chart-container h-40 sm:h-48">
                                 <canvas id="budgetPieChart"></canvas>
                             </div>
                         </div>
 
                         <!-- Income/Expense Breakdown -->
-                        <div class="space-y-4 mb-6">
+                        <div class="space-y-3 sm:space-y-4 mb-5 sm:mb-6">
                             <div>
-                                <div class="flex justify-between text-sm mb-2">
+                                <div class="flex justify-between text-[10px] sm:text-xs mb-1 sm:mb-2">
                                     <span class="text font-medium">Income</span>
                                     <span class="font-bold text-green-600">{{ total_income|floatformat }}Ks</span>
                                 </div>
-                                <div class="w-full bg-gray-100 rounded-full h-2.5">
-                                    <div class="bg-green-500 h-2.5 rounded-full" style="width: 100%"></div>
+                                <div class="w-full bg-gray-100 rounded-full h-1.5 sm:h-2.5">
+                                    <div class="bg-green-500 h-1.5 sm:h-2.5 rounded-full" style="width: 100%"></div>
                                 </div>
                             </div>
                             <div>
-                                <div class="flex justify-between text-sm mb-2">
+                                <div class="flex justify-between text-[10px] sm:text-xs mb-1 sm:mb-2">
                                     <span class="text font-medium">Expenses</span>
                                     <span class="font-bold text-red-600">{{ total_expense|floatformat }}Ks</span>
                                 </div>
-                                <div class="w-full bg-gray-100 rounded-full h-2.5">
-                                    <div class="bg-red-500 h-2.5 rounded-full"
+                                <div class="w-full bg-gray-100 rounded-full h-1.5 sm:h-2.5">
+                                    <div class="bg-red-500 h-1.5 sm:h-2.5 rounded-full"
                                          style="width:
                                          {% if total_income > 0 %}
                                             {% widthratio total_expense total_income 100 %}
@@ -931,20 +1041,20 @@
 
                         <!-- Expense Categories Breakdown -->
                     {% if expense_categories %}
-                    <div class="mt-6 pt-6 border-t border-gray-200">
-                        <h3 class="font-medium text mb-4">Top Expense Categories</h3>
-                        <div class="space-y-3">
+                    <div class="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
+                        <h3 class="font-medium text text-sm sm:text-base mb-3 sm:mb-4">Top Expense Categories</h3>
+                        <div class="space-y-2 sm:space-y-3">
                             {% for category in expense_categories %}
                         <div>
-                        <div class="flex justify-between text-sm mb-1">
+                        <div class="flex justify-between text-[10px] sm:text-xs mb-1">
                             <span class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-400 mr-2"></span>
+                            <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-yellow-400 mr-1 sm:mr-2"></span>
                                 {{ category.name }}
                             </span>
                             <span class="font-semibold">{{ category.count }} item{{ category.count|pluralize }}</span>
                         </div>
-                        <div class="w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="bg-yellow-400 h-1.5 rounded-full" style="width: {% widthratio category.count total_expenses_count 100 %}%"></div>
+                        <div class="w-full bg-gray-100 rounded-full h-1 sm:h-1.5">
+                        <div class="bg-yellow-400 h-1 sm:h-1.5 rounded-full" style="width: {% widthratio category.count total_expenses_count 100 %}%"></div>
                         </div>
                         </div>
                     {% endfor %}
@@ -953,50 +1063,50 @@
             {% endif %}
 
                         <!-- Recent Transactions -->
-                        <div class="mt-6 pt-6 border-t border-gray-200">
-                            <h3 class="font-medium text mb-4">Recent Transactions</h3>
-                            <div class="space-y-3 max-h-64 overflow-y-auto pr-2">
+                        <div class="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
+                            <h3 class="font-medium text text-sm sm:text-base mb-3 sm:mb-4">Recent Transactions</h3>
+                            <div class="space-y-2 sm:space-y-3 max-h-48 sm:max-h-64 overflow-y-auto pr-1 sm:pr-2">
                                 <!-- Recent Incomes -->
                                 {% for income in incomes|slice:":3" %}
-                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                <div class="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                     <div class="flex items-center min-w-0 flex-1">
-                                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
-                                            <i class="fas fa-arrow-down text-green-600 text-xs"></i>
+                                        <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-100 flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+                                            <i class="fas fa-arrow-up text-green-600 text-[8px] sm:text-xs"></i>
                                         </div>
                                         <div class="min-w-0 flex-1">
-                                            <p class="text-sm font-medium text truncate">{{ income.source }}</p>
-                                            <p class="text-xs text-secondary">{{ income.date|date:"M d, Y" }}</p>
+                                            <p class="text-xs sm:text-sm font-medium text truncate">{{ income.source }}</p>
+                                            <p class="text-[8px] sm:text-xs text-secondary">{{ income.date|date:"M d, Y" }}</p>
                                         </div>
                                     </div>
-                                    <span class="text-sm font-semibold text-green-600 ml-2 flex-shrink-0">+{{ income.amount }}Ks</span>
+                                    <span class="text-xs sm:text-sm font-semibold text-green-600 ml-1 sm:ml-2 flex-shrink-0">+{{ income.amount }}Ks</span>
                                 </div>
                                 {% endfor %}
 
                                 <!-- Recent Expenses -->
                                 {% for expense in expenses|slice:":3" %}
-                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                <div class="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                     <div class="flex items-center min-w-0 flex-1">
-                                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-3 flex-shrink-0">
-                                            <i class="fas fa-arrow-up text-red-600 text-xs"></i>
+                                        <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-100 flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+                                            <i class="fas fa-arrow-down text-red-600 text-[8px] sm:text-xs"></i>
                                         </div>
                                         <div class="min-w-0 flex-1">
-                                            <p class="text-sm font-medium text truncate">{{ expense.category.name|default:"Uncategorized" }}</p>
-                                            <p class="text-xs text-secondary">{{ expense.date|date:"M d, Y" }} • {{ expense.description|truncatechars:15 }}</p>
+                                            <p class="text-xs sm:text-sm font-medium text truncate">{{ expense.category.name|default:"Uncategorized" }}</p>
+                                            <p class="text-[8px] sm:text-xs text-secondary">{{ expense.date|date:"M d, Y" }} • {{ expense.description|truncatechars:10 }}</p>
                                         </div>
                                     </div>
-                                    <span class="text-sm font-semibold text-red-600 ml-2 flex-shrink-0">-{{ expense.amount }}Ks</span>
+                                    <span class="text-xs sm:text-sm font-semibold text-red-600 ml-1 sm:ml-2 flex-shrink-0">-{{ expense.amount }}Ks</span>
                                 </div>
                                 {% empty %}
-                                <p class="text-sm text-secondary text-center py-4">No recent transactions</p>
+                                <p class="text-[10px] sm:text-xs text-secondary text-center py-3 sm:py-4">No recent transactions</p>
                                 {% endfor %}
                             </div>
 
                             <!-- Quick Actions button for income and expense -->
-                            <div class="grid grid-cols-2 gap-3 mt-4">
-                                <a href="/budget/" class="flex items-center justify-center px-4 py-2 bg-black text-white rounded-lg text-sm font-medium  border cursor-pointer">
+                            <div class="grid grid-cols-2 gap-2 sm:gap-3 mt-3 sm:mt-4">
+                                <a href="/budget/" class="flex items-center justify-center px-3 sm:px-4 py-1.5 sm:py-2 bg-black text-white rounded-lg text-xs sm:text-sm font-medium border cursor-pointer">
                                    Add Income
                                 </a>
-                                <a href="/budget/" class="flex items-center justify-center px-4 py-2 bg-black text-white rounded-lg text-sm font-medium border cursor-pointer">
+                                <a href="/budget/" class="flex items-center justify-center px-3 sm:px-4 py-1.5 sm:py-2 bg-black text-white rounded-lg text-xs sm:text-sm font-medium border cursor-pointer">
                                     Add Expense
                                 </a>
                             </div>
@@ -1004,33 +1114,33 @@
                     </div>
 
                     <!-- Task Completion Trend -->
-                    <div class="card p-7">
-                        <h2 class="text-xl font-bold title mb-4">Task Completion Trend</h2>
+                    <div class="card p-5 sm:p-7">
+                        <h2 class="text-lg sm:text-xl font-bold title mb-3 sm:mb-4">Task Completion Trend</h2>
                         {% if tasks.count > 0 %}
-                        <div class="flex items-center justify-between mb-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3 sm:mb-4">
                             <div class="flex items-center space-x-2">
-                                <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-                                <span class="text-xs text-secondary">Completed vs Total</span>
+                                <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-blue-500"></span>
+                                <span class="text-[10px] sm:text-xs text-secondary">Completed vs Total</span>
                             </div>
                             <div class="flex items-center space-x-2">
-            <span class="trend-up">
+            <span class="trend-up text-[10px] sm:text-xs">
                 <i class="fas fa-arrow-up mr-1"></i>{{ productivity_score|floatformat:0 }}% rate
             </span>
                             </div>
                         </div>
-                        <div class="chart-container h-48">
+                        <div class="chart-container h-36 sm:h-48">
                             <canvas id="taskTrendChart"></canvas>
                         </div>
                         {% else %}
-                        <div class="flex flex-col items-center justify-center h-48 text-gray-400">
-                            <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                                <i class="fas fa-chart-line text-2xl"></i>
+                        <div class="flex flex-col items-center justify-center h-36 sm:h-48 text-gray-400">
+                            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-100 flex items-center justify-center mb-3 sm:mb-4">
+                                <i class="fas fa-chart-line text-xl sm:text-2xl"></i>
                             </div>
-                            <p class="text-sm font-medium mb-1">No task data available</p>
-                            <p class="text-xs text-center">Create tasks to see your completion trend</p>
+                            <p class="text-xs sm:text-sm font-medium mb-1">No task data available</p>
+                            <p class="text-[10px] sm:text-xs text-center">Create tasks to see your completion trend</p>
                             <a href="/todo/todolist/"
-                               class="mt-4 inline-flex items-center px-4 py-2 bg-black text-white rounded-lg text-sm hover:opacity-90 transition-all">
-                                <i class="fas fa-plus mr-2"></i>
+                               class="mt-3 sm:mt-4 inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-black text-white rounded-lg text-xs sm:text-sm hover:opacity-90 transition-all">
+                                <i class="fas fa-plus mr-1 sm:mr-2"></i>
                                 Create your first task
                             </a>
                         </div>
@@ -1038,60 +1148,60 @@
                     </div>
 
                     <!-- Tasks by Priority -->
-                    <div class="card p-7">
-                        <h2 class="text-xl font-bold title mb-4">Tasks by Priority</h2>
-                        <div class="space-y-4">
+                    <div class="card p-5 sm:p-7">
+                        <h2 class="text-lg sm:text-xl font-bold title mb-3 sm:mb-4">Tasks by Priority</h2>
+                        <div class="space-y-3 sm:space-y-4">
                             <!-- High Priority -->
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg">
                                 <div class="flex items-center">
-                                    <span class="w-3 h-3 rounded-full bg-red-500 mr-3"></span>
-                                    <span class="font-medium text-gray-700">High Priority</span>
+                                    <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500 mr-2 sm:mr-3"></span>
+                                    <span class="text-xs sm:text-sm font-medium text-gray-700">High Priority</span>
                                 </div>
-                                <span class="font-bold text-lg">{{ high_priority_count }}</span>
+                                <span class="font-bold text-base sm:text-lg">{{ high_priority_count }}</span>
                             </div>
 
                             <!-- Medium Priority -->
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg">
                                 <div class="flex items-center">
-                                    <span class="w-3 h-3 rounded-full bg-yellow-500 mr-3"></span>
-                                    <span class="font-medium text-gray-700">Medium Priority</span>
+                                    <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500 mr-2 sm:mr-3"></span>
+                                    <span class="text-xs sm:text-sm font-medium text-gray-700">Medium Priority</span>
                                 </div>
-                                <span class="font-bold text-lg">{{ medium_priority_count }}</span>
+                                <span class="font-bold text-base sm:text-lg">{{ medium_priority_count }}</span>
                             </div>
 
                             <!-- Low Priority -->
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg">
                                 <div class="flex items-center">
-                                    <span class="w-3 h-3 rounded-full bg-green-500 mr-3"></span>
-                                    <span class="font-medium text-gray-700">Low Priority</span>
+                                    <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500 mr-2 sm:mr-3"></span>
+                                    <span class="text-xs sm:text-sm font-medium text-gray-700">Low Priority</span>
                                 </div>
-                                <span class="font-bold text-lg">{{ low_priority_count }}</span>
+                                <span class="font-bold text-base sm:text-lg">{{ low_priority_count }}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Recent Activity -->
-                    <div class="card p-7">
-                        <h2 class="text-xl font-bold title mb-4">Recent Activity</h2>
-                        <div class="space-y-4">
+                    <div class="card p-5 sm:p-7">
+                        <h2 class="text-lg sm:text-xl font-bold title mb-3 sm:mb-4">Recent Activity</h2>
+                        <div class="space-y-3 sm:space-y-4">
                             <!-- Task Activities -->
                             {% with latest_tasks=tasks|slice:":2" %}
                                 {% for task in latest_tasks %}
-                                <div class="flex items-start space-x-3">
+                                <div class="flex items-start space-x-2 sm:space-x-3">
                                     <div class="flex-shrink-0">
-                                        <div class="w-8 h-8 rounded-full {% if task.is_completed %}bg-green-100{% else %}bg-blue-100{% endif %} flex items-center justify-center">
-                                            <i class="fas fa-tasks {% if task.is_completed %}text-green-600{% else %}text-blue-600{% endif %}"></i>
+                                        <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full {% if task.is_completed %}bg-green-100{% else %}bg-blue-100{% endif %} flex items-center justify-center">
+                                            <i class="fas fa-tasks text-[10px] sm:text-xs {% if task.is_completed %}text-green-600{% else %}text-blue-600{% endif %}"></i>
                                         </div>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text">
+                                        <p class="text-xs sm:text-sm font-medium text">
                                             {% if task.is_completed %}
-                                                Completed task: "{{ task.name|truncatechars:20 }}"
+                                                Completed task: "{{ task.name|truncatechars:15 }}"
                                             {% else %}
-                                                New task: "{{ task.name|truncatechars:20 }}"
+                                                New task: "{{ task.name|truncatechars:15 }}"
                                             {% endif %}
                                         </p>
-                                        <p class="text-xs text-secondary mt-1">{{ task.created_at|timesince }} ago</p>
+                                        <p class="text-[8px] sm:text-xs text-secondary mt-0.5 sm:mt-1">{{ task.created_at|timesince }} ago</p>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -1100,17 +1210,17 @@
                             <!-- Budget Activities -->
                             {% with latest_income=incomes|first %}
                                 {% if latest_income %}
-                                <div class="flex items-start space-x-3">
+                                <div class="flex items-start space-x-2 sm:space-x-3">
                                     <div class="flex-shrink-0">
-                                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                                            <i class="fas fa-arrow-up text-green-600"></i>
+                                        <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                            <i class="fas fa-arrow-up text-green-600 text-[10px] sm:text-xs"></i>
                                         </div>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text">
-                                            Added income: {{ latest_income.source|truncatechars:20 }} ({{ latest_income.amount }}Ks)
+                                        <p class="text-xs sm:text-sm font-medium text">
+                                            Added income: {{ latest_income.source|truncatechars:15 }} ({{ latest_income.amount }}Ks)
                                         </p>
-                                        <p class="text-xs text-secondary mt-1">{{ latest_income.date|timesince }} ago</p>
+                                        <p class="text-[8px] sm:text-xs text-secondary mt-0.5 sm:mt-1">{{ latest_income.date|timesince }} ago</p>
                                     </div>
                                 </div>
                                 {% endif %}
@@ -1118,24 +1228,24 @@
 
                             {% with latest_expense=expenses|first %}
                                 {% if latest_expense %}
-                                <div class="flex items-start space-x-3">
+                                <div class="flex items-start space-x-2 sm:space-x-3">
                                     <div class="flex-shrink-0">
-                                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                                            <i class="fas fa-arrow-down text-red-600"></i>
+                                        <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-100 flex items-center justify-center">
+                                            <i class="fas fa-arrow-down text-red-600 text-[10px] sm:text-xs"></i>
                                         </div>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text">
-                                            Added expense: {{ latest_expense.description|truncatechars:20 }} ({{ latest_expense.amount }}Ks)
+                                        <p class="text-xs sm:text-sm font-medium text">
+                                            Added expense: {{ latest_expense.description|truncatechars:15 }} ({{ latest_expense.amount }}Ks)
                                         </p>
-                                        <p class="text-xs text-secondary mt-1">{{ latest_expense.date|timesince }} ago</p>
+                                        <p class="text-[8px] sm:text-xs text-secondary mt-0.5 sm:mt-1">{{ latest_expense.date|timesince }} ago</p>
                                     </div>
                                 </div>
                                 {% endif %}
                             {% endwith %}
 
                             {% if not tasks and not incomes and not expenses %}
-                            <div class="text-center py-4 text-secondary text-sm">
+                            <div class="text-center py-3 sm:py-4 text-secondary text-[10px] sm:text-xs">
                                 No recent activity
                             </div>
                             {% endif %}
@@ -1147,6 +1257,50 @@
     </div>
 
 <script>
+// Mobile menu functions
+function toggleMobileMenu() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+
+    // Prevent body scrolling when menu is open
+    if (sidebar.classList.contains('mobile-open')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+}
+
+function closeMobileMenu() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Close mobile menu when clicking a link
+document.querySelectorAll('.sidebar-icon').forEach(link => {
+    link.addEventListener('click', function() {
+        if (window.innerWidth < 1024) {
+            closeMobileMenu();
+        }
+    });
+});
+
+// Handle window resize
+window.addEventListener('resize', function() {
+    if (window.innerWidth >= 1024) {
+        // On desktop, ensure sidebar is visible and remove overlay
+        const sidebar = document.getElementById('mobileSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+});
+
 // Initialize Charts
 document.addEventListener('DOMContentLoaded', function() {
     // Pie Chart for Budget
@@ -1231,11 +1385,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (chartContainer) {
             chartContainer.innerHTML = `
                 <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                    <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                        <i class="fas fa-chart-pie text-2xl"></i>
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-100 flex items-center justify-center mb-3 sm:mb-4">
+                        <i class="fas fa-chart-pie text-xl sm:text-2xl"></i>
                     </div>
-                    <p class="text-sm font-medium mb-1">No budget data available</p>
-                    <p class="text-xs">Add income or expenses to see the chart</p>
+                    <p class="text-xs sm:text-sm font-medium mb-1">No budget data available</p>
+                    <p class="text-[10px] sm:text-xs">Add income or expenses to see the chart</p>
                 </div>
             `;
         }
@@ -1364,11 +1518,11 @@ if (trendCtx && taskCount > 0) {
         const noDataMessage = document.createElement('div');
         noDataMessage.className = 'flex flex-col items-center justify-center h-full text-gray-400';
         noDataMessage.innerHTML = `
-            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-                <i class="fas fa-chart-line text-xl"></i>
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 flex items-center justify-center mb-2 sm:mb-3">
+                <i class="fas fa-chart-line text-lg sm:text-xl"></i>
             </div>
-            <p class="text-sm font-medium mb-1">No data for last 7 days</p>
-            <p class="text-xs">Complete tasks to see trends</p>
+            <p class="text-xs sm:text-sm font-medium mb-1">No data for last 7 days</p>
+            <p class="text-[8px] sm:text-xs">Complete tasks to see trends</p>
         `;
         chartContainer.appendChild(noDataMessage);
     }
