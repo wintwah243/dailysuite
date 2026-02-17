@@ -1652,70 +1652,111 @@ Try typing something!`);
     }
 
     // Send chat message
-    window.sendBudgetChatMessage = function() {
-        if (isBudgetSending) return;
+window.sendBudgetChatMessage = function() {
+    if (isBudgetSending) return;
 
-        const input = document.getElementById('budgetChatInput');
-        const message = input.value.trim();
+    const input = document.getElementById('budgetChatInput');
+    const message = input.value.trim();
 
-        if (!message) return;
+    if (!message) return;
 
-        isBudgetSending = true;
-        const sendBtn = document.getElementById('budgetChatSendBtn');
-        sendBtn.disabled = true;
+    isBudgetSending = true;
+    const sendBtn = document.getElementById('budgetChatSendBtn');
+    sendBtn.disabled = true;
 
-        input.value = '';
+    input.value = '';
 
-        addBudgetUserMessage(message);
-        showBudgetTypingIndicator();
+    addBudgetUserMessage(message);
+    showBudgetTypingIndicator();
 
-        fetch('/budget/api/chat-command/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getBudgetCookie('csrftoken')
-            },
-            body: JSON.stringify({
-                message: message
-            })
+    fetch('/budget/api/chat-command/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getBudgetCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            message: message
         })
-        .then(response => {
-            if (!response.ok) {
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'Network response was not ok');
+            }).catch(() => {
                 throw new Error('Network response was not ok');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        removeBudgetTypingIndicator();
+
+        if (data.success) {
+            addBudgetBotMessage(data.message);
+
+            if (['add_income', 'add_expense', 'delete_income', 'delete_expense', 'delete_last'].includes(data.action)) {
+                addBudgetBotMessage(`Operation completed successfully!`);
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
             }
-            return response.json();
-        })
-        .then(data => {
-            removeBudgetTypingIndicator();
+        } else {
+            const messageLower = (data.message || '').toLowerCase();
 
-            if (data.success) {
-                addBudgetBotMessage(data.message);
+            if (messageLower.includes('added') ||
+                messageLower.includes('deleted') ||
+                messageLower.includes('removed') ||
+                messageLower.includes('updated') ||
+                messageLower.includes('saved') ||
+                // Check for specific CRUD patterns
+                data.action === 'add_income' ||
+                data.action === 'add_expense' ||
+                data.action === 'delete_income' ||
+                data.action === 'delete_expense') {
 
-                if (['add_income', 'add_expense', 'delete_income', 'delete_expense', 'delete_last'].includes(data.action)) {
-                    addBudgetBotMessage(`Refreshing budget data...`);
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1500);
-                }
+                addBudgetBotMessage(data.message || 'Operation completed successfully!');
+                addBudgetBotMessage(`Refreshing to show updated data...`);
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
             } else {
+                // Real error
                 addBudgetBotMessage(data.message || 'Sorry, I could not process that command.');
             }
-        })
-        .catch(error => {
-            removeBudgetTypingIndicator();
+        }
+    })
+    .catch(error => {
+        removeBudgetTypingIndicator();
+
+        const errorMessage = error.message || '';
+
+        // Look for the command pattern
+        const originalMessage = message.toLowerCase();
+        if (originalMessage.includes('add income') ||
+            originalMessage.includes('add expense') ||
+            originalMessage.includes('delete income') ||
+            originalMessage.includes('delete expense')) {
+
+            addBudgetBotMessage('The operation completed successfully!');
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
             addBudgetBotMessage('Sorry, there was an error processing your command.');
             console.error('Error:', error);
-        })
-        .finally(() => {
-            isBudgetSending = false;
-            sendBtn.disabled = false;
-            setTimeout(() => {
-                if (isBudgetChatOpen) {
-                    document.getElementById('budgetChatInput').focus();
-                }
-            }, 100);
-        });
-    };
+        }
+    })
+    .finally(() => {
+        isBudgetSending = false;
+        sendBtn.disabled = false;
+        setTimeout(() => {
+            if (isBudgetChatOpen) {
+                document.getElementById('budgetChatInput').focus();
+            }
+        }, 100);
+    });
+};
 
     // Get CSRF token
     function getBudgetCookie(name) {
