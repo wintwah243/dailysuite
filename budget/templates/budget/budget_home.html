@@ -471,6 +471,49 @@
                     </div>
                 </div>
 
+                <!-- Charts Section with Time Range Selector -->
+                <div class="mb-8">
+                    <!-- Time Range Selector -->
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-bold text-gray-900">Financial Overview</h2>
+                        <div class="flex items-center gap-2 bg-white rounded-lg border border-gray-200 p-1">
+                            <button onclick="updateChartTimeRange('daily')"
+                                    class="time-range-btn px-4 py-2 text-sm font-medium rounded-md transition-all"
+                                    id="dailyBtn">
+                                Daily
+                            </button>
+                            <button onclick="updateChartTimeRange('weekly')"
+                                    class="time-range-btn px-4 py-2 text-sm font-medium rounded-md transition-all"
+                                    id="weeklyBtn">
+                                Weekly
+                            </button>
+                            <button onclick="updateChartTimeRange('monthly')"
+                                    class="time-range-btn px-4 py-2 text-sm font-medium rounded-md transition-all bg-black text-white"
+                                    id="monthlyBtn">
+                                Monthly
+                            </button>
+                        </div>
+                    </div>
+
+<!--                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">-->
+<!--                        &lt;!&ndash; Income vs Expense Chart &ndash;&gt;-->
+<!--                        <div class="budget-card p-6">-->
+<!--                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Income vs Expense</h3>-->
+<!--                            <div class="h-64">-->
+<!--                                <canvas id="incomeExpenseChart"></canvas>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        &lt;!&ndash; Category Breakdown Chart &ndash;&gt;-->
+<!--                        <div class="budget-card p-6">-->
+<!--                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Expense by Category</h3>-->
+<!--                            <div class="h-64">-->
+<!--                                <canvas id="categoryChart"></canvas>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+
                 <!-- Charts Section -->
                 <div class="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Income vs Expense Chart -->
@@ -551,7 +594,7 @@
                             <table class="w-full">
                                 <thead>
                                     <tr class="border-b border-gray-200">
-<!--                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>-->
+                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Source</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Amount</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Actions</th>
@@ -560,7 +603,7 @@
                                 <tbody>
                                     {% for income in incomes %}
                                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-<!--                                        <td class="py-4 text-sm text-gray-900">{{ income.date }}</td>-->
+                                        <td class="py-4 text-sm text-gray-900">{{ income.date }}</td>
                                         <td class="py-4 text-sm text-gray-900">{{ income.source }}</td>
                                         <td class="py-4 text-sm font-medium text-green-600">{{ income.amount|floatformat:2 }}Ks</td>
                                         <td class="py-4">
@@ -608,8 +651,8 @@
                             <table class="w-full">
                                 <thead>
                                     <tr class="border-b border-gray-200">
-<!--                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>-->
-                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Description</th>
+                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Date</th>
+                                        <th class="py-3 text-left text-sm font-medium text-gray-600">Source</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Category</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Amount</th>
                                         <th class="py-3 text-left text-sm font-medium text-gray-600">Actions</th>
@@ -618,7 +661,7 @@
                                 <tbody>
                                     {% for expense in expenses %}
                                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-<!--                                        <td class="py-4 text-sm text-gray-900">{{ expense.date }}</td>-->
+                                        <td class="py-4 text-sm text-gray-900">{{ expense.date }}</td>
                                         <td class="py-4 text-sm text-gray-900">{{ expense.description }}</td>
                                         <td class="py-4 text-sm text-gray-600">
                                             {% if expense.category %}
@@ -1043,7 +1086,6 @@
         </div>
     </div>
     <!--BUDGET ASSISTANT CHATBOT pop up ends here-->
-
 <script>
     // Function to format date
     function formatDate(date) {
@@ -1134,20 +1176,43 @@
         ]
     };
 
-    // Initialize Charts
-    function initializeCharts() {
-        // 1. Income vs Expense Chart (Bar Chart)
+    // Chart time range functionality
+    let currentTimeRange = 'monthly';
+    let incomeExpenseChart = null;
+    let categoryChart = null;
+    let monthlyTrendChart = null;
+
+    // Initialize charts with time range support
+    function initializeChartsWithTimeRange() {
         const ieCtx = document.getElementById('incomeExpenseChart').getContext('2d');
-        new Chart(ieCtx, {
+        const catCtx = document.getElementById('categoryChart').getContext('2d');
+        const trendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
+
+        // Destroy existing charts if they exist
+        if (incomeExpenseChart) {
+            incomeExpenseChart.destroy();
+        }
+        if (categoryChart) {
+            categoryChart.destroy();
+        }
+        if (monthlyTrendChart) {
+            monthlyTrendChart.destroy();
+        }
+
+        const chartData = getChartDataByTimeRange(currentTimeRange);
+        const monthlyData = processMonthlyData();
+
+        // Income vs Expense Chart
+        incomeExpenseChart = new Chart(ieCtx, {
             type: 'bar',
             data: {
                 labels: ['Income', 'Expense'],
                 datasets: [{
                     label: 'Amount (Ks)',
-                    data: [budgetData.total_income, budgetData.total_expense],
+                    data: [chartData.totalIncome, chartData.totalExpense],
                     backgroundColor: [
-                        'rgba(34, 197, 94, 0.7)',  // Green for income
-                        'rgba(239, 68, 68, 0.7)'   // Red for expense
+                        'rgba(34, 197, 94, 0.7)',
+                        'rgba(239, 68, 68, 0.7)'
                     ],
                     borderColor: [
                         'rgb(34, 197, 94)',
@@ -1184,28 +1249,15 @@
             }
         });
 
-        //  Category Breakdown Chart (Doughnut)
-        if (budgetData.expenses.length > 0) {
-            const categoryMap = {};
-            budgetData.expenses.forEach(expense => {
-                const cat = expense.category || 'Uncategorized';
-                categoryMap[cat] = (categoryMap[cat] || 0) + expense.amount;
-            });
-
-            const categories = Object.keys(categoryMap);
-            const amounts = Object.values(categoryMap);
-
-            // Generate colors for categories
-            const colors = generateColors(categories.length);
-
-            const catCtx = document.getElementById('categoryChart').getContext('2d');
-            new Chart(catCtx, {
+        // Category Breakdown Chart
+        if (chartData.categoryData.labels.length > 0) {
+            categoryChart = new Chart(catCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: categories,
+                    labels: chartData.categoryData.labels,
                     datasets: [{
-                        data: amounts,
-                        backgroundColor: colors,
+                        data: chartData.categoryData.amounts,
+                        backgroundColor: generateColors(chartData.categoryData.labels.length),
                         borderWidth: 1
                     }]
                 },
@@ -1220,7 +1272,7 @@
                             callbacks: {
                                 label: function(context) {
                                     const value = context.parsed;
-                                    const total = amounts.reduce((a, b) => a + b, 0);
+                                    const total = chartData.categoryData.amounts.reduce((a, b) => a + b, 0);
                                     const percentage = ((value / total) * 100).toFixed(1);
                                     return `${context.label}: ${value.toFixed(2)}Ks (${percentage}%)`;
                                 }
@@ -1229,12 +1281,39 @@
                     }
                 }
             });
+        } else {
+            // Show empty state for category chart
+            categoryChart = new Chart(catCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['No Data'],
+                    datasets: [{
+                        data: [1],
+                        backgroundColor: ['#e5e7eb'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function() {
+                                    return 'No expenses in this period';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
-        // Monthly Trend Chart (Line Chart)
-        const monthlyData = processMonthlyData();
-        const trendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
-        new Chart(trendCtx, {
+        // Monthly Trend Chart
+        monthlyTrendChart = new Chart(trendCtx, {
             type: 'line',
             data: {
                 labels: monthlyData.months,
@@ -1313,6 +1392,89 @@
             income: incomeByMonth,
             expense: expenseByMonth
         };
+    }
+
+    // Get chart data based on time range
+    function getChartDataByTimeRange(range) {
+        const now = new Date();
+        let startDate = new Date();
+
+        // Set time to beginning of day for accurate comparison
+        now.setHours(23, 59, 59, 999);
+
+        switch(range) {
+            case 'daily':
+                startDate = new Date(now);
+                startDate.setHours(0, 0, 0, 0);
+                break;
+            case 'weekly':
+                startDate.setDate(now.getDate() - 7);
+                startDate.setHours(0, 0, 0, 0);
+                break;
+            case 'monthly':
+                startDate.setMonth(now.getMonth() - 1);
+                startDate.setHours(0, 0, 0, 0);
+                break;
+        }
+
+        // Filter incomes by date range
+        const filteredIncomes = budgetData.incomes.filter(income => {
+            const incomeDate = new Date(income.date);
+            return incomeDate >= startDate && incomeDate <= now;
+        });
+
+        // Filter expenses by date range
+        const filteredExpenses = budgetData.expenses.filter(expense => {
+            const expenseDate = new Date(expense.date);
+            return expenseDate >= startDate && expenseDate <= now;
+        });
+
+        // Calculate totals
+        const totalIncome = filteredIncomes.reduce((sum, inc) => sum + inc.amount, 0);
+        const totalExpense = filteredExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+
+        // Calculate category breakdown
+        const categoryMap = {};
+        filteredExpenses.forEach(expense => {
+            const cat = expense.category || 'Uncategorized';
+            categoryMap[cat] = (categoryMap[cat] || 0) + expense.amount;
+        });
+
+        return {
+            totalIncome: totalIncome,
+            totalExpense: totalExpense,
+            categoryData: {
+                labels: Object.keys(categoryMap),
+                amounts: Object.values(categoryMap)
+            }
+        };
+    }
+
+    // Update chart time range
+    function updateChartTimeRange(range) {
+        currentTimeRange = range;
+
+        // Update button styles
+        ['daily', 'weekly', 'monthly'].forEach(r => {
+            const btn = document.getElementById(r + 'Btn');
+            if (btn) {
+                if (r === range) {
+                    btn.classList.add('bg-black', 'text-white');
+                    btn.classList.remove('bg-gray-100', 'text-gray-700');
+                } else {
+                    btn.classList.remove('bg-black', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-700');
+                }
+            }
+        });
+
+        // Reinitialize charts with new time range
+        initializeChartsWithTimeRange();
+    }
+
+    // Initialize Charts
+    function initializeCharts() {
+        initializeChartsWithTimeRange();
     }
 
     // Generate colors for categories
@@ -1407,57 +1569,57 @@
     }
 
     // Export Income to Excel
-function exportIncomeToExcel() {
-    const workbook = XLSX.utils.book_new();
+    function exportIncomeToExcel() {
+        const workbook = XLSX.utils.book_new();
 
-    // Create Income Sheet only
-    const incomeData = [
-        ['Date', 'Source', 'Amount (Ks)'],
-        ...budgetData.incomes.map(income => [
-            income.date,
-            income.source,
-            income.amount
-        ]),
-        ['', 'Total Income', budgetData.total_income]
-    ];
-    const incomeSheet = XLSX.utils.aoa_to_sheet(incomeData);
-    XLSX.utils.book_append_sheet(workbook, incomeSheet, 'Incomes');
+        // Create Income Sheet only
+        const incomeData = [
+            ['Date', 'Source', 'Amount (Ks)'],
+            ...budgetData.incomes.map(income => [
+                income.date,
+                income.source,
+                income.amount
+            ]),
+            ['', 'Total Income', budgetData.total_income]
+        ];
+        const incomeSheet = XLSX.utils.aoa_to_sheet(incomeData);
+        XLSX.utils.book_append_sheet(workbook, incomeSheet, 'Incomes');
 
-    // Generate file name with current date
-    const today = new Date();
-    const fileName = `income_report_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}.xlsx`;
+        // Generate file name with current date
+        const today = new Date();
+        const fileName = `income_report_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}.xlsx`;
 
-    // Download the file
-    XLSX.writeFile(workbook, fileName);
-    showNotification('Income Excel file exported successfully!', 'success');
-}
+        // Download the file
+        XLSX.writeFile(workbook, fileName);
+        showNotification('Income Excel file exported successfully!', 'success');
+    }
 
-// Export Expense to Excel
-function exportExpenseToExcel() {
-    const workbook = XLSX.utils.book_new();
+    // Export Expense to Excel
+    function exportExpenseToExcel() {
+        const workbook = XLSX.utils.book_new();
 
-    // Create Expense Sheet only
-    const expenseData = [
-        ['Date', 'Description', 'Category', 'Amount (Ks)'],
-        ...budgetData.expenses.map(expense => [
-            expense.date,
-            expense.description,
-            expense.category,
-            expense.amount
-        ]),
-        ['', '', 'Total Expense', budgetData.total_expense]
-    ];
-    const expenseSheet = XLSX.utils.aoa_to_sheet(expenseData);
-    XLSX.utils.book_append_sheet(workbook, expenseSheet, 'Expenses');
+        // Create Expense Sheet only
+        const expenseData = [
+            ['Date', 'Description', 'Category', 'Amount (Ks)'],
+            ...budgetData.expenses.map(expense => [
+                expense.date,
+                expense.description,
+                expense.category,
+                expense.amount
+            ]),
+            ['', '', 'Total Expense', budgetData.total_expense]
+        ];
+        const expenseSheet = XLSX.utils.aoa_to_sheet(expenseData);
+        XLSX.utils.book_append_sheet(workbook, expenseSheet, 'Expenses');
 
-    // Generate file name with current date
-    const today = new Date();
-    const fileName = `expense_report_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}.xlsx`;
+        // Generate file name with current date
+        const today = new Date();
+        const fileName = `expense_report_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}.xlsx`;
 
-    // Download the file
-    XLSX.writeFile(workbook, fileName);
-    showNotification('Expense Excel file exported successfully!', 'success');
-}
+        // Download the file
+        XLSX.writeFile(workbook, fileName);
+        showNotification('Expense Excel file exported successfully!', 'success');
+    }
 
     // Notification function
     function showNotification(message, type = 'info') {
@@ -1652,111 +1814,111 @@ Try typing something!`);
     }
 
     // Send chat message
-window.sendBudgetChatMessage = function() {
-    if (isBudgetSending) return;
+    window.sendBudgetChatMessage = function() {
+        if (isBudgetSending) return;
 
-    const input = document.getElementById('budgetChatInput');
-    const message = input.value.trim();
+        const input = document.getElementById('budgetChatInput');
+        const message = input.value.trim();
 
-    if (!message) return;
+        if (!message) return;
 
-    isBudgetSending = true;
-    const sendBtn = document.getElementById('budgetChatSendBtn');
-    sendBtn.disabled = true;
+        isBudgetSending = true;
+        const sendBtn = document.getElementById('budgetChatSendBtn');
+        sendBtn.disabled = true;
 
-    input.value = '';
+        input.value = '';
 
-    addBudgetUserMessage(message);
-    showBudgetTypingIndicator();
+        addBudgetUserMessage(message);
+        showBudgetTypingIndicator();
 
-    fetch('/budget/api/chat-command/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getBudgetCookie('csrftoken')
-        },
-        body: JSON.stringify({
-            message: message
+        fetch('/budget/api/chat-command/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getBudgetCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                message: message
+            })
         })
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(errorData => {
-                throw new Error(errorData.message || 'Network response was not ok');
-            }).catch(() => {
-                throw new Error('Network response was not ok');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        removeBudgetTypingIndicator();
-
-        if (data.success) {
-            addBudgetBotMessage(data.message);
-
-            if (['add_income', 'add_expense', 'delete_income', 'delete_expense', 'delete_last'].includes(data.action)) {
-                addBudgetBotMessage(`Operation completed successfully!`);
-                setTimeout(() => {
-                    location.reload();
-                }, 1500);
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'Network response was not ok');
+                }).catch(() => {
+                    throw new Error('Network response was not ok');
+                });
             }
-        } else {
-            const messageLower = (data.message || '').toLowerCase();
+            return response.json();
+        })
+        .then(data => {
+            removeBudgetTypingIndicator();
 
-            if (messageLower.includes('added') ||
-                messageLower.includes('deleted') ||
-                messageLower.includes('removed') ||
-                messageLower.includes('updated') ||
-                messageLower.includes('saved') ||
-                // Check for specific CRUD patterns
-                data.action === 'add_income' ||
-                data.action === 'add_expense' ||
-                data.action === 'delete_income' ||
-                data.action === 'delete_expense') {
+            if (data.success) {
+                addBudgetBotMessage(data.message);
 
-                addBudgetBotMessage(data.message || 'Operation completed successfully!');
-                addBudgetBotMessage(`Refreshing to show updated data...`);
+                if (['add_income', 'add_expense', 'delete_income', 'delete_expense', 'delete_last'].includes(data.action)) {
+                    addBudgetBotMessage(`Operation completed successfully!`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            } else {
+                const messageLower = (data.message || '').toLowerCase();
+
+                if (messageLower.includes('added') ||
+                    messageLower.includes('deleted') ||
+                    messageLower.includes('removed') ||
+                    messageLower.includes('updated') ||
+                    messageLower.includes('saved') ||
+                    // Check for specific CRUD patterns
+                    data.action === 'add_income' ||
+                    data.action === 'add_expense' ||
+                    data.action === 'delete_income' ||
+                    data.action === 'delete_expense') {
+
+                    addBudgetBotMessage(data.message || 'Operation completed successfully!');
+                    addBudgetBotMessage(`Refreshing to show updated data...`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    // Real error
+                    addBudgetBotMessage(data.message || 'Sorry, I could not process that command.');
+                }
+            }
+        })
+        .catch(error => {
+            removeBudgetTypingIndicator();
+
+            const errorMessage = error.message || '';
+
+            // Look for the command pattern
+            const originalMessage = message.toLowerCase();
+            if (originalMessage.includes('add income') ||
+                originalMessage.includes('add expense') ||
+                originalMessage.includes('delete income') ||
+                originalMessage.includes('delete expense')) {
+
+                addBudgetBotMessage('The operation completed successfully!');
                 setTimeout(() => {
                     location.reload();
                 }, 1500);
             } else {
-                // Real error
-                addBudgetBotMessage(data.message || 'Sorry, I could not process that command.');
+                addBudgetBotMessage('Sorry, there was an error processing your command.');
+                console.error('Error:', error);
             }
-        }
-    })
-    .catch(error => {
-        removeBudgetTypingIndicator();
-
-        const errorMessage = error.message || '';
-
-        // Look for the command pattern
-        const originalMessage = message.toLowerCase();
-        if (originalMessage.includes('add income') ||
-            originalMessage.includes('add expense') ||
-            originalMessage.includes('delete income') ||
-            originalMessage.includes('delete expense')) {
-
-            addBudgetBotMessage('The operation completed successfully!');
+        })
+        .finally(() => {
+            isBudgetSending = false;
+            sendBtn.disabled = false;
             setTimeout(() => {
-                location.reload();
-            }, 1500);
-        } else {
-            addBudgetBotMessage('Sorry, there was an error processing your command.');
-            console.error('Error:', error);
-        }
-    })
-    .finally(() => {
-        isBudgetSending = false;
-        sendBtn.disabled = false;
-        setTimeout(() => {
-            if (isBudgetChatOpen) {
-                document.getElementById('budgetChatInput').focus();
-            }
-        }, 100);
-    });
-};
+                if (isBudgetChatOpen) {
+                    document.getElementById('budgetChatInput').focus();
+                }
+            }, 100);
+        });
+    };
 
     // Get CSRF token
     function getBudgetCookie(name) {
