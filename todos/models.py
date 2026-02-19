@@ -13,12 +13,21 @@ class Task(models.Model):
     )
 
     OPTION_CHOICES = [
-        ('option1', 'Work'),
-        ('option2', 'Study'),
-        ('option3', 'Travel'),
-        ('option4', 'Family'),
-        ('option5', 'Shopping'),
-        ('option6', 'Exercise'),
+        ('option1', 'Personal'),
+        ('option2', 'Work / Professional'),
+        ('option3', 'Home / Chores'),
+        ('option4', 'Study / Education'),
+        ('option5', 'Health / Fitness'),
+        ('option6', 'Shopping / Errands'),
+        ('option7', 'Finance / Bills'),
+        ('option8', 'Social / Relationships'),
+        ('option9', 'Travel / Leisure'),
+        ('option10', 'Events / Appointments'),
+        ('option11', 'Goals / Projects'),
+        ('option12', 'Hobbies / Creativity'),
+        ('option13', 'Self-improvement'),
+        ('option14', 'Community / Volunteering'),
+        ('option15', 'Miscellaneous / Urgent'),
     ]
 
     PRIORITY_CHOICES = [
