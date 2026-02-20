@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import *
 import calendar as pycal
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 
 @login_required
@@ -24,6 +24,67 @@ def todo(request):
 
     today = date.today()
     current_date = datetime.now()
+
+    # for daily,weekly,monthly,yearly
+
+    week_start = today - timedelta(days=today.weekday())
+    week_end = week_start + timedelta(days=6)
+
+    month_start = today.replace(day=1)
+    # First day of next month
+    if today.month == 12:
+        next_month = today.replace(year=today.year + 1, month=1, day=1)
+    else:
+        next_month = today.replace(month=today.month + 1, day=1)
+    month_end = next_month - timedelta(days=1)
+
+    year_start = today.replace(month=1, day=1)
+    year_end = today.replace(month=12, day=31)
+
+    daily_label = today.strftime("%A, %b %d")  # Thursday, Feb 19
+    weekly_label = f"{week_start.strftime('%b %d')} - {week_end.strftime('%b %d')}"  # Feb 16 - Feb 22
+    monthly_label = today.strftime("%B %Y")  # February 2026
+    yearly_label = today.strftime("%Y") # 2026
+
+    daily_tasks = tasks.filter(due_date=today)
+    weekly_tasks = tasks.filter(due_date__gte=week_start, due_date__lte=week_end)
+    monthly_tasks = tasks.filter(due_date__gte=month_start, due_date__lte=month_end)
+    yearly_tasks = tasks.filter(due_date__gte=year_start, due_date__lte=year_end)
+
+    daily_tasks_count = daily_tasks.count()
+    daily_completed_tasks = daily_tasks.filter(is_completed=True)
+    daily_pending_tasks = daily_tasks.filter(is_completed=False)
+    daily_completed_tasks_count = daily_completed_tasks.count()
+    daily_pending_tasks_count = daily_pending_tasks.count()
+
+    weekly_tasks_count = weekly_tasks.count()
+    weekly_completed_tasks = weekly_tasks.filter(is_completed=True)
+    weekly_pending_tasks = weekly_tasks.filter(is_completed=False)
+    weekly_completed_tasks_count = weekly_completed_tasks.count()
+    weekly_pending_tasks_count = weekly_pending_tasks.count()
+
+    monthly_tasks_count = monthly_tasks.count()
+    monthly_completed_tasks = monthly_tasks.filter(is_completed=True)
+    monthly_pending_tasks = monthly_tasks.filter(is_completed=False)
+    monthly_completed_tasks_count = monthly_completed_tasks.count()
+    monthly_pending_tasks_count = monthly_pending_tasks.count()
+
+    def calculate_group_percent(group_queryset):
+        total = group_queryset.count()
+        if total == 0:
+            return 0, 0
+
+        completed = group_queryset.filter(is_completed=True).count()
+        completed_percent = (completed / total) * 100
+        remaining_percent = 100 - completed_percent
+
+        return round(completed_percent), round(remaining_percent)
+
+    daily_done, daily_remaining = calculate_group_percent(daily_tasks)
+    weekly_done, weekly_remaining = calculate_group_percent(weekly_tasks)
+    monthly_done, monthly_remaining = calculate_group_percent(monthly_tasks)
+    yearly_done, yearly_remaining = calculate_group_percent(yearly_tasks)
+
 
     cal = pycal.Calendar(firstweekday=0)
     month_dates = cal.monthdatescalendar(current_date.year, current_date.month)
@@ -71,6 +132,8 @@ def todo(request):
         inprogress_percent = 0
         overdue_percent = 0
 
+
+
     context = {
         "tasks": tasks,
         "add_form": add_form,
@@ -89,6 +152,46 @@ def todo(request):
         "inprogress_percent": round(inprogress_percent),
         "overdue_percent": round(overdue_percent),
         "query": q,
+        # Time groups
+        "daily_tasks": daily_tasks,
+        "weekly_tasks": weekly_tasks,
+        "monthly_tasks": monthly_tasks,
+        "yearly_tasks": yearly_tasks,
+
+        "daily_done_percent": daily_done,
+        "daily_remaining_percent": daily_remaining,
+
+        "weekly_done_percent": weekly_done,
+        "weekly_remaining_percent": weekly_remaining,
+
+        "monthly_done_percent": monthly_done,
+        "monthly_remaining_percent": monthly_remaining,
+
+        "yearly_done_percent": yearly_done,
+        "yearly_remaining_percent": yearly_remaining,
+
+        "daily_tasks_count": daily_tasks_count,
+        "daily_completed_tasks": daily_completed_tasks,
+        "daily_pending_tasks": daily_pending_tasks,
+        "daily_pending_tasks_count": daily_pending_tasks_count,
+        "daily_completed_tasks_count": daily_completed_tasks_count,
+
+        "weekly_tasks_count": weekly_tasks_count,
+        "weekly_completed_tasks": weekly_completed_tasks,
+        "weekly_pending_tasks": weekly_pending_tasks,
+        "weekly_pending_tasks_count": weekly_pending_tasks_count,
+        "weekly_completed_tasks_count": weekly_completed_tasks_count,
+
+        "monthly_tasks_count": monthly_tasks_count,
+        "monthly_completed_tasks": monthly_completed_tasks,
+        "monthly_pending_tasks": monthly_pending_tasks,
+        "monthly_pending_tasks_count": monthly_pending_tasks_count,
+        "monthly_completed_tasks_count": monthly_completed_tasks_count,
+
+        "daily_label": daily_label,
+        "weekly_label": weekly_label,
+        "monthly_label": monthly_label,
+        "yearly_label": yearly_label,
     }
 
     return render(request, "todos/todohome.html", context)

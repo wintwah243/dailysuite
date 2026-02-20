@@ -13,21 +13,21 @@ class Task(models.Model):
     )
 
     OPTION_CHOICES = [
-        ('option1', 'Personal'),
-        ('option2', 'Work / Professional'),
-        ('option3', 'Home / Chores'),
-        ('option4', 'Study / Education'),
-        ('option5', 'Health / Fitness'),
-        ('option6', 'Shopping / Errands'),
-        ('option7', 'Finance / Bills'),
-        ('option8', 'Social / Relationships'),
-        ('option9', 'Travel / Leisure'),
-        ('option10', 'Events / Appointments'),
-        ('option11', 'Goals / Projects'),
-        ('option12', 'Hobbies / Creativity'),
-        ('option13', 'Self-improvement'),
-        ('option14', 'Community / Volunteering'),
-        ('option15', 'Miscellaneous / Urgent'),
+        ('Personal', 'Personal'),
+        ('Work / Professional', 'Work / Professional'),
+        ('Home / Chores', 'Home / Chores'),
+        ('Study / Education', 'Study / Education'),
+        ('Health / Fitness', 'Health / Fitness'),
+        ('Shopping / Errands', 'Shopping / Errands'),
+        ('Finance / Bills', 'Finance / Bills'),
+        ('Social / Relationships', 'Social / Relationships'),
+        ('Travel / Leisure', 'Travel / Leisure'),
+        ('Events / Appointments', 'Events / Appointments'),
+        ('Goals / Projects', 'Goals / Projects'),
+        ('Hobbies / Creativity', 'Hobbies / Creativity'),
+        ('Self-improvement', 'Self-improvement'),
+        ('Community / Volunteering', 'Community / Volunteering'),
+        ('Miscellaneous / Urgent', 'Miscellaneous / Urgent'),
     ]
 
     PRIORITY_CHOICES = [

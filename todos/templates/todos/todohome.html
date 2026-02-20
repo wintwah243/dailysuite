@@ -537,11 +537,11 @@
                             </div>
 
                             <!-- Task List -->
-                            <div class="space-y-2" id="task-list">
+                            <div class="space-y-3 mb-1" id="task-list">
                                 {% for task in tasks %}
-                                <div class="group relative task-item {% if forloop.counter > 5 %} overflow-hidden max-h-0 opacity-0 {% endif %} transition-all duration-500 ease-in-out">
+                                <div class="group relative task-item {% if forloop.counter > 5 %} hidden hidden-task {% endif %}">
                                     <!-- Task Card -->
-                                    <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 mb-3">
+                                    <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200">
                                         <div class="flex items-start gap-4">
                                             <!-- Checkbox  -->
                                             <div class="pt-0.5">
@@ -690,11 +690,12 @@
                                 {% endfor %}
                             </div>
                             <!-- See More / See Less Button -->
-                            {% if tasks|length > 5 %}
-                            <div class="relative text-center -mt-7">
+                            {% if tasks|length >= 5 %}
+                            <div class="relative text-center -mt-9 mb-4">
                                 <button id="toggle-tasks-btn"
                                     class="inline-flex items-center justify-center
                                            w-12 h-12
+                                           -mb-7
                                            rounded-full
                                            bg-white/70 backdrop-blur-md
                                            border border-gray-200
@@ -714,8 +715,8 @@
                             {% endif %}
                         </section>
 
-                        <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm mt-4">
-                            <div class="flex items-center justify-center mt-3 mb-4">
+                        <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm mt-7">
+                            <div class="flex items-center justify-center mt-2 mb-4">
                                     <h1 class="text-3xl font-bold text-gray-900">Task Status</h1>
                             </div>
                             <div class="flex items-center gap-6 border-b border-gray-200 mb-6 tab-links">
@@ -1188,6 +1189,458 @@
                                     </div>
                             </div>
                         </div>
+
+                        <!--Daily, Weekly, Monthly-->
+                        <div class="flex items-center justify-between mb-6 mt-8">
+                            <div>
+                                <h1 class="text-3xl font-bold text-gray-900">Task Preview</h1>
+                                <p id="time-label" class="text-gray-500 ml-1 mt-1">{{ daily_label }}</p>
+                            </div>
+                            <!-- Time Filter Pills -->
+                            <div class="bg-gray-100 p-2 rounded-2xl inline-flex gap-2 time-links">
+
+                                <a href="#" data-time="daily-task"
+                                   class="time-pill px-6 py-2 rounded-xl font-semibold bg-gray-900 text-white">
+                                    Today
+                                </a>
+
+                                <a href="#" data-time="weekly-task"
+                                   class="time-pill px-6 py-2 rounded-xl font-semibold text-gray-600 hover:bg-gray-200">
+                                    This Week
+                                </a>
+
+                                <a href="#" data-time="monthly-task"
+                                   class="time-pill px-6 py-2 rounded-xl font-semibold text-gray-600 hover:bg-gray-200">
+                                    This Month
+                                </a>
+
+                            </div>
+                        </div>
+
+                        <!--Daily Task-->
+                        <div id="daily-task" class="time-content">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8 mt-8">
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Total Tasks</p>
+                                    <h2 class="text-4xl font-bold mt-2">{{ daily_tasks_count }}</h2>
+                                </div>
+
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Completed</p>
+                                    <h2 class="text-4xl font-bold text-green-600 mt-2">{{ daily_completed_tasks_count }}</h2>
+                                </div>
+
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Remaining</p>
+                                    <h2 class="text-4xl font-bold mt-2">{{ daily_pending_tasks_count }}</h2>
+                                </div>
+
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Completion</p>
+                                    <h2 class="text-4xl font-bold text-blue-600 mt-2">{{ daily_done_percent }}%</h2>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- To Do -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h2 class="text-xl font-bold">To Do</h2>
+                                        <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">
+                                            {{ daily_pending_tasks_count }}
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        {% for task in daily_pending_tasks %}
+                                        <div class="bg-white p-5 rounded-2xl shadow hover:shadow-md transition">
+
+                                            <div class="flex items-start gap-3">
+
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-2 mb-1">
+                                                        <span class="text-xs px-2 py-1 rounded-full
+                                                            {% if task.priority == 'high' %}bg-red-100 text-red-600
+                                                            {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-600
+                                                            {% else %}bg-gray-200 text-gray-600{% endif %}">
+                                                            {{ task.priority }}
+                                                        </span>
+                                                    </div>
+
+                                                    <h3 class="font-semibold text-gray-900 text-xl">{{ task.name }}</h3>
+                                                    <div class="flex flex-wrap items-center gap-2">
+                                                        {% if task.due_date %}
+                                                            <div class="flex items-center gap-1 text-sm mt-2">
+                                                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                                </svg>
+                                                                <span class="text-gray-600 text-sm">{{ task.due_date|date:"M j, Y" }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-black text-white mt-2">
+                                                            {{ task.get_option_display }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        {% empty %}
+                                        <div class="text-center py-12">
+                                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                                </svg>
+                                            </div>
+                                            <h3 class="text-lg font-medium text-gray-900 mb-2">No tasks yet</h3>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Completed -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h2 class="text-xl font-bold">Completed</h2>
+                                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                                            {{ daily_completed_tasks_count }}
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        {% for task in daily_completed_tasks %}
+                                        <div class="bg-gray-100 p-5 rounded-2xl">
+
+                                            <div class="flex items-start gap-3">
+
+
+                                                <div class="flex-1">
+                                                    <span class="text-xs px-2 py-1 rounded-full bg-gray-300 text-gray-700">
+                                                        {{ task.priority }}
+                                                    </span>
+
+                                                    <h3 class="font-semibold line-through text-gray-500 mt-1">
+                                                        {{ task.name }}
+                                                    </h3>
+                                                    <div class="flex flex-wrap items-center gap-2">
+                                                        {% if task.due_date %}
+                                                            <div class="flex items-center gap-1 text-sm mt-2">
+                                                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                                </svg>
+                                                                <span class="text-gray-600 text-sm">{{ task.due_date|date:"M j, Y" }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-black text-white mt-2">
+                                                            {{ task.get_option_display }}
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        {% empty %}
+                                        <div class="text-center py-12">
+                                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                                </svg>
+                                            </div>
+                                            <h3 class="text-lg font-medium text-gray-900 mb-2">No completed tasks yet</h3>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Weekly Task-->
+                        <div id="weekly-task" class="time-content hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8 mt-8">
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Total Tasks</p>
+                                    <h2 class="text-4xl font-bold mt-2">{{ weekly_tasks_count }}</h2>
+                                </div>
+
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Completed</p>
+                                    <h2 class="text-4xl font-bold text-green-600 mt-2">{{ weekly_completed_tasks_count }}</h2>
+                                </div>
+
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Remaining</p>
+                                    <h2 class="text-4xl font-bold mt-2">{{ weekly_pending_tasks_count }}</h2>
+                                </div>
+
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Completion</p>
+                                    <h2 class="text-4xl font-bold text-blue-600 mt-2">{{ weekly_done_percent }}%</h2>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- To Do -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h2 class="text-xl font-bold">To Do</h2>
+                                        <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">
+                                            {{ weekly_pending_tasks_count }}
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        {% for task in weekly_pending_tasks %}
+                                        <div class="bg-white p-5 rounded-2xl shadow hover:shadow-md transition">
+
+                                            <div class="flex items-start gap-3">
+
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-2 mb-1">
+                                                        <span class="text-xs px-2 py-1 rounded-full
+                                                            {% if task.priority == 'high' %}bg-red-100 text-red-600
+                                                            {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-600
+                                                            {% else %}bg-gray-200 text-gray-600{% endif %}">
+                                                            {{ task.priority }}
+                                                        </span>
+                                                    </div>
+
+                                                    <h3 class="font-semibold text-gray-900">{{ task.name }}</h3>
+                                                    <div class="flex flex-wrap items-center gap-2">
+                                                        {% if task.due_date %}
+                                                            <div class="flex items-center gap-1 text-sm mt-2">
+                                                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                                </svg>
+                                                                <span class="text-gray-600 text-sm">{{ task.due_date|date:"M j, Y" }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-black text-white mt-2">
+                                                            {{ task.get_option_display }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        {% empty %}
+                                        <div class="text-center py-12">
+                                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                                </svg>
+                                            </div>
+                                            <h3 class="text-lg font-medium text-gray-900 mb-2">No tasks yet</h3>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Completed -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h2 class="text-xl font-bold">Completed</h2>
+                                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                                            {{ weekly_completed_tasks_count }}
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        {% for task in weekly_completed_tasks %}
+                                        <div class="bg-gray-100 p-5 rounded-2xl">
+
+                                            <div class="flex items-start gap-3">
+
+
+                                                <div class="flex-1">
+                                                    <span class="text-xs px-2 py-1 rounded-full bg-gray-300 text-gray-700">
+                                                        {{ task.priority }}
+                                                    </span>
+
+                                                    <h3 class="font-semibold line-through text-gray-500 mt-1">
+                                                        {{ task.name }}
+                                                    </h3>
+                                                    <div class="flex flex-wrap items-center gap-2">
+                                                        {% if task.due_date %}
+                                                            <div class="flex items-center gap-1 text-sm mt-2">
+                                                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                                </svg>
+                                                                <span class="text-gray-600 text-sm">{{ task.due_date|date:"M j, Y" }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-black text-white mt-2">
+                                                            {{ task.get_option_display }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        {% empty %}
+                                        <div class="text-center py-12">
+                                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                                </svg>
+                                            </div>
+                                            <h3 class="text-lg font-medium text-gray-900 mb-2">No completed tasks yet</h3>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Monthly Task-->
+                        <div id="monthly-task" class="time-content hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8 mt-8">
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Total Tasks</p>
+                                    <h2 class="text-4xl font-bold mt-2">{{ monthly_tasks_count }}</h2>
+                                </div>
+
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Completed</p>
+                                    <h2 class="text-4xl font-bold text-green-600 mt-2">{{ monthly_completed_tasks_count }}</h2>
+                                </div>
+
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Remaining</p>
+                                    <h2 class="text-4xl font-bold mt-2">{{ monthly_pending_tasks_count }}</h2>
+                                </div>
+
+                                <div class="bg-white rounded-2xl p-6 shadow
+                                            hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 ease-out">
+                                    <p class="text-gray-500">Completion</p>
+                                    <h2 class="text-4xl font-bold text-blue-600 mt-2">{{ monthly_done_percent }}%</h2>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- To Do -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h2 class="text-xl font-bold">To Do</h2>
+                                        <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">
+                                            {{ monthly_pending_tasks_count }}
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        {% for task in monthly_pending_tasks %}
+                                        <div class="bg-white p-5 rounded-2xl shadow hover:shadow-md transition">
+
+                                            <div class="flex items-start gap-3">
+
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-2 mb-1">
+                                                        <span class="text-xs px-2 py-1 rounded-full
+                                                            {% if task.priority == 'high' %}bg-red-100 text-red-600
+                                                            {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-600
+                                                            {% else %}bg-gray-200 text-gray-600{% endif %}">
+                                                            {{ task.priority }}
+                                                        </span>
+                                                    </div>
+
+                                                    <h3 class="font-semibold text-gray-900">{{ task.name }}</h3>
+                                                    <div class="flex flex-wrap items-center gap-2">
+                                                        {% if task.due_date %}
+                                                            <div class="flex items-center gap-1 text-sm mt-2">
+                                                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                                </svg>
+                                                                <span class="text-gray-600 text-sm">{{ task.due_date|date:"M j, Y" }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-black text-white mt-2">
+                                                            {{ task.get_option_display }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        {% empty %}
+                                        <div class="text-center py-12">
+                                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                                </svg>
+                                            </div>
+                                            <h3 class="text-lg font-medium text-gray-900 mb-2">No tasks yet</h3>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Completed -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h2 class="text-xl font-bold">Completed</h2>
+                                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                                            {{ monthly_completed_tasks_count }}
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        {% for task in monthly_completed_tasks %}
+                                        <div class="bg-gray-100 p-5 rounded-2xl">
+
+                                            <div class="flex items-start gap-3">
+
+
+                                                <div class="flex-1">
+                                                    <span class="text-xs px-2 py-1 rounded-full bg-gray-300 text-gray-700">
+                                                        {{ task.priority }}
+                                                    </span>
+
+                                                    <h3 class="font-semibold line-through text-gray-500 mt-1">
+                                                        {{ task.name }}
+                                                    </h3>
+                                                    <div class="flex flex-wrap items-center gap-2">
+                                                        {% if task.due_date %}
+                                                            <div class="flex items-center gap-1 text-sm mt-2">
+                                                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                                </svg>
+                                                                <span class="text-gray-600 text-sm">{{ task.due_date|date:"M j, Y" }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-black text-white mt-2">
+                                                            {{ task.get_option_display }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        {% empty %}
+                                        <div class="text-center py-12">
+                                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                                </svg>
+                                            </div>
+                                            <h3 class="text-lg font-medium text-gray-900 mb-2">No completed tasks yet</h3>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -1549,7 +2002,7 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Tab switching
+// Tab switching pending,overdue,done
 document.querySelectorAll('.tab-links a').forEach(link => {
     link.addEventListener('click', function(e) {
         e.preventDefault();
@@ -1570,6 +2023,41 @@ document.querySelectorAll('.tab-links a').forEach(link => {
         this.classList.remove('text-gray-700');
     });
 });
+
+//Tab switching time-link
+document.querySelectorAll('.time-links .time-pill').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const timeName = this.dataset.time;
+
+        // hide content
+        document.querySelectorAll('.time-content').forEach(tab => {
+            tab.classList.add('hidden');
+        });
+
+        document.getElementById(timeName).classList.remove('hidden');
+
+        // reset pills
+        document.querySelectorAll('.time-pill').forEach(pill => {
+            pill.classList.remove('bg-gray-900','text-white');
+            pill.classList.add('text-gray-600','hover:bg-gray-200');
+        });
+
+        // activate pill
+        this.classList.add('bg-gray-900','text-white');
+        this.classList.remove('text-gray-600','hover:bg-gray-200');
+
+        const label = document.getElementById("time-label");
+
+        if (timeName === "daily-task") label.innerText = "{{ daily_label }}";
+        if (timeName === "weekly-task") label.innerText = "{{ weekly_label }}";
+        if (timeName === "monthly-task") label.innerText = "{{ monthly_label }}";
+        if (timeName === "yearly-task") label.innerText = "{{ yearly_label }}";
+    });
+});
+
+
 
 // Set active sidebar item
 const currentPath = window.location.pathname;
@@ -1842,18 +2330,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // If searching → show everything
             if (searching) {
-                item.classList.remove('max-h-0', 'opacity-0');
-                item.classList.add('max-h-[500px]', 'opacity-100');
+                item.classList.remove("hidden");
             }
 
             // If NOT searching → apply see more logic
             else {
                 if (!expanded && index >= 5) {
-                    item.classList.add('max-h-0', 'opacity-0');
-                    item.classList.remove('max-h-[500px]', 'opacity-100');
+                    item.classList.add("hidden");
                 } else {
-                    item.classList.remove('max-h-0', 'opacity-0');
-                    item.classList.add('max-h-[500px]', 'opacity-100');
+                    item.classList.remove("hidden");
                 }
             }
         });

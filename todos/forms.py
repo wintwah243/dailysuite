@@ -5,12 +5,21 @@ from todos.models import *
 
 class TaskForm(forms.ModelForm):
     OPTION_CHOICES = [
-        ('option1', 'Work'),
-        ('option2', 'Study'),
-        ('option3', 'Travel'),
-        ('option4', 'Family'),
-        ('option5', 'Shopping'),
-        ('option6', 'Exercise'),
+        ('Personal', 'Personal'),
+        ('Work / Professional', 'Work / Professional'),
+        ('Home / Chores', 'Home / Chores'),
+        ('Study / Education', 'Study / Education'),
+        ('Health / Fitness', 'Health / Fitness'),
+        ('Shopping / Errands', 'Shopping / Errands'),
+        ('Finance / Bills', 'Finance / Bills'),
+        ('Social / Relationships', 'Social / Relationships'),
+        ('Travel / Leisure', 'Travel / Leisure'),
+        ('Events / Appointments', 'Events / Appointments'),
+        ('Goals / Projects', 'Goals / Projects'),
+        ('Hobbies / Creativity', 'Hobbies / Creativity'),
+        ('Self-improvement', 'Self-improvement'),
+        ('Community / Volunteering', 'Community / Volunteering'),
+        ('Miscellaneous / Urgent', 'Miscellaneous / Urgent'),
     ]
 
     PRIORITY_CHOICES = [
@@ -32,6 +41,7 @@ class TaskForm(forms.ModelForm):
 
     option = forms.ChoiceField(
         choices=OPTION_CHOICES,
+        initial=OPTION_CHOICES[0][0],
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
