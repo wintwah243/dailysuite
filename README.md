@@ -17,12 +17,15 @@ DailySuite is built as a **full-stack web application** and serves as both a **u
 
 - **User Authentication System** — Secure login and user account management plus google login 
 - **Task & Daily Activity Management** — Create, update, delete, and track daily tasks  (to-do-list)
+- **Command-basd chatbot in Task Management** — chatbot that can perform operations (eg: "add task1 tomorrow", "delete task1", "show pending tasks")
 - **Daily Transaction Management** - Create, update, delete, and track incomes & expenses (budget tracking)
+- **Command-basd chatbot in Budget Management** — chatbot that can perform operations (eg: "add income salary 5000 today", "show my budget summary", "how much on food?")
 - **Note Taking Management** - Create, update, delete, and track users' notes (note taking)
-- **Smart Assistant (Chatbot UI)** — Interactive assistant to help users inside the system  (customer service chatbot)
-- **Modern Dashboard UI** — Clean and responsive user interface  
-- **Backend Logic & Validation** — Robust Django backend handling business logic and data validation  
-- **Database Integration** — Stores users, tasks, and system data persistently  
+- **Speech-To-Text using Web Speech API** - speech-to-text support for note taking (Language available - Burmese and English)
+- **Customer service chatbot** — Interactive assistant to help users inside the system
+- **Password Reset via Email** — The system allows users to reset their password through their registered email address using a secure verification process
+- **Password Change** — The system enables authenticated users to update their existing password
+- **Account Deletion** — The system allows users to permanently delete their account and associated data from the platform
 
 ---
 
