@@ -17,11 +17,12 @@ DailySuite is built as a **full-stack web application** and serves as both a **u
 
 - **User Authentication System** — Secure login and user account management plus google login 
 - **Task & Daily Activity Management** — Create, update, delete, and track daily tasks  (to-do-list)
-- **Command-basd chatbot in Task Management** — chatbot that can perform operations (eg: "add task1 tomorrow", "delete task1", "show pending tasks")
+- **Command-basd chatbot in Task Management** — Chatbot that can perform operations (eg: "add task1 tomorrow", "delete task1", "show pending tasks")
 - **Daily Transaction Management** - Create, update, delete, and track incomes & expenses (budget tracking)
-- **Command-basd chatbot in Budget Management** — chatbot that can perform operations (eg: "add income salary 5000 today", "show my budget summary", "how much on food?")
+- **Command-basd chatbot in Budget Management** — Chatbot that can perform operations (eg: "add income salary 5000 today", "show my budget summary", "how much on food?")
+- **Excel Export & Download Feature** - Users can export and download their transaction history in Excel (.xlsx) format for backup, reporting, and external analysis
 - **Note Taking Management** - Create, update, delete, and track users' notes (note taking)
-- **Speech-To-Text using Web Speech API** - speech-to-text support for note taking (Language available - Burmese and English)
+- **Speech-To-Text using Web Speech API** - Speech-to-text support for note taking (Language available - Burmese and English)
 - **Customer service chatbot** — Interactive assistant to help users inside the system
 - **Password Reset via Email** — The system allows users to reset their password through their registered email address using a secure verification process
 - **Password Change** — The system enables authenticated users to update their existing password
