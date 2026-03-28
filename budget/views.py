@@ -64,7 +64,7 @@ def add_category(request):
             category = form.save(commit=False)
             category.user = request.user
             category.save()
-            return redirect('add_expense')
+            return redirect('dashboard')
     else:
         form = CategoryForm(user=request.user)
 
