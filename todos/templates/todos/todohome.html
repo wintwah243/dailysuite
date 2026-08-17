@@ -790,7 +790,7 @@
             <!-- Header -->
                 <div class="todo-page-heading">
                     <div>
-                        <h1 class="font-bold">Tasks Dashboard</h1>
+                        <span class="text-3xl font-bold">Tasks Dashboard</span>
                         <p>Plan your priorities, track deadlines, and stay focused on what matters.</p>
                     </div>
                     <button onclick="openAddModal()" class="dashboard-new-task">
@@ -928,7 +928,7 @@
                         <section id="tasks">
                             <div class="mb-6">
                                 <div class="flex items-center justify-between -mt-8">
-                                    <h1 class="text-3xl font-bold text-gray-900">Tasks</h1>
+                                    <span class="text-3xl font-bold text-gray-900">Tasks</span>
                                     <!-- Search Bar -->
                                     <form method="get" class="mb-6">
                                         <div class="relative max-w-md mb-6 group">
@@ -1634,7 +1634,7 @@
                         <div class="task-preview-header flex items-center justify-between mb-6 mt-8">
                             <div>
                                 <span class="text-3xl font-bold text-gray-900">Task Preview</span>
-                                <p id="time-label" class="text-gray-500 ml-1 mt-1">{{ daily_label }}</p>
+                                <p class="text-gray-600 text-md ml-1 mt-1">{{ daily_label }}<p>
                             </div>
                             <!-- Time Filter Pills -->
                             <div class="bg-gray-100 p-2 rounded-2xl inline-flex gap-2 time-links">
@@ -1697,7 +1697,7 @@
 
                                     <div class="preview-page-list space-y-4">
                                         {% for task in daily_pending_tasks %}
-                                        <div class="preview-page-item bg-white p-5 rounded-2xl border transition {% if forloop.counter > 3 %}hidden{% endif %}">
+                                        <div class="preview-page-item bg-white p-5 rounded-2xl border transition {% if forloop.counter > 2 %}hidden{% endif %}">
 
                                             <div class="flex items-start gap-3">
 
