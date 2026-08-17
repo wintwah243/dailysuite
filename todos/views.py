@@ -2,6 +2,7 @@ from asyncio import tasks
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from .forms import *
 from .models import *
 import calendar as pycal
@@ -132,10 +133,13 @@ def todo(request):
         inprogress_percent = 0
         overdue_percent = 0
 
+    task_page = Paginator(tasks, 5).get_page(request.GET.get("page"))
+
 
 
     context = {
         "tasks": tasks,
+        "task_page": task_page,
         "add_form": add_form,
         "today": today,
         "current_date": current_date,
@@ -241,5 +245,4 @@ def toggle_pin(request, task_id):
     task.is_pinned = not task.is_pinned
     task.save()
     return redirect('todolist')
-
 

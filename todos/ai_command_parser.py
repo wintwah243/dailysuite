@@ -51,15 +51,15 @@ Examples:
 """
 
     data = {
-        "model": "llama-3.3-70b-versatile",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ],
-        "temperature": 0.1,
-        "max_tokens": 300,
-        "response_format": {"type": "json_object"}
-    }
+    "model": "openai/gpt-oss-120b",
+    "messages": [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_message}
+    ],
+    "temperature": 0.1,
+    "max_tokens": 300,
+    "response_format": {"type": "json_object"}
+}
 
     try:
         response = requests.post(url, json=data, headers=headers, timeout=10)

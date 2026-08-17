@@ -280,6 +280,442 @@
             height: 60px;
         }
     }
+
+
+    /* Tasks dashboard — aligned with Notes and Budget */
+    .todo-main { min-height: calc(100vh - 4rem); background: #f9fafb; }
+    .todo-page-heading {
+        max-width: 80rem; margin: 0 auto 2rem; display: flex;
+        align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .todo-page-heading h1 {
+        color: #111827; font-size: 1.875rem; line-height: 2.25rem;
+        letter-spacing: -0.025em;
+    }
+    .todo-page-heading p { margin-top: .5rem; color: #4b5563; }
+    .dashboard-new-task {
+        display: inline-flex; flex-shrink: 0; align-items: center; gap: .5rem;
+        padding: .625rem 1rem; border-radius: .5rem; background: #000;
+        color: #fff; font-size: .875rem; font-weight: 500; transition: opacity .2s;
+    }
+    .dashboard-new-task:hover { opacity: .88; }
+    .todo-main > .min-h-screen {
+        min-height: 0; margin-top: 0 !important; padding-top: 0 !important;
+        background: transparent !important;
+    }
+    .todo-main .max-w-7xl { max-width: 80rem; }
+    .todo-main .lg\:grid-cols-3 { gap: 1.5rem; }
+
+    /* Card positions */
+    .todo-main .dashboard-card-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 1.5rem;
+        align-items: stretch;
+    }
+    .todo-main .dashboard-card-source { display: contents; }
+    .todo-main .overview-card {
+        grid-column: 1 / span 4;
+        grid-row: 1;
+    }
+    .todo-main .calendar-card {
+        grid-column: 5 / span 4;
+        grid-row: 1;
+    }
+    .todo-main .progress-card {
+        grid-column: 9 / span 4;
+        grid-row: 1;
+    }
+    .todo-main #tasks {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+    .todo-main .status-panel {
+        grid-column: 1 / -1;
+        grid-row: 3;
+    }
+    .todo-main .task-preview-panel {
+        grid-column: 1 / -1;
+        grid-row: 4;
+    }
+
+    .todo-main .lg\:col-span-1 > .bg-white,
+    .todo-main #tasks,
+    .todo-main .status-panel,
+    .todo-main .preview-content > .grid:first-child > div,
+    .todo-main .preview-content > .grid:nth-child(2) > div {
+        border: 1px solid #e5e7eb; border-radius: .75rem; background: #fff;
+        box-shadow: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .todo-main .lg\:col-span-1 > .bg-white:hover,
+    .todo-main #tasks:hover, .todo-main .status-panel:hover,
+    .todo-main .preview-content > .grid:first-child > div:hover,
+    .todo-main .preview-content > .grid:nth-child(2) > div:hover {
+        border-color: #d1d5db; box-shadow: 0 4px 12px rgba(0,0,0,.05);
+    }
+    .todo-main .lg\:col-span-1 > .bg-white {
+        margin: 0; padding: 1.5rem;
+        height: 100%;
+    }
+    .todo-main .lg\:col-span-1 h2 {
+        color: #111827; font-size: 1.125rem; font-weight: 600;
+    }
+    .todo-main .overview-card {
+        padding: 1rem;
+        border-color: #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    }
+    .todo-main .overview-card:hover {
+        border-color: #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    }
+    .todo-main .overview-card .text-green-600 { color: #16a34a !important; }
+    .todo-main .overview-card .text-orange-600 { color: #ea580c !important; }
+    .todo-main .overview-card .text-red-600 { color: #dc2626 !important; }
+    .todo-main .calendar-card > div:first-child,
+    .todo-main .overview-card > h2,
+    .todo-main .progress-card > h2 {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    .todo-main .h-4.rounded-full { height: .4rem; background: #e5e7eb; }
+    .todo-main .h-4.rounded-full > div { background: #000 !important; }
+
+    .todo-main #tasks, .todo-main .status-panel { padding: 1.5rem; }
+    .todo-main #tasks h1,
+    .todo-main .status-panel > div:first-child h1,
+    .todo-main .task-preview-header h1 {
+        color: #111827; font-size: 1.25rem; line-height: 1.75rem;
+        font-weight: 700; letter-spacing: -0.025em;
+    }
+    .todo-main #tasks > .mb-6 > .flex { margin-top: 0 !important; gap: 1rem; }
+    .todo-main #tasks form[method="get"],
+    .todo-main #tasks form[method="get"] > div { margin-bottom: 0; }
+    .todo-main #tasks form[method="get"] > div { width: min(22rem,38vw); }
+    .todo-main #search-input {
+        min-height: 2.75rem; border: 1px solid #d1d5db; border-radius: .5rem;
+        background: #fff;
+    }
+    .todo-main #search-input:focus {
+        border-color: #000; box-shadow: 0 0 0 3px rgba(0,0,0,.08);
+    }
+    .todo-main #tasks > .mb-6 + .mb-6 { margin: 0 0 1rem !important; }
+    .todo-main #tasks > .mb-6 + .mb-6 button {
+        padding: .75rem .875rem; border: 1px solid #d1d5db; border-radius: .5rem;
+        background: #fff; box-shadow: none;
+    }
+    .todo-main #tasks > .mb-6 + .mb-6 button:hover {
+        border-color: #9ca3af; background: #f9fafb;
+    }
+    .todo-main #tasks > .mb-6 + .mb-6 button > div {
+        border: 0; border-radius: 999px; background: #000;
+    }
+    .todo-main #tasks > .mb-6 + .mb-6 button > div span { color: #fff; }
+    .todo-main input[type="checkbox"] { accent-color: #000; }
+    .task-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .375rem;
+        margin-top: 1.25rem;
+    }
+    .task-pagination a,
+    .task-pagination span {
+        display: inline-flex;
+        min-width: 2.25rem;
+        height: 2.25rem;
+        align-items: center;
+        justify-content: center;
+        padding: 0 .75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: .5rem;
+        background: #fff;
+        color: #4b5563;
+        font-size: .8125rem;
+        font-weight: 500;
+    }
+    .task-pagination a:hover {
+        border-color: #9ca3af;
+        color: #111827;
+    }
+    .task-pagination .current-page {
+        border-color: #111827;
+        background: #111827;
+        color: #fff;
+    }
+    .task-pagination .disabled-page {
+        color: #9ca3af;
+        cursor: not-allowed;
+    }
+    #tasks.pagination-loading #task-list,
+    #tasks.pagination-loading .task-pagination {
+        opacity: .45;
+        pointer-events: none;
+    }
+
+    .task-list-empty,
+    .status-panel .tab-content .text-center.py-12,
+    .preview-content > .grid:nth-child(2) .text-center.py-12 {
+        padding: 2rem 1rem; border: 1px solid #e5e7eb; border-radius: .75rem;
+        background: #f9fafb;
+    }
+    .preview-content > .grid:nth-child(2) .text-center.py-12 {
+        border: 0;
+        background: #fff;
+    }
+    .task-list-empty > div,
+    .status-panel .text-center.py-12 > div,
+    .preview-content .text-center.py-12 > div {
+        width: 3rem; height: 3rem; margin-bottom: .75rem;
+        border: 1px solid #e5e7eb; background: #fff;
+    }
+    .task-list-empty > div svg,
+    .status-panel .text-center.py-12 svg,
+    .preview-content .text-center.py-12 svg {
+        width: 1.35rem; height: 1.35rem; color: #6b7280;
+    }
+    .task-list-empty h3,
+    .status-panel .text-center.py-12 h3,
+    .preview-content .text-center.py-12 h3 {
+        margin-bottom: .25rem; color: #111827; font-size: 1rem; font-weight: 600;
+    }
+    .task-list-empty p { margin-bottom: 1rem; color: #4b5563; }
+    .task-list-empty button { background: #000; color: #fff; }
+
+    .status-panel { margin-top: 0; }
+    .status-panel > div:first-child { justify-content: flex-start; margin: 0 0 1rem; }
+    .tab-links {
+        gap: .25rem; padding: .25rem; border: 1px solid #e5e7eb;
+        border-radius: 999px; background: #fff;
+    }
+    .tab-links a {
+        flex: 1; padding: .55rem .75rem; border: 0 !important;
+        border-radius: 999px; color: #4b5563; text-align: center;
+        font-size: .9375rem;
+        font-weight: 600;
+    }
+    .tab-links a.font-bold { background: #000; color: #fff; }
+
+    /* Original time filter pills */
+    .task-preview-header .time-links {
+        display: inline-flex;
+        gap: .5rem;
+        padding: .5rem;
+        border: 0;
+        border-radius: 1rem;
+        background: #f3f4f6;
+    }
+    .task-preview-header .time-pill {
+        flex: 0 0 auto;
+        padding: .5rem 1.5rem;
+        border-radius: .75rem;
+        color: #4b5563;
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.5rem;
+        text-align: center;
+        white-space: nowrap;
+    }
+    .task-preview-header .time-pill.bg-gray-900 {
+        background: #111827;
+        color: #fff;
+    }
+
+    .task-preview-header {
+        margin: 0;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid #dbe1e8;
+    }
+    .task-preview-panel {
+        padding: 1.5rem;
+        border: 1px solid #dbe1e8;
+        border-radius: 1rem;
+        background: #fff;
+    }
+    .task-preview-panel .preview-content > .grid:first-child {
+        margin-top: 1.5rem;
+    }
+    .task-preview-header #time-label { margin: .25rem 0 0; font-size: .875rem; }
+    .preview-content > .grid:first-child { gap: 1rem; margin: 0 0 1.5rem; }
+    .preview-content > .grid:first-child > div {
+        min-height: 7rem; padding: 1.5rem; transform: none !important;
+    }
+    .preview-content > .grid:first-child p { color: #4b5563; font-size: .875rem; }
+    .preview-content > .grid:first-child h2 {
+        margin-top: .25rem; color: #111827 !important; font-size: 1.5rem;
+    }
+    .preview-content > .grid:nth-child(2) { gap: 1.5rem; }
+    .todo-main .preview-content > .grid:nth-child(2) > div,
+    .todo-main .preview-content > .grid:nth-child(2) > div:hover {
+        padding: 1.5rem;
+        border: 0;
+        box-shadow: none;
+    }
+    .preview-list-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: .5rem;
+        margin-top: 1rem;
+    }
+    .preview-list-pagination button {
+        display: inline-flex;
+        width: 2.25rem;
+        height: 2.25rem;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #d1d5db;
+        border-radius: 999px;
+        background: #fff;
+        color: #111827;
+        font-size: 1.125rem;
+        transition: border-color .2s, background .2s;
+    }
+    .preview-list-pagination button:hover:not(:disabled) {
+        border-color: #111827;
+        background: #f9fafb;
+    }
+    .preview-list-pagination button:disabled {
+        color: #d1d5db;
+        cursor: not-allowed;
+    }
+
+    /* Colored summary cards for Today, This Week, and This Month */
+    .preview-content > .grid:first-child > div:nth-child(1) {
+        border-color: #bfdbfe;
+        background: #eff6ff;
+    }
+    .preview-content > .grid:first-child > div:nth-child(1) h2 {
+        color: #2563eb !important;
+    }
+    .preview-content > .grid:first-child > div:nth-child(2) {
+        border-color: #bbf7d0;
+        background: #f0fdf4;
+    }
+    .preview-content > .grid:first-child > div:nth-child(2) h2 {
+        color: #16a34a !important;
+    }
+    .preview-content > .grid:first-child > div:nth-child(3) {
+        border-color: #fed7aa;
+        background: #fff7ed;
+    }
+    .preview-content > .grid:first-child > div:nth-child(3) h2 {
+        color: #ea580c !important;
+    }
+    .preview-content > .grid:first-child > div:nth-child(4) {
+        border-color: #ddd6fe;
+        background: #f5f3ff;
+    }
+    .preview-content > .grid:first-child > div:nth-child(4) h2 {
+        color: #7c3aed !important;
+    }
+
+    .todo-main .text-green-600, .todo-main .text-green-700,
+    .todo-main .text-green-800, .todo-main .text-blue-600,
+    .todo-main .text-blue-800, .todo-main .text-yellow-600,
+    .todo-main .text-yellow-800, .todo-main .text-orange-600,
+    .todo-main .text-orange-800, .todo-main .text-red-600,
+    .todo-main .text-red-800 { color: #111827 !important; }
+    .todo-main .bg-green-100, .todo-main .bg-blue-100,
+    .todo-main .bg-yellow-100, .todo-main .bg-orange-100,
+    .todo-main .bg-red-100, .todo-main .bg-red-50 {
+        background: #f3f4f6 !important;
+    }
+    .todo-main .bg-green-500, .todo-main .bg-blue-500,
+    .todo-main .bg-blue-600, .todo-main .bg-red-600 { background: #000 !important; }
+
+    .todo-main .progress-card .h-4.rounded-full > .bg-green-500 {
+        background: #22c55e !important;
+    }
+    .todo-main .progress-card .h-4.rounded-full > .bg-blue-600 {
+        background: #2563eb !important;
+    }
+    .todo-main .progress-card .h-4.rounded-full > .bg-red-600 {
+        background: #dc2626 !important;
+    }
+
+    .todo-main .preview-content .bg-red-100 { background: #fee2e2 !important; }
+    .todo-main .preview-content .text-red-600 { color: #dc2626 !important; }
+    .todo-main .preview-content .bg-yellow-100 { background: #fef9c3 !important; }
+    .todo-main .preview-content .text-yellow-600 { color: #ca8a04 !important; }
+    .todo-main .preview-content .bg-blue-100 { background: #dbeafe !important; }
+    .todo-main .preview-content .text-blue-600 { color: #2563eb !important; }
+
+    /* Keep task rows in their original visual style */
+    .todo-main #task-list .bg-green-100,
+    .todo-main .tab-content .bg-green-100 { background: #dcfce7 !important; }
+    .todo-main #task-list .text-green-800,
+    .todo-main .tab-content .text-green-800 { color: #166534 !important; }
+    .todo-main #task-list .bg-blue-100,
+    .todo-main .tab-content .bg-blue-100 { background: #dbeafe !important; }
+    .todo-main #task-list .text-blue-800,
+    .todo-main .tab-content .text-blue-800 { color: #1e40af !important; }
+    .todo-main #task-list .bg-yellow-100,
+    .todo-main .tab-content .bg-yellow-100 { background: #fef9c3 !important; }
+    .todo-main #task-list .text-yellow-800,
+    .todo-main .tab-content .text-yellow-800 { color: #854d0e !important; }
+    .todo-main #task-list .bg-orange-100,
+    .todo-main .tab-content .bg-orange-100 { background: #ffedd5 !important; }
+    .todo-main #task-list .text-orange-800,
+    .todo-main .tab-content .text-orange-800 { color: #9a3412 !important; }
+    .todo-main #task-list .bg-red-100,
+    .todo-main .tab-content .bg-red-100 { background: #fee2e2 !important; }
+    .todo-main #task-list .text-red-800,
+    .todo-main .tab-content .text-red-800 { color: #991b1b !important; }
+    .todo-main #task-list .hover\:text-red-600:hover,
+    .todo-main .tab-content .hover\:text-red-600:hover { color: #dc2626 !important; }
+    .todo-main #task-list .hover\:bg-red-50:hover,
+    .todo-main .tab-content .hover\:bg-red-50:hover { background: #fef2f2 !important; }
+
+    #addModal > div, [id^="editModal-"] > div {
+        width: 500px; max-width: 90%; border-radius: 1rem;
+    }
+    #addModal > div > .bg-black, [id^="editModal-"] > div > .bg-black,
+    #addModal form, [id^="editModal-"] form { padding: 1.5rem; }
+    #addModal form .grid, [id^="editModal-"] form .grid { gap: 1rem; }
+    #addModal form .border-2, [id^="editModal-"] form .border-2 {
+        border-width: 1px; border-color: #d1d5db; border-radius: .5rem;
+    }
+
+    @media (max-width: 1023px) {
+        .todo-main { padding: 1.5rem !important; }
+        .todo-main .lg\:col-span-1 { position: static; }
+        .todo-main .dashboard-card-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .todo-main .overview-card { grid-column: 1; grid-row: 1; }
+        .todo-main .calendar-card { grid-column: 2; grid-row: 1; }
+        .todo-main .progress-card { grid-column: 1 / -1; grid-row: 2; }
+        .todo-main #tasks { grid-column: 1 / -1; grid-row: 3; }
+        .todo-main .status-panel { grid-column: 1 / -1; grid-row: 4; }
+        .todo-main .task-preview-panel { grid-column: 1 / -1; grid-row: 5; }
+    }
+    @media (max-width: 700px) {
+        .todo-page-heading, .todo-main #tasks > .mb-6 > .flex,
+        .task-preview-header { align-items: stretch; flex-direction: column; }
+        .dashboard-new-task { justify-content: center; width: 100%; }
+        .todo-main #tasks form[method="get"] > div { width: 100%; }
+        .task-preview-header .time-links {
+            display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); width: 100%;
+        }
+        .task-preview-header .time-pill {
+            padding: .5rem .75rem;
+            font-size: .875rem;
+        }
+        .todo-main .dashboard-card-grid { grid-template-columns: 1fr; }
+        .todo-main .overview-card,
+        .todo-main .calendar-card,
+        .todo-main .progress-card,
+        .todo-main #tasks,
+        .todo-main .status-panel,
+        .todo-main .task-preview-panel,
+        .todo-main .task-preview-header,
+        .todo-main .preview-content {
+            grid-column: 1 / -1;
+            grid-row: auto;
+        }
+    }
     </style>
 </head>
 <body class="main-bg font-sans text-gray-800 antialiased">
@@ -350,22 +786,24 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content flex-1 p-8">
+        <div class="main-content todo-main flex-1 p-8">
             <!-- Header -->
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900">Task Dashboard</h1>
-
-                    <p class="text-gray-600 mt-2">A clean and thoughtfully organized workspace built to streamline your daily tasks.</p>
-
-                    <p class="text-gray-600 mt-2">Manage your daily tasks and get organized.</p>
-
+                <div class="todo-page-heading">
+                    <div>
+                        <h1 class="font-bold">Tasks Dashboard</h1>
+                        <p>Plan your priorities, track deadlines, and stay focused on what matters.</p>
+                    </div>
+                    <button onclick="openAddModal()" class="dashboard-new-task">
+                        <i class="fas fa-plus"></i>
+                        <span>New Task</span>
+                    </button>
                 </div>
             <div class="min-h-screen bg-gray-50 py-8 -mt-5">
-                <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="dashboard-card-grid max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Left Column - Calendar and Stats -->
-                    <div class="lg:col-span-1 lg:sticky lg:top-24 h-fit self-start">
+                    <div class="dashboard-card-source lg:col-span-1 lg:sticky lg:top-24 h-fit self-start">
                         <!-- Calendar Section -->
-                        <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6 shadow-sm">
+                        <div class="calendar-card bg-white rounded-xl border border-gray-200 p-4 mb-6 shadow-sm">
                             <div class="flex items-center justify-between mb-4">
                                 <h2 class="text-lg font-semibold text-gray-900">Calendar</h2>
                                 <span class="text-sm text-gray-600">{{ current_date|date:"F Y" }}</span>
@@ -426,7 +864,7 @@
                         </div>
 
                         <!-- Status Section -->
-                        <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                        <div class="overview-card bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                             <h2 class="text-lg font-semibold text-gray-900 mb-4">Overview</h2>
                             <div class="space-y-3">
                                 <div class="flex items-center justify-between">
@@ -453,7 +891,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-6 bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                        <div class="progress-card mt-6 bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                             <h2 class="text-lg font-semibold text-gray-900 mb-4">Task Progress</h2>
                             <!-- completed -->
                             <p class="text-sm text-gray-600 mb-2">Completed</p>
@@ -485,14 +923,14 @@
                     </div>
 
                     <!-- Right Column - Tasks -->
-                    <div class="lg:col-span-2">
+                    <div class="dashboard-card-source lg:col-span-2">
                         <!-- Header -->
                         <section id="tasks">
                             <div class="mb-6">
                                 <div class="flex items-center justify-between -mt-8">
                                     <h1 class="text-3xl font-bold text-gray-900">Tasks</h1>
                                     <!-- Search Bar -->
-                                    <form method="get" class="mb-6" onsubmit="return false;">
+                                    <form method="get" class="mb-6">
                                         <div class="relative max-w-md mb-6 group">
                                             <input
                                                 type="text"
@@ -538,8 +976,8 @@
 
                             <!-- Task List -->
                             <div class="space-y-3 mb-1" id="task-list">
-                                {% for task in tasks %}
-                                <div class="group relative task-item {% if forloop.counter > 5 %} hidden hidden-task {% endif %}">
+                                {% for task in task_page %}
+                                <div class="group relative task-item">
                                     <!-- Task Card -->
                                     <div class="p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200">
                                         <div class="flex items-start gap-4">
@@ -674,7 +1112,7 @@
                                 </div>
                                 {% empty %}
                                 <!-- Empty State -->
-                                <div class="text-center py-12">
+                                <div class="task-list-empty text-center py-12">
                                     <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
                                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
@@ -689,39 +1127,40 @@
                                 </div>
                                 {% endfor %}
                             </div>
-                            <!-- See More / See Less Button -->
-                            {% if tasks|length >= 5 %}
-                            <div class="relative text-center -mt-9 mb-4">
-                                <button id="toggle-tasks-btn"
-                                    class="inline-flex items-center justify-center
-                                           w-12 h-12
-                                           -mb-7
-                                           rounded-full
-                                           bg-white/70 backdrop-blur-md
-                                           border border-gray-200
-                                           shadow-lg
-                                           text-gray-600
-                                           hover:text-black
-                                           hover:bg-white
-                                           transition-all duration-300
-                                           opacity-0 hover:opacity-100">
+                            {% if task_page.paginator.num_pages > 1 %}
+                            <nav class="task-pagination" aria-label="Task list pagination">
+                                {% if task_page.has_previous %}
+                                <a href="?{% if query %}q={{ query|urlencode }}&amp;{% endif %}page={{ task_page.previous_page_number }}"
+                                   aria-label="Previous page">Previous</a>
+                                {% else %}
+                                <span class="disabled-page">Previous</span>
+                                {% endif %}
 
-<!--                                    <span id="toggle-text">See More</span>-->
-                                    <i id="expand-icon" class="bi bi-arrows-angle-expand text-lg transition-all duration-300"></i>
-                                    <i id="contract-icon" class="bi bi-arrows-angle-contract text-lg hidden transition-all duration-300"></i>
+                                {% for page_number in task_page.paginator.page_range %}
+                                    {% if page_number == task_page.number %}
+                                    <span class="current-page" aria-current="page">{{ page_number }}</span>
+                                    {% else %}
+                                    <a href="?{% if query %}q={{ query|urlencode }}&amp;{% endif %}page={{ page_number }}">{{ page_number }}</a>
+                                    {% endif %}
+                                {% endfor %}
 
-                                </button>
-                            </div>
+                                {% if task_page.has_next %}
+                                <a href="?{% if query %}q={{ query|urlencode }}&amp;{% endif %}page={{ task_page.next_page_number }}"
+                                   aria-label="Next page">Next</a>
+                                {% else %}
+                                <span class="disabled-page">Next</span>
+                                {% endif %}
+                            </nav>
                             {% endif %}
                         </section>
 
-                        <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm mt-7">
+                        <div class="status-panel bg-white rounded-xl border border-gray-200 p-4 shadow-sm mt-7">
                             <div class="flex items-center justify-center mt-2 mb-4">
-                                    <h1 class="text-3xl font-bold text-gray-900">Task Status</h1>
+                                    <span class="text-3xl font-bold text-gray-900">Task Status</span>
                             </div>
-                            <div class="flex items-center gap-6 border-b border-gray-200 mb-6 tab-links">
+                            <div class="flex items-center w-[400px] gap-6 border-b border-gray-200 mb-6 tab-links rounded-full">
                                 <a href="#" data-tab="pending"
-                                   class="pb-3 text-lg font-medium px-4 py-2 text-black border-b-2 border-black font-bold">
+                                   class="pb-3 text-lg font-medium px-4 py-2 text-black border-b-2 border-black font-bold rounded-full">
                                     Pending
                                 </a>
 
@@ -1191,9 +1630,10 @@
                         </div>
 
                         <!--Daily, Weekly, Monthly-->
-                        <div class="flex items-center justify-between mb-6 mt-8">
+                        <section class="task-preview-panel">
+                        <div class="task-preview-header flex items-center justify-between mb-6 mt-8">
                             <div>
-                                <h1 class="text-3xl font-bold text-gray-900">Task Preview</h1>
+                                <span class="text-3xl font-bold text-gray-900">Task Preview</span>
                                 <p id="time-label" class="text-gray-500 ml-1 mt-1">{{ daily_label }}</p>
                             </div>
                             <!-- Time Filter Pills -->
@@ -1218,29 +1658,29 @@
                         </div>
 
                         <!--Daily Task-->
-                        <div id="daily-task" class="time-content">
+                        <div id="daily-task" class="preview-content time-content">
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8 mt-8">
                                 <div class="bg-white rounded-2xl p-6 shadow
                                             hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-out">
-                                    <p class="text-gray-500">Total Tasks</p>
+                                    <p class="text-gray-500 font-bold">Total Tasks</p>
                                     <h2 class="text-4xl font-bold mt-2">{{ daily_tasks_count }}</h2>
                                 </div>
 
                                 <div class="bg-white rounded-2xl p-6 shadow
                                             hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-out">
-                                    <p class="text-gray-500">Completed</p>
+                                    <p class="text-gray-500 font-bold">Completed</p>
                                     <h2 class="text-4xl font-bold text-green-600 mt-2">{{ daily_completed_tasks_count }}</h2>
                                 </div>
 
                                 <div class="bg-white rounded-2xl p-6 shadow
                                             hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-out">
-                                    <p class="text-gray-500">Remaining</p>
+                                    <p class="text-gray-500 font-bold">Remaining</p>
                                     <h2 class="text-4xl font-bold mt-2">{{ daily_pending_tasks_count }}</h2>
                                 </div>
 
                                 <div class="bg-white rounded-2xl p-6 shadow
                                             hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-out">
-                                    <p class="text-gray-500">Completion</p>
+                                    <p class="text-gray-500 font-bold">Completion</p>
                                     <h2 class="text-4xl font-bold text-blue-600 mt-2">{{ daily_done_percent }}%</h2>
                                 </div>
                             </div>
@@ -1249,15 +1689,15 @@
                                 <!-- To Do -->
                                 <div>
                                     <div class="flex items-center justify-between mb-4">
-                                        <h2 class="text-xl font-bold">To Do</h2>
+                                        <span class="text-2xl font-bold">To Do</span>
                                         <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">
                                             {{ daily_pending_tasks_count }}
                                         </span>
                                     </div>
 
-                                    <div class="space-y-4">
+                                    <div class="preview-page-list space-y-4">
                                         {% for task in daily_pending_tasks %}
-                                        <div class="bg-white p-5 rounded-2xl shadow hover:shadow-md transition">
+                                        <div class="preview-page-item bg-white p-5 rounded-2xl border transition {% if forloop.counter > 3 %}hidden{% endif %}">
 
                                             <div class="flex items-start gap-3">
 
@@ -1266,7 +1706,7 @@
                                                         <span class="text-xs px-2 py-1 rounded-full
                                                             {% if task.priority == 'high' %}bg-red-100 text-red-600
                                                             {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-600
-                                                            {% else %}bg-gray-200 text-gray-600{% endif %}">
+                                                            {% else %}bg-blue-100 text-blue-600{% endif %}">
                                                             {{ task.priority }}
                                                         </span>
                                                     </div>
@@ -1291,7 +1731,7 @@
                                         </div>
                                         {% empty %}
                                         <div class="text-center py-12">
-                                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-white flex items-center justify-center">
                                                 <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                                 </svg>
@@ -1300,6 +1740,12 @@
                                         </div>
                                         {% endfor %}
                                     </div>
+                                    {% if daily_pending_tasks_count > 3 %}
+                                    <nav class="preview-list-pagination" aria-label="More daily to-do tasks">
+                                        <button type="button" data-preview-prev aria-label="Previous tasks" disabled>&lt;</button>
+                                        <button type="button" data-preview-next aria-label="Next tasks">&gt;</button>
+                                    </nav>
+                                    {% endif %}
                                 </div>
 
                                 <!-- Completed -->
@@ -1311,15 +1757,18 @@
                                         </span>
                                     </div>
 
-                                    <div class="space-y-4">
+                                    <div class="preview-page-list space-y-4">
                                         {% for task in daily_completed_tasks %}
-                                        <div class="bg-gray-100 p-5 rounded-2xl">
+                                        <div class="preview-page-item bg-gray-100 p-5 rounded-2xl {% if forloop.counter > 3 %}hidden{% endif %}">
 
                                             <div class="flex items-start gap-3">
 
 
                                                 <div class="flex-1">
-                                                    <span class="text-xs px-2 py-1 rounded-full bg-gray-300 text-gray-700">
+                                                    <span class="text-xs px-2 py-1 rounded-full
+                                                        {% if task.priority == 'high' %}bg-red-100 text-red-600
+                                                        {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-600
+                                                        {% else %}bg-blue-100 text-blue-600{% endif %}">
                                                         {{ task.priority }}
                                                     </span>
 
@@ -1345,8 +1794,8 @@
 
                                         </div>
                                         {% empty %}
-                                        <div class="text-center py-12">
-                                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <div class="text-center py-12 bg-white">
+                                            <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center">
                                                 <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                                 </svg>
@@ -1355,12 +1804,18 @@
                                         </div>
                                         {% endfor %}
                                     </div>
+                                    {% if daily_completed_tasks_count > 3 %}
+                                    <nav class="preview-list-pagination" aria-label="More daily completed tasks">
+                                        <button type="button" data-preview-prev aria-label="Previous tasks" disabled>&lt;</button>
+                                        <button type="button" data-preview-next aria-label="Next tasks">&gt;</button>
+                                    </nav>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
 
                         <!--Weekly Task-->
-                        <div id="weekly-task" class="time-content hidden">
+                        <div id="weekly-task" class="preview-content time-content hidden">
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8 mt-8">
                                 <div class="bg-white rounded-2xl p-6 shadow
                                             hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 ease-out">
@@ -1397,9 +1852,9 @@
                                         </span>
                                     </div>
 
-                                    <div class="space-y-4">
+                                    <div class="preview-page-list space-y-4">
                                         {% for task in weekly_pending_tasks %}
-                                        <div class="bg-white p-5 rounded-2xl shadow hover:shadow-md transition">
+                                        <div class="preview-page-item bg-white p-5 rounded-2xl border transition {% if forloop.counter > 3 %}hidden{% endif %}">
 
                                             <div class="flex items-start gap-3">
 
@@ -1408,7 +1863,7 @@
                                                         <span class="text-xs px-2 py-1 rounded-full
                                                             {% if task.priority == 'high' %}bg-red-100 text-red-600
                                                             {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-600
-                                                            {% else %}bg-gray-200 text-gray-600{% endif %}">
+                                                            {% else %}bg-blue-100 text-blue-600{% endif %}">
                                                             {{ task.priority }}
                                                         </span>
                                                     </div>
@@ -1442,6 +1897,12 @@
                                         </div>
                                         {% endfor %}
                                     </div>
+                                    {% if weekly_pending_tasks_count > 3 %}
+                                    <nav class="preview-list-pagination" aria-label="More weekly to-do tasks">
+                                        <button type="button" data-preview-prev aria-label="Previous tasks" disabled>&lt;</button>
+                                        <button type="button" data-preview-next aria-label="Next tasks">&gt;</button>
+                                    </nav>
+                                    {% endif %}
                                 </div>
 
                                 <!-- Completed -->
@@ -1453,15 +1914,18 @@
                                         </span>
                                     </div>
 
-                                    <div class="space-y-4">
+                                    <div class="preview-page-list space-y-4">
                                         {% for task in weekly_completed_tasks %}
-                                        <div class="bg-gray-100 p-5 rounded-2xl">
+                                        <div class="preview-page-item bg-gray-100 p-5 rounded-2xl {% if forloop.counter > 3 %}hidden{% endif %}">
 
                                             <div class="flex items-start gap-3">
 
 
                                                 <div class="flex-1">
-                                                    <span class="text-xs px-2 py-1 rounded-full bg-gray-300 text-gray-700">
+                                                    <span class="text-xs px-2 py-1 rounded-full
+                                                        {% if task.priority == 'high' %}bg-red-100 text-red-600
+                                                        {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-600
+                                                        {% else %}bg-blue-100 text-blue-600{% endif %}">
                                                         {{ task.priority }}
                                                     </span>
 
@@ -1496,12 +1960,18 @@
                                         </div>
                                         {% endfor %}
                                     </div>
+                                    {% if weekly_completed_tasks_count > 3 %}
+                                    <nav class="preview-list-pagination" aria-label="More weekly completed tasks">
+                                        <button type="button" data-preview-prev aria-label="Previous tasks" disabled>&lt;</button>
+                                        <button type="button" data-preview-next aria-label="Next tasks">&gt;</button>
+                                    </nav>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
 
                         <!--Monthly Task-->
-                        <div id="monthly-task" class="time-content hidden">
+                        <div id="monthly-task" class="preview-content time-content hidden">
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8 mt-8">
                                 <div class="bg-white rounded-2xl p-6 shadow
                                             hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 ease-out">
@@ -1538,9 +2008,9 @@
                                         </span>
                                     </div>
 
-                                    <div class="space-y-4">
+                                    <div class="preview-page-list space-y-4">
                                         {% for task in monthly_pending_tasks %}
-                                        <div class="bg-white p-5 rounded-2xl shadow hover:shadow-md transition">
+                                        <div class="preview-page-item bg-white p-5 rounded-2xl border transition {% if forloop.counter > 3 %}hidden{% endif %}">
 
                                             <div class="flex items-start gap-3">
 
@@ -1549,7 +2019,7 @@
                                                         <span class="text-xs px-2 py-1 rounded-full
                                                             {% if task.priority == 'high' %}bg-red-100 text-red-600
                                                             {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-600
-                                                            {% else %}bg-gray-200 text-gray-600{% endif %}">
+                                                            {% else %}bg-blue-100 text-blue-600{% endif %}">
                                                             {{ task.priority }}
                                                         </span>
                                                     </div>
@@ -1583,6 +2053,12 @@
                                         </div>
                                         {% endfor %}
                                     </div>
+                                    {% if monthly_pending_tasks_count > 3 %}
+                                    <nav class="preview-list-pagination" aria-label="More monthly to-do tasks">
+                                        <button type="button" data-preview-prev aria-label="Previous tasks" disabled>&lt;</button>
+                                        <button type="button" data-preview-next aria-label="Next tasks">&gt;</button>
+                                    </nav>
+                                    {% endif %}
                                 </div>
 
                                 <!-- Completed -->
@@ -1594,15 +2070,18 @@
                                         </span>
                                     </div>
 
-                                    <div class="space-y-4">
+                                    <div class="preview-page-list space-y-4">
                                         {% for task in monthly_completed_tasks %}
-                                        <div class="bg-gray-100 p-5 rounded-2xl">
+                                        <div class="preview-page-item bg-gray-100 p-5 rounded-2xl {% if forloop.counter > 3 %}hidden{% endif %}">
 
                                             <div class="flex items-start gap-3">
 
 
                                                 <div class="flex-1">
-                                                    <span class="text-xs px-2 py-1 rounded-full bg-gray-300 text-gray-700">
+                                                    <span class="text-xs px-2 py-1 rounded-full
+                                                        {% if task.priority == 'high' %}bg-red-100 text-red-600
+                                                        {% elif task.priority == 'medium' %}bg-yellow-100 text-yellow-600
+                                                        {% else %}bg-blue-100 text-blue-600{% endif %}">
                                                         {{ task.priority }}
                                                     </span>
 
@@ -1637,9 +2116,16 @@
                                         </div>
                                         {% endfor %}
                                     </div>
+                                    {% if monthly_completed_tasks_count > 3 %}
+                                    <nav class="preview-list-pagination" aria-label="More monthly completed tasks">
+                                        <button type="button" data-preview-prev aria-label="Previous tasks" disabled>&lt;</button>
+                                        <button type="button" data-preview-next aria-label="Next tasks">&gt;</button>
+                                    </nav>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
+                        </section>
 
                     </div>
                 </div>
@@ -1753,7 +2239,8 @@
 
 
     <!-- Edit Task Modals -->
-        {% for task in tasks %}
+    <div id="edit-task-modals">
+        {% for task in task_page %}
         <div id="editModal-{{ task.id }}"
              class="fixed inset-0 hidden flex items-center justify-center bg-black/60 z-50 p-4">
 
@@ -1886,6 +2373,7 @@
             </div>
         </div>
         {% endfor %}
+    </div>
 
 
 
@@ -2296,19 +2784,51 @@ function updateTaskBadge() {
 
 updateTaskBadge();
 
+// Task Preview pagination (three tasks per page)
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".preview-list-pagination").forEach(function (pagination) {
+        const list = pagination.previousElementSibling;
+        const items = Array.from(list.querySelectorAll(".preview-page-item"));
+        const previousButton = pagination.querySelector("[data-preview-prev]");
+        const nextButton = pagination.querySelector("[data-preview-next]");
+        const pageSize = 3;
+        const pageCount = Math.ceil(items.length / pageSize);
+        let currentPage = 0;
+
+        function showPreviewPage() {
+            const start = currentPage * pageSize;
+            const end = start + pageSize;
+
+            items.forEach(function (item, index) {
+                item.classList.toggle("hidden", index < start || index >= end);
+            });
+
+            previousButton.disabled = currentPage === 0;
+            nextButton.disabled = currentPage === pageCount - 1;
+        }
+
+        previousButton.addEventListener("click", function () {
+            if (currentPage === 0) return;
+            currentPage -= 1;
+            showPreviewPage();
+        });
+
+        nextButton.addEventListener("click", function () {
+            if (currentPage >= pageCount - 1) return;
+            currentPage += 1;
+            showPreviewPage();
+        });
+
+        showPreviewPage();
+    });
+});
+
 //Search Bar
 document.addEventListener("DOMContentLoaded", function () {
 
     const searchInput = document.getElementById("search-input");
     const clearBtn = document.getElementById("clear-search");
 
-    const toggleBtn = document.getElementById("toggle-tasks-btn");
-    const expandIcon = document.getElementById("expand-icon");
-    const contractIcon = document.getElementById("contract-icon");
-
-    const taskItems = document.querySelectorAll("#task-list .task-item");
-
-    let expanded = false;
     let searching = false;
 
     function updateTasks() {
@@ -2316,7 +2836,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const query = searchInput.value.toLowerCase();
         searching = query.length > 0;
 
-        taskItems.forEach((item, index) => {
+        document.querySelectorAll("#task-list .task-item").forEach(item => {
 
             const taskName = item.querySelector("h3").textContent.toLowerCase();
             const matches = taskName.includes(query);
@@ -2327,36 +2847,11 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             item.style.display = "";
-
-            // If searching → show everything
-            if (searching) {
-                item.classList.remove("hidden");
-            }
-
-            // If NOT searching → apply see more logic
-            else {
-                if (!expanded && index >= 5) {
-                    item.classList.add("hidden");
-                } else {
-                    item.classList.remove("hidden");
-                }
-            }
+            item.classList.remove("hidden");
         });
 
         clearBtn.classList.toggle("hidden", !searching);
     }
-    // See more button
-    toggleBtn?.addEventListener("click", function () {
-
-        if (searching) return;
-
-        expanded = !expanded;
-
-        expandIcon.classList.toggle("hidden", expanded);
-        contractIcon.classList.toggle("hidden", !expanded);
-
-        updateTasks();
-    });
 
     // Search
     searchInput?.addEventListener("input", updateTasks);
@@ -2368,6 +2863,62 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initial load
     updateTasks();
+
+    async function loadTaskPage(url, addToHistory = true) {
+        const tasksSection = document.getElementById("tasks");
+        if (tasksSection.classList.contains("pagination-loading")) return;
+
+        tasksSection.classList.add("pagination-loading");
+
+        try {
+            const response = await fetch(url, {
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+
+            if (!response.ok) throw new Error("Unable to load tasks");
+
+            const html = await response.text();
+            const nextDocument = new DOMParser().parseFromString(html, "text/html");
+            const currentList = document.getElementById("task-list");
+            const nextList = nextDocument.getElementById("task-list");
+            const currentPagination = document.querySelector(".task-pagination");
+            const nextPagination = nextDocument.querySelector(".task-pagination");
+            const currentModals = document.getElementById("edit-task-modals");
+            const nextModals = nextDocument.getElementById("edit-task-modals");
+
+            if (!nextList || !nextModals) throw new Error("Invalid task response");
+
+            currentList.replaceWith(nextList);
+            currentModals.replaceWith(nextModals);
+
+            if (currentPagination && nextPagination) {
+                currentPagination.replaceWith(nextPagination);
+            } else if (currentPagination) {
+                currentPagination.remove();
+            } else if (nextPagination) {
+                nextList.insertAdjacentElement("afterend", nextPagination);
+            }
+
+            if (addToHistory) history.pushState({}, "", url);
+            updateTasks();
+        } catch (error) {
+            window.location.href = url;
+        } finally {
+            tasksSection.classList.remove("pagination-loading");
+        }
+    }
+
+    document.addEventListener("click", function (event) {
+        const paginationLink = event.target.closest(".task-pagination a");
+        if (!paginationLink) return;
+
+        event.preventDefault();
+        loadTaskPage(paginationLink.href);
+    });
+
+    window.addEventListener("popstate", function () {
+        loadTaskPage(window.location.href, false);
+    });
 
 });
 
