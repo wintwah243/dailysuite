@@ -48,6 +48,10 @@ def todo(request):
     yearly_label = today.strftime("%Y") # 2026
 
     daily_tasks = tasks.filter(due_date=today)
+    tomorrow = today + timedelta(days=1)
+    due_today_tasks = tasks.filter(due_date=today, is_completed=False)
+    due_tomorrow_tasks = tasks.filter(due_date=tomorrow, is_completed=False)
+    high_priority_tasks = tasks.filter(priority="high", is_completed=False)
     weekly_tasks = tasks.filter(due_date__gte=week_start, due_date__lte=week_end)
     monthly_tasks = tasks.filter(due_date__gte=month_start, due_date__lte=month_end)
     yearly_tasks = tasks.filter(due_date__gte=year_start, due_date__lte=year_end)
@@ -158,6 +162,12 @@ def todo(request):
         "query": q,
         # Time groups
         "daily_tasks": daily_tasks,
+        "due_today_tasks": due_today_tasks,
+        "due_today_count": due_today_tasks.count(),
+        "due_tomorrow_tasks": due_tomorrow_tasks,
+        "due_tomorrow_count": due_tomorrow_tasks.count(),
+        "high_priority_tasks": high_priority_tasks,
+        "high_priority_count": high_priority_tasks.count(),
         "weekly_tasks": weekly_tasks,
         "monthly_tasks": monthly_tasks,
         "yearly_tasks": yearly_tasks,
@@ -245,4 +255,3 @@ def toggle_pin(request, task_id):
     task.is_pinned = not task.is_pinned
     task.save()
     return redirect('todolist')
-

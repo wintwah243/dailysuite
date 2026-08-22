@@ -1,10 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Title</title>
+    {% include 'responsive_shared.html' %}
 </head>
-<body>
+<body class="simple-form-page">
     <h1>Update task</h1>
     <form method="post">
         {% csrf_token %}

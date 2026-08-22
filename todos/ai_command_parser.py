@@ -1,16 +1,13 @@
-import requests
 import json
-from django.conf import settings
 import re
+import requests
+from django.conf import settings
 
 
 def parse_todo_command(user_message, username):
     GROQ_API_KEY = getattr(settings, "GROQ_API_KEY", None)
     if not GROQ_API_KEY:
-        return {
-            "action": "unknown",
-            "message": "AI assistant not configured"
-        }
+        return {"action": "unknown", "message": "AI assistant not configured"}
 
     url = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -51,37 +48,42 @@ Examples:
 """
 
     data = {
-    "model": "openai/gpt-oss-120b",
-    "messages": [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_message}
-    ],
-    "temperature": 0.1,
-    "max_tokens": 300,
-    "response_format": {"type": "json_object"}
-}
+        "model": "openai/gpt-oss-20b",
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_message},
+        ],
+        "temperature": 0.1,
+        "max_tokens": 300,
+        "response_format": {"type": "json_object"},
+    }
 
     try:
         response = requests.post(url, json=data, headers=headers, timeout=10)
-        response.raise_for_status()
-        resp_json = response.json()
 
+        # Print raw response text on HTTP errors to catch API issues
+        if response.status_code != 200:
+            print("Groq API Error Response:", response.text)
+            return {"action": "unknown", "message": "AI service returned an error"}
+
+        resp_json = response.json()
         ai_response = resp_json["choices"][0]["message"]["content"]
 
-        # Parse the JSON response
+        # Parse JSON response
         try:
             command_data = json.loads(ai_response)
-            # Ensure required fields
             if "action" not in command_data:
                 command_data["action"] = "unknown"
             return command_data
         except json.JSONDecodeError:
-            # If JSON parsing fails, try to extract with regex
             action_match = re.search(r'"action":\s*"([^"]+)"', ai_response)
             if action_match:
-                return {"action": action_match.group(1), "original": user_message}
+                return {
+                    "action": action_match.group(1),
+                    "original": user_message,
+                }
             return {"action": "unknown", "message": "Could not parse command"}
 
-    except Exception as e:
-        print(f"Groq API error: {e}")
+    except requests.exceptions.RequestException as e:
+        print(f"Groq API connection error: {e}")
         return {"action": "unknown", "message": "AI service unavailable"}

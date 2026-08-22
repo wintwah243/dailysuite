@@ -1,6 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DailySuite - Budget</title>
     <!-- Add Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -9,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SheetJS for Excel export -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    {% include 'responsive_shared.html' %}
     <style>
         .main-bg { background-color: #f9fafb; }
         .sidebar {
